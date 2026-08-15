@@ -1,0 +1,73 @@
+---
+description: "Keep user facing copy clear, consistent, accessible, and free of banned punctuation such as the U+2014 em dash character."
+globs: "**/*"
+alwaysApply: true
+---
+
+# Content Style Cleanup
+
+## Purpose
+
+Keep user facing copy clear, consistent, accessible, and free of banned punctuation such as the U+2014 em dash character.
+
+## When This Applies
+
+- UI copy
+- Marketing copy
+- Errors
+- Empty states
+- Tooltips
+- Localization files
+- Help content
+- Generated documents shown to users
+
+## Required Workflow
+
+1. Identify all user facing strings touched by the task.
+2. Rewrite for clarity, directness, and natural grammar.
+3. Search changed files for U+2014 before finishing.
+4. Update translations when source copy changes.
+5. Confirm copy fits the UI.
+
+## Standards
+
+- Use colons, commas, periods, parentheses, or clean sentence rewrites instead of U+2014.
+- Buttons should be action oriented.
+- Errors should explain what happened and what to do next.
+- Empty states should be useful.
+- Localization should preserve meaning rather than word order.
+
+## Do Not
+
+- Do not use U+2014 in user facing content.
+- Do not replace punctuation with awkward grammar.
+- Do not leave stale translations after changing source copy.
+- Do not use clever copy where clarity matters.
+- Do not let labels become too long for mobile layouts.
+
+## Required Search Commands
+
+Run one of these before finishing copy changes when supported by the environment:
+
+```bash
+rg "\x{2014}" src app components pages content data public messages locales
+```
+
+For a full repository scan:
+
+```bash
+rg "\x{2014}" .
+```
+
+## Verification Checklist
+
+- The existing project pattern was inspected before changes were made.
+- The implementation is scoped to the user request.
+- Unsafe files, secrets, and unrelated changes are excluded.
+- Applicable lint, typecheck, test, build, or validation commands were run when available.
+- Any skipped or failed verification is reported clearly.
+
+## Related Skills
+
+- Use the matching `.cursor/skills/` workflow when one exists for this rule.
+- When no matching skill exists, follow this rule directly and keep changes minimal, safe, and verifiable.

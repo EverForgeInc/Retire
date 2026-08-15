@@ -1,0 +1,50 @@
+---
+description: "Require accessible UI behavior for interactive, informational, and form based components."
+globs: "src/**/*.{tsx,jsx,ts,js,css,scss},app/**/*.{tsx,jsx,ts,js,css,scss},components/**/*.{tsx,jsx,ts,js,css,scss},pages/**/*.{tsx,jsx,ts,js,css,scss}"
+alwaysApply: false
+---
+
+# Accessibility Standard
+
+## Purpose
+
+Require accessible UI behavior for interactive, informational, and form based components.
+
+## When This Applies
+
+- This rule applies when files matched by the glob are changed or generated.
+- Use it when the task affects the behavior described by the purpose statement.
+
+## Required Workflow
+
+1. Use semantic HTML.
+2. Provide labels and accessible names.
+3. Preserve keyboard navigation and visible focus states.
+4. Verify contrast, roles, and screen reader behavior where relevant.
+
+## Standards
+
+- Follow the existing project pattern before introducing a new one.
+- Keep the implementation small, explicit, and easy to review.
+- Prefer reusable project primitives, shared utilities, and documented conventions.
+- Verify the change using the checks available in the project.
+
+## Do Not
+
+- Do not use divs as buttons.
+- Do not remove focus outlines without replacement.
+- Do not rely on color alone.
+- Do not ship unlabeled form controls.
+
+## Verification Checklist
+
+- The existing project pattern was inspected before changes were made.
+- The implementation is scoped to the user request.
+- Unsafe files, secrets, and unrelated changes are excluded.
+- Applicable lint, typecheck, test, build, or validation commands were run when available.
+- Any skipped or failed verification is reported clearly.
+
+## Related Skills
+
+- Use the matching `.cursor/skills/` workflow when one exists for this rule.
+- When no matching skill exists, follow this rule directly and keep changes minimal, safe, and verifiable.

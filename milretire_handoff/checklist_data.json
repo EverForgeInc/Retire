@@ -1,0 +1,2099 @@
+{
+  "schema_version": "1.0.0",
+  "generated_on": "2026-08-05",
+  "default_member_profile": {
+    "name": "",
+    "rank": "",
+    "projected_retirement_date": "2027-06-01",
+    "branch": "USAF",
+    "component": "Active Duty"
+  },
+  "status_values": [
+    "not_started",
+    "in_progress",
+    "waiting",
+    "complete",
+    "not_applicable"
+  ],
+  "sections": [
+    {
+      "section": "18–24 months before retirement",
+      "tasks": [
+        {
+          "task": "Confirm retirement eligibility, desired retirement date, TAFMS/service dates, ADSCs and likely retired grade.",
+          "owner": "Personnel",
+          "evidence": "Service data / retirement planning worksheet",
+          "id": "task_001",
+          "section_id": "section_01",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2025-06-01",
+            "window_end": "2025-12-01"
+          }
+        },
+        {
+          "task": "Start retirement financial model: retired pay estimate, taxes, SBP, VA scenarios, health care, housing and relocation.",
+          "owner": "Finance",
+          "evidence": "Retirement budget",
+          "id": "task_002",
+          "section_id": "section_01",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2025-06-01",
+            "window_end": "2025-12-01"
+          }
+        },
+        {
+          "task": "Begin TAP Initial Counseling as early as permitted and identify required Career Readiness Standards.",
+          "owner": "TAP",
+          "evidence": "TAP/eForm records",
+          "id": "task_003",
+          "section_id": "section_01",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2025-06-01",
+            "window_end": "2025-12-01"
+          }
+        },
+        {
+          "task": "Identify post-retirement location(s), including overseas residency/visa implications if remaining OCONUS.",
+          "owner": "Relocation",
+          "evidence": "Location decision worksheet",
+          "id": "task_004",
+          "section_id": "section_01",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2025-06-01",
+            "window_end": "2025-12-01"
+          }
+        },
+        {
+          "task": "Create secure retirement document vault and master task tracker.",
+          "owner": "Admin",
+          "evidence": "Document index",
+          "id": "task_005",
+          "section_id": "section_01",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2025-06-01",
+            "window_end": "2025-12-01"
+          }
+        },
+        {
+          "task": "Inventory medical conditions, injuries, surgeries, medications, specialty care and missing records.",
+          "owner": "Medical/VA",
+          "evidence": "Master medical condition list",
+          "id": "task_006",
+          "section_id": "section_01",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2025-06-01",
+            "window_end": "2025-12-01"
+          }
+        },
+        {
+          "task": "Begin civilian resume, LinkedIn/profile, certifications and transcript collection.",
+          "owner": "Career",
+          "evidence": "Resume / transcripts / certificates",
+          "id": "task_007",
+          "section_id": "section_01",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2025-06-01",
+            "window_end": "2025-12-01"
+          }
+        }
+      ],
+      "id": "section_01",
+      "relative_window": "18–24 months before retirement",
+      "calculated_start": "2025-06-01",
+      "calculated_end": "2025-12-01"
+    },
+    {
+      "section": "12–18 months before retirement",
+      "tasks": [
+        {
+          "task": "Submit retirement application when eligible under current Air Force process.",
+          "owner": "Personnel",
+          "evidence": "Retirement application confirmation",
+          "id": "task_008",
+          "section_id": "section_02",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2025-12-01",
+            "window_end": "2026-06-01"
+          }
+        },
+        {
+          "task": "Begin/continue TAP requirements and selected career track.",
+          "owner": "TAP",
+          "evidence": "TAP completion artifacts",
+          "id": "task_009",
+          "section_id": "section_02",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2025-12-01",
+            "window_end": "2026-06-01"
+          }
+        },
+        {
+          "task": "Develop SkillBridge plan if participating; confirm eligibility, program, dates and command approval path.",
+          "owner": "SkillBridge",
+          "evidence": "Program acceptance/approval documents",
+          "id": "task_010",
+          "section_id": "section_02",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2025-12-01",
+            "window_end": "2026-06-01"
+          }
+        },
+        {
+          "task": "Request or begin assembling copies of Service Treatment Records, dental records and relevant civilian records.",
+          "owner": "Medical",
+          "evidence": "STR/dental/civilian medical records",
+          "id": "task_011",
+          "section_id": "section_02",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2025-12-01",
+            "window_end": "2026-06-01"
+          }
+        },
+        {
+          "task": "Review life insurance needs and compare SGLI conversion, VGLI and commercial options.",
+          "owner": "Insurance",
+          "evidence": "Coverage comparison",
+          "id": "task_012",
+          "section_id": "section_02",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2025-12-01",
+            "window_end": "2026-06-01"
+          }
+        },
+        {
+          "task": "Identify expected terminal leave and permissive/administrative absence plan if authorized.",
+          "owner": "Leave",
+          "evidence": "Draft leave timeline",
+          "id": "task_013",
+          "section_id": "section_02",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2025-12-01",
+            "window_end": "2026-06-01"
+          }
+        },
+        {
+          "task": "Review household goods and final-move entitlement concepts; identify likely destination.",
+          "owner": "TMO",
+          "evidence": "Move planning notes",
+          "id": "task_014",
+          "section_id": "section_02",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2025-12-01",
+            "window_end": "2026-06-01"
+          }
+        }
+      ],
+      "id": "section_02",
+      "relative_window": "12–18 months before retirement",
+      "calculated_start": "2025-12-01",
+      "calculated_end": "2026-06-01"
+    },
+    {
+      "section": "9–12 months before retirement",
+      "tasks": [
+        {
+          "task": "Receive retirement approval/orders when available and review every data element for accuracy.",
+          "owner": "Personnel",
+          "evidence": "Retirement orders/amendments",
+          "id": "task_015",
+          "section_id": "section_03",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2026-06-01",
+            "window_end": "2026-09-01"
+          }
+        },
+        {
+          "task": "Use approved retirement date to lock SkillBridge, terminal leave, PTDY/absence and final duty-day sequence.",
+          "owner": "Leave/SkillBridge",
+          "evidence": "Approved timeline",
+          "id": "task_016",
+          "section_id": "section_03",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2026-06-01",
+            "window_end": "2026-09-01"
+          }
+        },
+        {
+          "task": "Start detailed VA claim preparation with a VSO/VA representative if desired.",
+          "owner": "VA",
+          "evidence": "Claim evidence index",
+          "id": "task_017",
+          "section_id": "section_03",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2026-06-01",
+            "window_end": "2026-09-01"
+          }
+        },
+        {
+          "task": "Request missing imaging reports, operative reports, specialty notes and test results.",
+          "owner": "Medical",
+          "evidence": "Medical evidence",
+          "id": "task_018",
+          "section_id": "section_03",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2026-06-01",
+            "window_end": "2026-09-01"
+          }
+        },
+        {
+          "task": "Schedule unresolved medical/dental issues early enough for treatment or documentation before departure.",
+          "owner": "Medical/Dental",
+          "evidence": "Appointments/referrals",
+          "id": "task_019",
+          "section_id": "section_03",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2026-06-01",
+            "window_end": "2026-09-01"
+          }
+        },
+        {
+          "task": "Begin retirement ceremony planning and final award/decoration coordination if desired.",
+          "owner": "Unit",
+          "evidence": "Ceremony checklist / decoration status",
+          "id": "task_020",
+          "section_id": "section_03",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2026-06-01",
+            "window_end": "2026-09-01"
+          }
+        },
+        {
+          "task": "Gather letters of recommendation and non-duty contact information for references.",
+          "owner": "Career",
+          "evidence": "Reference list",
+          "id": "task_021",
+          "section_id": "section_03",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2026-06-01",
+            "window_end": "2026-09-01"
+          }
+        }
+      ],
+      "id": "section_03",
+      "relative_window": "9–12 months before retirement",
+      "calculated_start": "2026-06-01",
+      "calculated_end": "2026-09-01"
+    },
+    {
+      "section": "270–181 days before retirement",
+      "tasks": [
+        {
+          "task": "Confirm BDD eligibility and calculate the exact 180-day and 90-day claim-window dates.",
+          "owner": "VA",
+          "evidence": "BDD timeline",
+          "id": "task_022",
+          "section_id": "section_04",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2026-09-04",
+            "window_end": "2026-12-02"
+          }
+        },
+        {
+          "task": "Finalize claimed-condition list with onset, treatment locations, symptoms and supporting evidence.",
+          "owner": "VA",
+          "evidence": "Condition worksheet",
+          "id": "task_023",
+          "section_id": "section_04",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2026-09-04",
+            "window_end": "2026-12-02"
+          }
+        },
+        {
+          "task": "Verify VA.gov access and personal contact information; never store passwords in the app.",
+          "owner": "VA",
+          "evidence": "Account verification status",
+          "id": "task_024",
+          "section_id": "section_04",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2026-09-04",
+            "window_end": "2026-12-02"
+          }
+        },
+        {
+          "task": "Confirm Separation Health Assessment process with MTF/VA and required appointments.",
+          "owner": "Medical/VA",
+          "evidence": "SHA instructions",
+          "id": "task_025",
+          "section_id": "section_04",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2026-09-04",
+            "window_end": "2026-12-02"
+          }
+        },
+        {
+          "task": "Confirm SkillBridge and leave approvals/dependencies that affect availability for VA exams.",
+          "owner": "SkillBridge/VA",
+          "evidence": "Integrated calendar",
+          "id": "task_026",
+          "section_id": "section_04",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2026-09-04",
+            "window_end": "2026-12-02"
+          }
+        },
+        {
+          "task": "Review current TRICARE retiree plan options and expected costs for intended residence.",
+          "owner": "TRICARE",
+          "evidence": "Plan comparison",
+          "id": "task_027",
+          "section_id": "section_04",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2026-09-04",
+            "window_end": "2026-12-02"
+          }
+        }
+      ],
+      "id": "section_04",
+      "relative_window": "270–181 days before retirement",
+      "calculated_start": "2026-09-04",
+      "calculated_end": "2026-12-02"
+    },
+    {
+      "section": "180–121 days before retirement",
+      "tasks": [
+        {
+          "task": "File VA Benefits Delivery at Discharge claim as soon as ready within the 180–90 day window, if eligible.",
+          "owner": "VA",
+          "evidence": "Claim confirmation",
+          "id": "task_028",
+          "section_id": "section_05",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2026-12-03",
+            "window_end": "2027-01-31"
+          }
+        },
+        {
+          "task": "Submit Separation Health Assessment Part A as required for the BDD/separation health process.",
+          "owner": "Medical/VA",
+          "evidence": "SHA Part A",
+          "id": "task_029",
+          "section_id": "section_05",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2026-12-03",
+            "window_end": "2027-01-31"
+          }
+        },
+        {
+          "task": "Remain available for required VA C&P examinations and track every appointment.",
+          "owner": "VA",
+          "evidence": "C&P schedule",
+          "id": "task_030",
+          "section_id": "section_05",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2026-12-03",
+            "window_end": "2027-01-31"
+          }
+        },
+        {
+          "task": "Complete/continue retirement/separation health assessment appointments.",
+          "owner": "Medical",
+          "evidence": "SHA/exam documentation",
+          "id": "task_031",
+          "section_id": "section_05",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2026-12-03",
+            "window_end": "2027-01-31"
+          }
+        },
+        {
+          "task": "Request final comprehensive copies/exports of medical and dental records as they become available.",
+          "owner": "Medical/Dental",
+          "evidence": "STR/dental archive",
+          "id": "task_032",
+          "section_id": "section_05",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2026-12-03",
+            "window_end": "2027-01-31"
+          }
+        },
+        {
+          "task": "Begin detailed SBP education with spouse/family before making election.",
+          "owner": "Finance/SBP",
+          "evidence": "SBP comparison",
+          "id": "task_033",
+          "section_id": "section_05",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2026-12-03",
+            "window_end": "2027-01-31"
+          }
+        },
+        {
+          "task": "Confirm final move/HHG counseling process after orders are available.",
+          "owner": "TMO",
+          "evidence": "Counseling notes",
+          "id": "task_034",
+          "section_id": "section_05",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2026-12-03",
+            "window_end": "2027-01-31"
+          }
+        }
+      ],
+      "id": "section_05",
+      "relative_window": "180–121 days before retirement",
+      "calculated_start": "2026-12-03",
+      "calculated_end": "2027-01-31"
+    },
+    {
+      "section": "120–91 days before retirement",
+      "tasks": [
+        {
+          "task": "Continue C&P examinations and submit permitted evidence for pending VA claim.",
+          "owner": "VA",
+          "evidence": "Evidence log",
+          "id": "task_035",
+          "section_id": "section_06",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-02-01",
+            "window_end": "2027-03-02"
+          }
+        },
+        {
+          "task": "Complete major TAP Career Readiness Standards and prepare for Capstone.",
+          "owner": "TAP",
+          "evidence": "CRS artifacts",
+          "id": "task_036",
+          "section_id": "section_06",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-02-01",
+            "window_end": "2027-03-02"
+          }
+        },
+        {
+          "task": "Review DD Form 2656 requirements: retired pay, direct deposit, tax withholding, beneficiaries and SBP.",
+          "owner": "Finance",
+          "evidence": "DD Form 2656 preparation",
+          "id": "task_037",
+          "section_id": "section_06",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-02-01",
+            "window_end": "2027-03-02"
+          }
+        },
+        {
+          "task": "Verify bank, personal email, phone and mailing address information that will remain valid after CAC loss.",
+          "owner": "Finance/Admin",
+          "evidence": "Contact-data checklist",
+          "id": "task_038",
+          "section_id": "section_06",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-02-01",
+            "window_end": "2027-03-02"
+          }
+        },
+        {
+          "task": "Begin scheduling HHG shipment/NTS and final travel as appropriate.",
+          "owner": "TMO",
+          "evidence": "Shipment/travel confirmations",
+          "id": "task_039",
+          "section_id": "section_06",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-02-01",
+            "window_end": "2027-03-02"
+          }
+        },
+        {
+          "task": "Review housing termination/clearance requirements and utility cancellation dates.",
+          "owner": "Housing",
+          "evidence": "Housing checklist",
+          "id": "task_040",
+          "section_id": "section_06",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-02-01",
+            "window_end": "2027-03-02"
+          }
+        }
+      ],
+      "id": "section_06",
+      "relative_window": "120–91 days before retirement",
+      "calculated_start": "2027-02-01",
+      "calculated_end": "2027-03-02"
+    },
+    {
+      "section": "90–61 days before retirement",
+      "tasks": [
+        {
+          "task": "BDD filing window closes at 90 days before separation/retirement; if not filed, transition to the appropriate standard VA claim process.",
+          "owner": "VA",
+          "evidence": "Claim status",
+          "id": "task_041",
+          "section_id": "section_07",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-03-03",
+            "window_end": "2027-04-01"
+          }
+        },
+        {
+          "task": "Finalize DD Form 2656 and SBP election; obtain spouse concurrence/notarization when required.",
+          "owner": "Finance/SBP",
+          "evidence": "DD Form 2656",
+          "id": "task_042",
+          "section_id": "section_07",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-03-03",
+            "window_end": "2027-04-01"
+          }
+        },
+        {
+          "task": "Complete TAP Capstone by the required deadline and resolve unmet standards.",
+          "owner": "TAP",
+          "evidence": "Capstone completion",
+          "id": "task_043",
+          "section_id": "section_07",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-03-03",
+            "window_end": "2027-04-01"
+          }
+        },
+        {
+          "task": "Confirm retiree TRICARE enrollment actions, QLE window and family plan selection.",
+          "owner": "TRICARE",
+          "evidence": "Enrollment plan",
+          "id": "task_044",
+          "section_id": "section_07",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-03-03",
+            "window_end": "2027-04-01"
+          }
+        },
+        {
+          "task": "Plan DEERS update and retiree/dependent ID card appointments after retirement status posts.",
+          "owner": "DEERS/ID",
+          "evidence": "Appointment plan",
+          "id": "task_045",
+          "section_id": "section_07",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-03-03",
+            "window_end": "2027-04-01"
+          }
+        },
+        {
+          "task": "Verify final active-duty pay, allotments, debts, travel vouchers and GTC status.",
+          "owner": "Finance",
+          "evidence": "Finance checklist",
+          "id": "task_046",
+          "section_id": "section_07",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-03-03",
+            "window_end": "2027-04-01"
+          }
+        },
+        {
+          "task": "Confirm installation and unit out-processing start dates.",
+          "owner": "Out-processing",
+          "evidence": "Local checklist",
+          "id": "task_047",
+          "section_id": "section_07",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-03-03",
+            "window_end": "2027-04-01"
+          }
+        }
+      ],
+      "id": "section_07",
+      "relative_window": "90–61 days before retirement",
+      "calculated_start": "2027-03-03",
+      "calculated_end": "2027-04-01"
+    },
+    {
+      "section": "60–31 days before retirement",
+      "tasks": [
+        {
+          "task": "Start/continue installation and unit out-processing.",
+          "owner": "Out-processing",
+          "evidence": "Electronic/signed checklist",
+          "id": "task_048",
+          "section_id": "section_08",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-04-02",
+            "window_end": "2027-05-01"
+          }
+        },
+        {
+          "task": "Clear or schedule clearance for CSS, security, equipment, records, training, facilities/keys, GTC and local agencies.",
+          "owner": "Unit",
+          "evidence": "Clearance receipts/status",
+          "id": "task_049",
+          "section_id": "section_08",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-04-02",
+            "window_end": "2027-05-01"
+          }
+        },
+        {
+          "task": "Turn in accountable government equipment/devices as allowed by mission timeline.",
+          "owner": "Unit",
+          "evidence": "Turn-in receipts",
+          "id": "task_050",
+          "section_id": "section_08",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-04-02",
+            "window_end": "2027-05-01"
+          }
+        },
+        {
+          "task": "Complete housing pre-inspection/final inspection scheduling and move logistics.",
+          "owner": "Housing",
+          "evidence": "Inspection/clearance documents",
+          "id": "task_051",
+          "section_id": "section_08",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-04-02",
+            "window_end": "2027-05-01"
+          }
+        },
+        {
+          "task": "Confirm HHG pack-out, pickup, storage and delivery details.",
+          "owner": "TMO",
+          "evidence": "Shipment documents",
+          "id": "task_052",
+          "section_id": "section_08",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-04-02",
+            "window_end": "2027-05-01"
+          }
+        },
+        {
+          "task": "Refill medications and establish post-retirement medical continuity plan.",
+          "owner": "Medical",
+          "evidence": "Medication/referral plan",
+          "id": "task_053",
+          "section_id": "section_08",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-04-02",
+            "window_end": "2027-05-01"
+          }
+        },
+        {
+          "task": "Obtain current eyeglass/contact prescriptions and needed durable-medical-equipment documentation.",
+          "owner": "Medical",
+          "evidence": "Prescriptions",
+          "id": "task_054",
+          "section_id": "section_08",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-04-02",
+            "window_end": "2027-05-01"
+          }
+        },
+        {
+          "task": "Review DD Form 214 worksheet/source data and correct errors early.",
+          "owner": "Personnel",
+          "evidence": "DD214 worksheet/source documents",
+          "id": "task_055",
+          "section_id": "section_08",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-04-02",
+            "window_end": "2027-05-01"
+          }
+        }
+      ],
+      "id": "section_08",
+      "relative_window": "60–31 days before retirement",
+      "calculated_start": "2027-04-02",
+      "calculated_end": "2027-05-01"
+    },
+    {
+      "section": "30–15 days before retirement",
+      "tasks": [
+        {
+          "task": "Complete remaining unit/installation clearance items that can be closed before final duty day.",
+          "owner": "Out-processing",
+          "evidence": "Clearance status",
+          "id": "task_056",
+          "section_id": "section_09",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-05-02",
+            "window_end": "2027-05-17"
+          }
+        },
+        {
+          "task": "Complete security debrief/access termination requirements at the appropriate time.",
+          "owner": "Security",
+          "evidence": "Completion status only",
+          "id": "task_057",
+          "section_id": "section_09",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-05-02",
+            "window_end": "2027-05-17"
+          }
+        },
+        {
+          "task": "Settle GTC and outstanding travel vouchers.",
+          "owner": "Finance",
+          "evidence": "GTC/voucher status",
+          "id": "task_058",
+          "section_id": "section_09",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-05-02",
+            "window_end": "2027-05-17"
+          }
+        },
+        {
+          "task": "Complete official records/continuity turnover and handoff responsibilities.",
+          "owner": "Unit",
+          "evidence": "Turnover confirmation",
+          "id": "task_059",
+          "section_id": "section_09",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-05-02",
+            "window_end": "2027-05-17"
+          }
+        },
+        {
+          "task": "Verify final evaluation and retirement decoration processing.",
+          "owner": "Unit",
+          "evidence": "EPB/decoration",
+          "id": "task_060",
+          "section_id": "section_09",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-05-02",
+            "window_end": "2027-05-17"
+          }
+        },
+        {
+          "task": "Verify DD Form 214 data: awards, deployments, military education, service dates and other entries.",
+          "owner": "Personnel",
+          "evidence": "Supporting records",
+          "id": "task_061",
+          "section_id": "section_09",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-05-02",
+            "window_end": "2027-05-17"
+          }
+        },
+        {
+          "task": "Confirm final medical/dental record copies are safely archived outside government systems.",
+          "owner": "Medical",
+          "evidence": "Record archive",
+          "id": "task_062",
+          "section_id": "section_09",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-05-02",
+            "window_end": "2027-05-17"
+          }
+        },
+        {
+          "task": "Confirm personal access to myPay, VA.gov and other post-service systems without relying solely on CAC.",
+          "owner": "Admin",
+          "evidence": "Access verification",
+          "id": "task_063",
+          "section_id": "section_09",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-05-02",
+            "window_end": "2027-05-17"
+          }
+        }
+      ],
+      "id": "section_09",
+      "relative_window": "30–15 days before retirement",
+      "calculated_start": "2027-05-02",
+      "calculated_end": "2027-05-17"
+    },
+    {
+      "section": "Final 14 days through final duty day",
+      "tasks": [
+        {
+          "task": "Complete final housing clearance/lease termination and utilities as applicable.",
+          "owner": "Housing",
+          "evidence": "Housing clearance",
+          "id": "task_064",
+          "section_id": "section_10",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-05-18",
+            "window_end": "2027-05-31"
+          }
+        },
+        {
+          "task": "Complete MPF final out and all installation/unit out-processing.",
+          "owner": "Personnel",
+          "evidence": "Final-out confirmation",
+          "id": "task_065",
+          "section_id": "section_10",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-05-18",
+            "window_end": "2027-05-31"
+          }
+        },
+        {
+          "task": "Complete finance final out and understand final active-duty pay audit/hold.",
+          "owner": "Finance",
+          "evidence": "Finance final-out confirmation",
+          "id": "task_066",
+          "section_id": "section_10",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-05-18",
+            "window_end": "2027-05-31"
+          }
+        },
+        {
+          "task": "Complete final equipment, badge, key, token and property turn-in.",
+          "owner": "Unit",
+          "evidence": "Turn-in receipts",
+          "id": "task_067",
+          "section_id": "section_10",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-05-18",
+            "window_end": "2027-05-31"
+          }
+        },
+        {
+          "task": "Confirm final travel/HHG arrangements and retain receipts/inventories.",
+          "owner": "TMO",
+          "evidence": "Travel/HHG records",
+          "id": "task_068",
+          "section_id": "section_10",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-05-18",
+            "window_end": "2027-05-31"
+          }
+        },
+        {
+          "task": "Preserve retirement orders, amendments, DD Form 2656, SBP election, final LES and key personnel documents.",
+          "owner": "Records",
+          "evidence": "Permanent archive",
+          "id": "task_069",
+          "section_id": "section_10",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-05-18",
+            "window_end": "2027-05-31"
+          }
+        },
+        {
+          "task": "Execute terminal leave/final duty transition as approved.",
+          "owner": "Leave",
+          "evidence": "Leave approval",
+          "id": "task_070",
+          "section_id": "section_10",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-05-18",
+            "window_end": "2027-05-31"
+          }
+        }
+      ],
+      "id": "section_10",
+      "relative_window": "Final 14 days through final duty day",
+      "calculated_start": "2027-05-18",
+      "calculated_end": "2027-05-31"
+    },
+    {
+      "section": "Retirement date / first days after retirement",
+      "tasks": [
+        {
+          "task": "Verify retirement status has updated in DEERS.",
+          "owner": "DEERS",
+          "evidence": "DEERS confirmation",
+          "id": "task_071",
+          "section_id": "section_11",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-06-01",
+            "window_end": "2027-06-08"
+          }
+        },
+        {
+          "task": "Obtain retiree Uniformed Services ID card and eligible dependent cards.",
+          "owner": "ID Cards",
+          "evidence": "Completion status",
+          "id": "task_072",
+          "section_id": "section_11",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-06-01",
+            "window_end": "2027-06-08"
+          }
+        },
+        {
+          "task": "Take required TRICARE enrollment action for retiree coverage.",
+          "owner": "TRICARE",
+          "evidence": "Enrollment confirmation",
+          "id": "task_073",
+          "section_id": "section_11",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-06-01",
+            "window_end": "2027-06-08"
+          }
+        },
+        {
+          "task": "Verify retired myPay account and retired-pay direct-deposit/tax data.",
+          "owner": "DFAS",
+          "evidence": "Retired-pay account confirmation",
+          "id": "task_074",
+          "section_id": "section_11",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-06-01",
+            "window_end": "2027-06-08"
+          }
+        },
+        {
+          "task": "Obtain and securely archive final DD Form 214 when issued.",
+          "owner": "Personnel",
+          "evidence": "DD Form 214",
+          "id": "task_075",
+          "section_id": "section_11",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-06-01",
+            "window_end": "2027-06-08"
+          }
+        },
+        {
+          "task": "Update mailing address/contact information with DFAS, DEERS, VA and other required institutions.",
+          "owner": "Admin",
+          "evidence": "Address-change checklist",
+          "id": "task_076",
+          "section_id": "section_11",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-06-01",
+            "window_end": "2027-06-08"
+          }
+        }
+      ],
+      "id": "section_11",
+      "relative_window": "Retirement date / first days after retirement",
+      "calculated_start": "2027-06-01",
+      "calculated_end": "2027-06-08"
+    },
+    {
+      "section": "Days 1–30 after retirement",
+      "tasks": [
+        {
+          "task": "Verify first retired-pay account data and resolve discrepancies promptly.",
+          "owner": "DFAS",
+          "evidence": "Retired pay statement",
+          "id": "task_077",
+          "section_id": "section_12",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-06-02",
+            "window_end": "2027-07-01"
+          }
+        },
+        {
+          "task": "Track VA claim status and respond to VA requests/exams.",
+          "owner": "VA",
+          "evidence": "Claim correspondence",
+          "id": "task_078",
+          "section_id": "section_12",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-06-02",
+            "window_end": "2027-07-01"
+          }
+        },
+        {
+          "task": "Apply for/enroll in VA health care as appropriate.",
+          "owner": "VA",
+          "evidence": "Enrollment confirmation",
+          "id": "task_079",
+          "section_id": "section_12",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-06-02",
+            "window_end": "2027-07-01"
+          }
+        },
+        {
+          "task": "Confirm TRICARE coverage for all eligible family members and resolve enrollment issues.",
+          "owner": "TRICARE",
+          "evidence": "Coverage confirmation",
+          "id": "task_080",
+          "section_id": "section_12",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-06-02",
+            "window_end": "2027-07-01"
+          }
+        },
+        {
+          "task": "Complete FEDVIP dental/vision enrollment if desired/eligible within applicable enrollment rules.",
+          "owner": "Benefits",
+          "evidence": "Enrollment confirmation",
+          "id": "task_081",
+          "section_id": "section_12",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-06-02",
+            "window_end": "2027-07-01"
+          }
+        },
+        {
+          "task": "Finalize VGLI/SGLI conversion or other life-insurance decision within applicable deadlines.",
+          "owner": "Insurance",
+          "evidence": "Coverage confirmation",
+          "id": "task_082",
+          "section_id": "section_12",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-06-02",
+            "window_end": "2027-07-01"
+          }
+        },
+        {
+          "task": "Confirm HHG delivery/storage claims and document loss/damage if applicable.",
+          "owner": "TMO",
+          "evidence": "Delivery/claim documents",
+          "id": "task_083",
+          "section_id": "section_12",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-06-02",
+            "window_end": "2027-07-01"
+          }
+        }
+      ],
+      "id": "section_12",
+      "relative_window": "Days 1–30 after retirement",
+      "calculated_start": "2027-06-02",
+      "calculated_end": "2027-07-01"
+    },
+    {
+      "section": "Days 31–90 after retirement",
+      "tasks": [
+        {
+          "task": "Ensure TRICARE QLE enrollment action is completed within the retirement window to avoid coverage problems.",
+          "owner": "TRICARE",
+          "evidence": "Enrollment confirmation",
+          "id": "task_084",
+          "section_id": "section_13",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-07-02",
+            "window_end": "2027-08-30"
+          }
+        },
+        {
+          "task": "Review VA rating decision when issued; verify dependents and effective dates.",
+          "owner": "VA",
+          "evidence": "Rating decision",
+          "id": "task_085",
+          "section_id": "section_13",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-07-02",
+            "window_end": "2027-08-30"
+          }
+        },
+        {
+          "task": "Review retired pay/VA interaction and CRDP/CRSC eligibility if applicable.",
+          "owner": "DFAS/VA",
+          "evidence": "CRSC application or pay review",
+          "id": "task_086",
+          "section_id": "section_13",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-07-02",
+            "window_end": "2027-08-30"
+          }
+        },
+        {
+          "task": "Verify all final military records are archived: orders, DD214, DD2656, SBP, LES, medical/dental, evaluations, decorations and certificates.",
+          "owner": "Records",
+          "evidence": "Retirement binder/index",
+          "id": "task_087",
+          "section_id": "section_13",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-07-02",
+            "window_end": "2027-08-30"
+          }
+        },
+        {
+          "task": "Close remaining relocation, housing, travel and claims actions.",
+          "owner": "Relocation",
+          "evidence": "Closeout records",
+          "id": "task_088",
+          "section_id": "section_13",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-07-02",
+            "window_end": "2027-08-30"
+          }
+        }
+      ],
+      "id": "section_13",
+      "relative_window": "Days 31–90 after retirement",
+      "calculated_start": "2027-07-02",
+      "calculated_end": "2027-08-30"
+    },
+    {
+      "section": "Ongoing after retirement",
+      "tasks": [
+        {
+          "task": "Maintain current DFAS, DEERS, VA and TRICARE contact information.",
+          "owner": "Admin",
+          "evidence": "Periodic verification",
+          "id": "task_089",
+          "section_id": "section_14",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-08-31",
+            "window_end": null
+          }
+        },
+        {
+          "task": "Review SBP, beneficiary, tax withholding and life-insurance information after major life events.",
+          "owner": "Finance",
+          "evidence": "Updated elections",
+          "id": "task_090",
+          "section_id": "section_14",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-08-31",
+            "window_end": null
+          }
+        },
+        {
+          "task": "Maintain permanent copies of DD214, retirement orders, medical records and VA decisions.",
+          "owner": "Records",
+          "evidence": "Secure archive",
+          "id": "task_091",
+          "section_id": "section_14",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-08-31",
+            "window_end": null
+          }
+        },
+        {
+          "task": "Track VA appeals/supplemental claims or CRSC actions if needed.",
+          "owner": "VA",
+          "evidence": "Case records",
+          "id": "task_092",
+          "section_id": "section_14",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-08-31",
+            "window_end": null
+          }
+        },
+        {
+          "task": "Review annual TRICARE/FEDVIP enrollment and cost changes.",
+          "owner": "Benefits",
+          "evidence": "Annual review",
+          "id": "task_093",
+          "section_id": "section_14",
+          "status": "not_started",
+          "required_level": "recommended_or_required_verify_locally",
+          "date_completed": null,
+          "notes": "",
+          "attachments": [],
+          "dependencies": [],
+          "official_source_url": null,
+          "source_last_verified": null,
+          "local_override_allowed": true,
+          "due_date_rule": {
+            "type": "section_window",
+            "window_start": "2027-08-31",
+            "window_end": null
+          }
+        }
+      ],
+      "id": "section_14",
+      "relative_window": "Ongoing after retirement",
+      "calculated_start": "2027-08-31",
+      "calculated_end": null
+    }
+  ]
+}

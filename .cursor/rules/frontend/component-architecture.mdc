@@ -1,0 +1,50 @@
+---
+description: "Keep frontend components small, composable, typed, and easy to test."
+globs: "src/**/*.{tsx,jsx,ts,js,css,scss},app/**/*.{tsx,jsx,ts,js,css,scss},components/**/*.{tsx,jsx,ts,js,css,scss},pages/**/*.{tsx,jsx,ts,js,css,scss}"
+alwaysApply: false
+---
+
+# Component Architecture
+
+## Purpose
+
+Keep frontend components small, composable, typed, and easy to test.
+
+## When This Applies
+
+- This rule applies when files matched by the glob are changed or generated.
+- Use it when the task affects the behavior described by the purpose statement.
+
+## Required Workflow
+
+1. Separate layout, state, and pure display concerns.
+2. Use clear prop types and sensible defaults.
+3. Extract reusable primitives when repeated.
+4. Keep files focused and readable.
+
+## Standards
+
+- Follow the existing project pattern before introducing a new one.
+- Keep the implementation small, explicit, and easy to review.
+- Prefer reusable project primitives, shared utilities, and documented conventions.
+- Verify the change using the checks available in the project.
+
+## Do Not
+
+- Do not create massive components.
+- Do not mix unrelated concerns.
+- Do not pass untyped any props when types are knowable.
+- Do not duplicate components instead of composing.
+
+## Verification Checklist
+
+- The existing project pattern was inspected before changes were made.
+- The implementation is scoped to the user request.
+- Unsafe files, secrets, and unrelated changes are excluded.
+- Applicable lint, typecheck, test, build, or validation commands were run when available.
+- Any skipped or failed verification is reported clearly.
+
+## Related Skills
+
+- Use the matching `.cursor/skills/` workflow when one exists for this rule.
+- When no matching skill exists, follow this rule directly and keep changes minimal, safe, and verifiable.

@@ -1,0 +1,50 @@
+---
+description: "Ensure every interface works on mobile, tablet, desktop, and constrained layouts."
+globs: "src/**/*.{tsx,jsx,ts,js,css,scss},app/**/*.{tsx,jsx,ts,js,css,scss},components/**/*.{tsx,jsx,ts,js,css,scss},pages/**/*.{tsx,jsx,ts,js,css,scss}"
+alwaysApply: false
+---
+
+# Responsive Design Standard
+
+## Purpose
+
+Ensure every interface works on mobile, tablet, desktop, and constrained layouts.
+
+## When This Applies
+
+- This rule applies when files matched by the glob are changed or generated.
+- Use it when the task affects the behavior described by the purpose statement.
+
+## Required Workflow
+
+1. Design mobile first when practical.
+2. Check overflow, wrapping, spacing, and touch targets.
+3. Use existing breakpoints and layout primitives.
+4. Verify modals, drawers, tables, and navigation on small screens.
+
+## Standards
+
+- Follow the existing project pattern before introducing a new one.
+- Keep the implementation small, explicit, and easy to review.
+- Prefer reusable project primitives, shared utilities, and documented conventions.
+- Verify the change using the checks available in the project.
+
+## Do Not
+
+- Do not assume desktop only.
+- Do not hardcode widths that break mobile.
+- Do not hide critical actions on small screens.
+- Do not create horizontal scrolling unless intentional.
+
+## Verification Checklist
+
+- The existing project pattern was inspected before changes were made.
+- The implementation is scoped to the user request.
+- Unsafe files, secrets, and unrelated changes are excluded.
+- Applicable lint, typecheck, test, build, or validation commands were run when available.
+- Any skipped or failed verification is reported clearly.
+
+## Related Skills
+
+- Use the matching `.cursor/skills/` workflow when one exists for this rule.
+- When no matching skill exists, follow this rule directly and keep changes minimal, safe, and verifiable.

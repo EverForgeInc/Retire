@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Military Retirement Planner
 
-## Getting Started
+Secure, mobile-first retirement planning MVP for U.S. service members. Built from the v3 developer handoff package in `milretire_handoff/`.
 
-First, run the development server:
+**This application is not an official Department of Defense or U.S. government system.**
+
+## Authoritative sources
+
+1. `milretire_handoff/DEVELOPMENT_BASELINE_v3.md`
+2. `milretire_handoff/MASTER_BUILD_PROMPT.md`
+3. `milretire_handoff/checklist_data.json` (93 tasks, 14 phases)
+4. `docs/design/dashboard-mockup.png` (UI reference)
+
+## Stack
+
+- Next.js (App Router) + TypeScript
+- Prisma + SQLite for local development (PostgreSQL via `docker-compose.yml` when Docker is available)
+- Tailwind CSS
+- Vitest + Playwright
+- Session auth with signed HTTP-only cookies
+
+## Quick start
 
 ```bash
+npm install
+npx prisma db push
+npm run db:seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Demo login (from seed):
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Email: `david@example.com`
+- Password: `changeme123`
 
-## Learn More
+## Scripts
 
-To learn more about Next.js, take a look at the following resources:
+| Command | Purpose |
+|---------|---------|
+| `npm run dev` | Start local app |
+| `npm run build` | Production build |
+| `npm test` | Unit/integration tests |
+| `npm run test:e2e` | Playwright (iPad viewport) |
+| `npm run db:seed` | Import checklist + demo member |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Key MVP capabilities
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Onboarding without SSN / Last 4
+- 93-task chronological checklist with date recalculation
+- Audited completion (no initials)
+- Dashboard matching the mockup layout
+- **Timeline & leave planner with annual calendar**
+  - Month-by-month transition timeline with leave balance tracking
+  - Full-year calendar view showing all daily events (work, leave, SkillBridge, TDY, PTDY, holidays)
+  - Event precedence system with interactive tooltips
+  - 11 federal holidays automatically calculated
+- Income + 10-location comparison
+- VA functional-impact tracker
+- Privacy-preserving evidence references (no medical uploads)
+- Daily/weekly digest preferences + local test queue
+- JSON / CSV / printable checklist export
+- Staged official-rate imports with approval
 
-## Deploy on Vercel
+## PostgreSQL (optional)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+If Docker is installed:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+docker compose up -d
+```
+
+Then set in `.env`:
+
+```env
+DATABASE_URL="postgresql://milretire:milretire@localhost:5432/milretire?schema=public"
+```
+
+Update `prisma/schema.prisma` datasource provider to `postgresql` before migrating.
+
+## Environment
+
+Copy `.env.example` to `.env`. Never commit real secrets.

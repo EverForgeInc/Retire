@@ -1,0 +1,57 @@
+---
+description: "Require the agent to inspect and follow the existing project structure before creating files, folders, services, components, or configuration."
+globs: "**/*"
+alwaysApply: true
+---
+
+# Project Structure Awareness
+
+## Purpose
+
+Require the agent to inspect and follow the existing project structure before creating files, folders, services, components, or configuration.
+
+## When This Applies
+
+- Any new feature
+- Any refactor
+- New files or folders
+- Moving code
+- Adding configuration
+- Changing application architecture
+
+## Required Workflow
+
+1. Inspect the repository tree before editing.
+2. Find existing patterns for similar features.
+3. Place new files beside the closest existing equivalent.
+4. Reuse established naming conventions.
+5. Update imports through the existing barrel or module pattern when present.
+
+## Standards
+
+- Follow the current folder architecture unless there is a clear reason to improve it.
+- Prefer small targeted edits over broad rewrites.
+- Respect app, src, components, server, services, database, and tests conventions.
+- Keep generated code discoverable.
+- Use consistent naming across files, exports, routes, and tests.
+
+## Do Not
+
+- Do not create a parallel architecture.
+- Do not add top level folders when an existing folder fits.
+- Do not scatter related files across unrelated directories.
+- Do not rename public APIs without updating all references.
+- Do not assume Next.js, Vite, FastAPI, or another framework without checking files first.
+
+## Verification Checklist
+
+- The existing project pattern was inspected before changes were made.
+- The implementation is scoped to the user request.
+- Unsafe files, secrets, and unrelated changes are excluded.
+- Applicable lint, typecheck, test, build, or validation commands were run when available.
+- Any skipped or failed verification is reported clearly.
+
+## Related Skills
+
+- Use the matching `.cursor/skills/` workflow when one exists for this rule.
+- When no matching skill exists, follow this rule directly and keep changes minimal, safe, and verifiable.

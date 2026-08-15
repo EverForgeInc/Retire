@@ -1,0 +1,56 @@
+---
+description: "Control when dependencies are added, updated, removed, or replaced so the project stays stable and maintainable."
+globs: "**/*"
+alwaysApply: true
+---
+
+# Dependency Control
+
+## Purpose
+
+Control when dependencies are added, updated, removed, or replaced so the project stays stable and maintainable.
+
+## When This Applies
+
+- Adding packages
+- Updating package versions
+- Replacing libraries
+- Changing lockfiles
+- Introducing build tools or runtime services
+
+## Required Workflow
+
+1. Inspect the existing package manager and dependency files before making changes.
+2. Check whether the project already has a utility or package that solves the need.
+3. Prefer built in language or framework features before adding a package.
+4. Justify every new dependency in the final response.
+5. Run the relevant install, build, lint, and test checks after dependency changes.
+
+## Standards
+
+- Use the package manager already used by the project.
+- Commit lockfile changes when dependency versions change.
+- Prefer maintained packages with clear licenses and active releases.
+- Avoid adding overlapping libraries that duplicate existing capabilities.
+- Keep dependency scope minimal.
+
+## Do Not
+
+- Do not install packages just to avoid writing small project specific code.
+- Do not mix npm, pnpm, yarn, uv, pip, poetry, and pipenv unless the project already does.
+- Do not add packages with unknown licenses to production code.
+- Do not change major versions casually.
+- Do not remove dependencies without checking where they are used.
+
+## Verification Checklist
+
+- The existing project pattern was inspected before changes were made.
+- The implementation is scoped to the user request.
+- Unsafe files, secrets, and unrelated changes are excluded.
+- Applicable lint, typecheck, test, build, or validation commands were run when available.
+- Any skipped or failed verification is reported clearly.
+
+## Related Skills
+
+- Use the matching `.cursor/skills/` workflow when one exists for this rule.
+- When no matching skill exists, follow this rule directly and keep changes minimal, safe, and verifiable.
