@@ -1,0 +1,54 @@
+{
+  "version": "1.0",
+  "purpose": "Capture the member's accurate description of how a condition affects daily life and work without predicting a VA rating.",
+  "condition_fields": [
+    "condition_name",
+    "body_system",
+    "diagnosis_status",
+    "onset_or_service_event",
+    "symptoms",
+    "flare_ups",
+    "functional_impact_narrative",
+    "treatment_history",
+    "claim_status",
+    "exam_status"
+  ],
+  "limitation_fields": [
+    "activity",
+    "limitation_description",
+    "threshold_value",
+    "threshold_unit",
+    "frequency",
+    "severity",
+    "flare_impact",
+    "accommodation_or_device"
+  ],
+  "activity_options": [
+    "walking",
+    "standing",
+    "sitting",
+    "lifting",
+    "carrying",
+    "reaching",
+    "stairs",
+    "driving",
+    "sleeping",
+    "concentration",
+    "exercise",
+    "household_activities",
+    "work_duties",
+    "other"
+  ],
+  "example": {
+    "condition": "Knee arthritis",
+    "functional_impact_narrative": "Pain limits walking to approximately 0.5 miles before I need to stop and rest.",
+    "activity": "walking",
+    "threshold_value": 0.5,
+    "threshold_unit": "miles"
+  },
+  "guardrails": [
+    "Use the member's own accurate experience.",
+    "Examples are prompts only and are never prefilled.",
+    "Do not diagnose, exaggerate, or guarantee a rating."
+  ]
+}

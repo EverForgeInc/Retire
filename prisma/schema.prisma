@@ -1,0 +1,409 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Local default is SQLite so the MVP runs without Docker.
+// For PostgreSQL, set provider = "postgresql" and use docker-compose.yml.
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  displayName  String?
+  role         String   @default("member")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  profile              MemberProfile?
+  digestPreferences    DigestPreference?
+  digestDeliveries     DigestDelivery[]
+  completedTasks       MemberTask[]         @relation("TaskCompletedBy")
+  auditEvents          AuditEvent[]
+  approvedRateVersions BenefitRateVersion[] @relation("RateApprovedBy")
+}
+
+model MemberProfile {
+  id                      String    @id @default(uuid())
+  userId                  String    @unique
+  fullName                String?
+  rank                    String?
+  branch                  String    @default("USAF")
+  component               String    @default("Active Duty")
+  installation            String?
+  timezone                String?   @default("America/New_York")
+  projectedRetirementDate DateTime
+  skillbridgeStart        DateTime?
+  skillbridgeEnd          DateTime?
+  terminalLeaveStart      DateTime?
+  finalDutyDay            DateTime?
+  retirementLocation      String?
+  overseasStatus          Boolean   @default(false)
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+
+  user                User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks               MemberTask[]
+  attachments         Attachment[]
+  auditEvents         AuditEvent[]
+  transitionScenarios TransitionScenario[]
+  incomeScenarios     IncomeScenario[]
+  evidenceReferences  EvidenceReference[]
+  vaConditions        VaCondition[]
+}
+
+model ChecklistTemplate {
+  id        String   @id @default(uuid())
+  name      String
+  branch    String?
+  component String?
+  version   String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  tasks TaskTemplate[]
+}
+
+model TaskTemplate {
+  id                   String  @id @default(uuid())
+  checklistTemplateId  String
+  externalKey          String  @unique
+  sectionId            String
+  sectionName          String
+  title                String
+  description          String?
+  category             String?
+  ownerLabel           String?
+  evidenceLabel        String?
+  requiredLevel        String  @default("verify_locally")
+  dateRule             String
+  dependencies         String  @default("[]")
+  officialSource       String?
+  localOverrideAllowed Boolean @default(true)
+  sortOrder            Int
+  active               Boolean @default(true)
+
+  checklistTemplate ChecklistTemplate @relation(fields: [checklistTemplateId], references: [id], onDelete: Cascade)
+  memberTasks       MemberTask[]
+
+  @@index([sectionId, sortOrder])
+}
+
+model MemberTask {
+  id                String    @id @default(uuid())
+  memberProfileId   String
+  taskTemplateId    String?
+  externalKey       String?
+  sectionId         String?
+  sectionName       String?
+  title             String
+  category          String?
+  ownerLabel        String?
+  calculatedStart   DateTime?
+  calculatedEnd     DateTime?
+  manualDueDate     DateTime?
+  dateOverride      Boolean   @default(false)
+  status            String    @default("not_started")
+  completedAt       DateTime?
+  completedByUserId String?
+  dateCompleted     DateTime?
+  notes             String?
+  requiredLevel     String?
+  sortOrder         Int       @default(0)
+  outsideWindow     Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  memberProfile MemberProfile       @relation(fields: [memberProfileId], references: [id], onDelete: Cascade)
+  taskTemplate  TaskTemplate?       @relation(fields: [taskTemplateId], references: [id])
+  completedBy   User?               @relation("TaskCompletedBy", fields: [completedByUserId], references: [id])
+  attachments   Attachment[]
+  reminders     Reminder[]
+  evidenceRefs  EvidenceReference[]
+
+  @@index([memberProfileId, status])
+}
+
+model Attachment {
+  id              String   @id @default(uuid())
+  memberTaskId    String?
+  memberProfileId String
+  fileName        String
+  contentType     String
+  storageKey      String
+  sizeBytes       Int
+  sha256          String?
+  documentType    String?
+  uploadedAt      DateTime @default(now())
+
+  memberTask    MemberTask?   @relation(fields: [memberTaskId], references: [id], onDelete: Cascade)
+  memberProfile MemberProfile @relation(fields: [memberProfileId], references: [id], onDelete: Cascade)
+}
+
+model Reminder {
+  id           String    @id @default(uuid())
+  memberTaskId String
+  remindAt     DateTime
+  channel      String
+  sentAt       DateTime?
+  status       String    @default("scheduled")
+
+  memberTask MemberTask @relation(fields: [memberTaskId], references: [id], onDelete: Cascade)
+}
+
+model AuditEvent {
+  id              String   @id @default(uuid())
+  userId          String?
+  memberProfileId String?
+  entityType      String
+  entityId        String?
+  action          String
+  beforeValue     String?
+  afterValue      String?
+  createdAt       DateTime @default(now())
+
+  user          User?          @relation(fields: [userId], references: [id])
+  memberProfile MemberProfile? @relation(fields: [memberProfileId], references: [id], onDelete: Cascade)
+
+  @@index([memberProfileId, createdAt])
+}
+
+model TransitionScenario {
+  id                         String   @id @default(uuid())
+  memberProfileId            String
+  name                       String
+  projectedRetirementDate    DateTime
+  currentLeaveBalance        Float?
+  leaveAccrualPerMonth       Float    @default(2.5)
+  maximumSkillbridgeDays     Int?
+  policyCombinationLimitDays Int?
+  active                     Boolean  @default(true)
+  createdAt                  DateTime @default(now())
+
+  memberProfile MemberProfile   @relation(fields: [memberProfileId], references: [id], onDelete: Cascade)
+  events        TimelineEvent[]
+}
+
+model TimelineEvent {
+  id              String   @id @default(uuid())
+  scenarioId      String
+  eventType       String
+  title           String
+  startDate       DateTime
+  endDate         DateTime
+  chargeableLeave Boolean  @default(false)
+  notes           String?
+  source          String?
+
+  scenario TransitionScenario @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
+}
+
+model Location {
+  id       String  @id @default(uuid())
+  city     String
+  region   String?
+  country  String
+  currency String
+  active   Boolean @default(true)
+
+  costVersions LocationCostVersion[]
+  selections   ScenarioLocationSelection[]
+}
+
+model LocationCostVersion {
+  id               String    @id @default(uuid())
+  locationId       String
+  effectiveDate    DateTime
+  category         String
+  amountLocal      Float?
+  amountUsd        Float?
+  sourceType       String?
+  sourceUrl        String?
+  sourceDate       DateTime?
+  lastVerified     DateTime?
+  exchangeRate     Float?
+  exchangeRateDate DateTime?
+  confidence       String?
+  approved         Boolean   @default(false)
+
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+}
+
+model IncomeScenario {
+  id                     String   @id @default(uuid())
+  memberProfileId        String
+  name                   String
+  retirementSystem       String?
+  high3Monthly           Float?
+  yearsService           Float?
+  multiplier             Float?
+  estimatedRetiredPay    Float?
+  memberVaRating         Int?
+  memberVaPay            Float?
+  spouseVaPay            Float?
+  civilianIncome         Float?
+  otherIncome            Float?
+  dependentConfiguration String   @default("{}")
+  createdAt              DateTime @default(now())
+
+  memberProfile MemberProfile               @relation(fields: [memberProfileId], references: [id], onDelete: Cascade)
+  locations     ScenarioLocationSelection[]
+}
+
+model ScenarioLocationSelection {
+  id               String @id @default(uuid())
+  incomeScenarioId String
+  locationId       String
+  customExpenses   String @default("{}")
+  weights          String @default("{}")
+
+  incomeScenario IncomeScenario @relation(fields: [incomeScenarioId], references: [id], onDelete: Cascade)
+  location       Location       @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@unique([incomeScenarioId, locationId])
+}
+
+model BenefitRateVersion {
+  id            String    @id @default(uuid())
+  benefitType   String
+  effectiveDate DateTime
+  sourceUrl     String
+  sourceHash    String?
+  status        String    @default("staged")
+  importedAt    DateTime  @default(now())
+  approvedAt    DateTime?
+  approvedById  String?
+
+  approvedBy          User?                 @relation("RateApprovedBy", fields: [approvedById], references: [id])
+  vaCompensationRates VaCompensationRate[]
+  militaryPayTables   MilitaryPayTable[]
+}
+
+model VaCompensationRate {
+  id                     String  @id @default(uuid())
+  versionId              String
+  rating                 Int
+  dependentKey           String
+  monthlyAmount          Float
+  additionalChildUnder18 Float?
+  additionalChildSchool  Float?
+  spouseAidAttendance    Float?
+
+  version BenefitRateVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+
+  @@unique([versionId, rating, dependentKey])
+}
+
+model MilitaryPayTable {
+  id               String @id @default(uuid())
+  versionId        String
+  payGrade         String
+  yearsServiceBand String
+  monthlyBasicPay  Float
+
+  version BenefitRateVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+
+  @@unique([versionId, payGrade, yearsServiceBand])
+}
+
+model EvidenceReference {
+  id                      String    @id @default(uuid())
+  memberProfileId         String
+  memberTaskId            String?
+  evidenceType            String
+  recordCategory          String?
+  facilityOrOffice        String?
+  requestDate             DateTime?
+  receivedDate            DateTime?
+  completeness            String?
+  confirmationNumber      String?
+  summary                 String?
+  externalStorageLabel    String?
+  sensitiveHealthMetadata Boolean   @default(false)
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+
+  memberProfile MemberProfile @relation(fields: [memberProfileId], references: [id], onDelete: Cascade)
+  memberTask    MemberTask?   @relation(fields: [memberTaskId], references: [id], onDelete: Cascade)
+
+  @@index([memberProfileId])
+}
+
+model VaCondition {
+  id                        String   @id @default(uuid())
+  memberProfileId           String
+  conditionName             String
+  bodySystem                String?
+  diagnosisStatus           String?
+  onsetOrServiceEvent       String?
+  symptoms                  String?
+  flareUps                  String?
+  functionalImpactNarrative String?
+  treatmentHistory          String?
+  claimStatus               String?
+  examStatus                String?
+  decisionRating            Float?
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+
+  memberProfile MemberProfile            @relation(fields: [memberProfileId], references: [id], onDelete: Cascade)
+  limitations   VaFunctionalLimitation[]
+
+  @@index([memberProfileId])
+}
+
+model VaFunctionalLimitation {
+  id                    String   @id @default(uuid())
+  vaConditionId         String
+  activity              String
+  limitationDescription String
+  thresholdValue        Float?
+  thresholdUnit         String?
+  frequency             String?
+  severity              String?
+  flareImpact           String?
+  accommodationOrDevice String?
+  createdAt             DateTime @default(now())
+
+  vaCondition VaCondition @relation(fields: [vaConditionId], references: [id], onDelete: Cascade)
+}
+
+model DigestPreference {
+  id                 String    @id @default(uuid())
+  userId             String    @unique
+  cadence            String    @default("off")
+  deliveryLocalTime  String    @default("08:00")
+  weeklyDay          Int?
+  timezone           String
+  includeActivePhase Boolean   @default(true)
+  includeOverdue     Boolean   @default(true)
+  includeWaiting     Boolean   @default(false)
+  upcomingDays       Int       @default(7)
+  sendEmptyDigest    Boolean   @default(false)
+  pausedUntil        DateTime?
+  unsubscribedAt     DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model DigestDelivery {
+  id                 String    @id @default(uuid())
+  userId             String
+  scheduledPeriodKey String
+  cadence            String
+  taskCount          Int       @default(0)
+  status             String    @default("queued")
+  providerMessageId  String?
+  errorCode          String?
+  sentAt             DateTime?
+  createdAt          DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, scheduledPeriodKey])
+}

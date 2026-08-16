@@ -1,0 +1,119 @@
+{
+  "module": "transition_timeline_planner",
+  "version": "1.0.0",
+  "purpose": "Model and compare the member's path through duty, leave, PTDY, TDY, SkillBridge, terminal leave, final out, and retirement.",
+  "event_types": [
+    {
+      "code": "duty",
+      "label": "Duty",
+      "counts_as_chargeable_leave": false
+    },
+    {
+      "code": "ordinary_leave",
+      "label": "Ordinary Leave",
+      "counts_as_chargeable_leave": true
+    },
+    {
+      "code": "terminal_leave",
+      "label": "Terminal Leave",
+      "counts_as_chargeable_leave": true
+    },
+    {
+      "code": "ptdy",
+      "label": "PTDY / Permissive Absence",
+      "counts_as_chargeable_leave": false
+    },
+    {
+      "code": "skillbridge",
+      "label": "SkillBridge",
+      "counts_as_chargeable_leave": false
+    },
+    {
+      "code": "tdy",
+      "label": "TDY",
+      "counts_as_chargeable_leave": false
+    },
+    {
+      "code": "outprocessing",
+      "label": "Out-processing",
+      "counts_as_chargeable_leave": false
+    },
+    {
+      "code": "medical_va",
+      "label": "Medical / VA Appointment",
+      "counts_as_chargeable_leave": false
+    },
+    {
+      "code": "weekend",
+      "label": "Weekend",
+      "counts_as_chargeable_leave": false
+    },
+    {
+      "code": "federal_holiday",
+      "label": "Federal Holiday",
+      "counts_as_chargeable_leave": false
+    },
+    {
+      "code": "final_out",
+      "label": "Final Out",
+      "counts_as_chargeable_leave": false
+    },
+    {
+      "code": "retirement",
+      "label": "Retirement Effective",
+      "counts_as_chargeable_leave": false
+    }
+  ],
+  "member_inputs": [
+    "projected_retirement_date",
+    "current_leave_balance",
+    "leave_accrual_per_month",
+    "leave_events",
+    "ptdy_events",
+    "tdy_events",
+    "skillbridge_start",
+    "skillbridge_end",
+    "terminal_leave_start",
+    "final_duty_day",
+    "final_out_date",
+    "holidays",
+    "maximum_skillbridge_days",
+    "policy_combination_limit_days",
+    "scenario_name"
+  ],
+  "calculated_outputs": [
+    "calendar_days_remaining",
+    "duty_days_remaining",
+    "chargeable_leave_days",
+    "ordinary_leave_days",
+    "terminal_leave_days",
+    "ptdy_days",
+    "skillbridge_days",
+    "tdy_days",
+    "projected_leave_balance_by_month",
+    "use_or_lose_projection",
+    "remaining_leave_at_retirement",
+    "last_day_physically_reporting",
+    "overlap_conflicts",
+    "gap_warnings",
+    "policy_limit_warnings",
+    "etp_may_be_required"
+  ],
+  "views": [
+    "calendar",
+    "horizontal_timeline",
+    "summary_table",
+    "scenario_comparison"
+  ],
+  "scenario_support": {
+    "minimum_saved_scenarios": 10,
+    "recommended_saved_scenarios": 25
+  },
+  "source_workbook_patterns": [
+    "Multiple retirement dates",
+    "With and without ETP",
+    "With and without USFJ TDY",
+    "59/60/117/120/133-day SkillBridge scenarios",
+    "Monthly calendar blocks and event labels"
+  ]
+}

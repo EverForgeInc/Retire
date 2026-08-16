@@ -1,0 +1,50 @@
+---
+description: "Run applicable tests and checks before declaring implementation work complete."
+globs: "test/**,tests/**,__tests__/**,**/*.test.*,**/*.spec.*,playwright.config.*,cypress/**,pytest.ini"
+alwaysApply: true
+---
+
+# Test Before Complete
+
+## Purpose
+
+Run applicable tests and checks before declaring implementation work complete.
+
+## When This Applies
+
+- This rule applies when files matched by the glob are changed or generated.
+- Use it when the task affects the behavior described by the purpose statement.
+
+## Required Workflow
+
+1. Identify available test, lint, typecheck, and build commands.
+2. Run the checks relevant to changed files.
+3. Fix related failures.
+4. Report passed, failed, or skipped checks.
+
+## Standards
+
+- Follow the existing project pattern before introducing a new one.
+- Keep the implementation small, explicit, and easy to review.
+- Prefer reusable project primitives, shared utilities, and documented conventions.
+- Verify the change using the checks available in the project.
+
+## Do Not
+
+- Do not claim tests passed if they were not run.
+- Do not hide failing checks.
+- Do not skip obvious verification.
+- Do not leave broken builds unexplained.
+
+## Verification Checklist
+
+- The existing project pattern was inspected before changes were made.
+- The implementation is scoped to the user request.
+- Unsafe files, secrets, and unrelated changes are excluded.
+- Applicable lint, typecheck, test, build, or validation commands were run when available.
+- Any skipped or failed verification is reported clearly.
+
+## Related Skills
+
+- Use the matching `.cursor/skills/` workflow when one exists for this rule.
+- When no matching skill exists, follow this rule directly and keep changes minimal, safe, and verifiable.

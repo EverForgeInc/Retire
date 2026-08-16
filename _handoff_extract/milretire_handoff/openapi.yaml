@@ -1,0 +1,219 @@
+openapi: 3.1.0
+info:
+  title: Military Retirement App API
+  version: 1.1.0
+servers:
+  - url: /api
+paths:
+  /profile:
+    get:
+      summary: Get current member profile
+      responses:
+        '200': {description: Profile returned}
+    put:
+      summary: Update member profile and recalculate timeline
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ProfileUpdate'}
+      responses:
+        '200': {description: Profile updated}
+  /tasks:
+    get:
+      summary: List member tasks
+      parameters:
+        - in: query
+          name: status
+          schema: {type: string}
+        - in: query
+          name: category
+          schema: {type: string}
+      responses:
+        '200': {description: Tasks returned}
+  /tasks/{taskId}:
+    get:
+      summary: Get task
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      responses:
+        '200': {description: Task returned}
+    patch:
+      summary: Update task status, optional completion date, notes, evidence reference, or override dates
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/TaskUpdate'}
+      responses:
+        '200': {description: Task updated}
+  /tasks/{taskId}/attachments:
+    post:
+      summary: Upload task attachment
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file: {type: string, format: binary}
+                documentType: {type: string}
+      responses:
+        '201': {description: Attachment created}
+  /evidence-references:
+    get:
+      summary: List privacy-preserving evidence and medical-record metadata
+      responses:
+        '200': {description: Evidence references returned}
+    post:
+      summary: Create an evidence reference without uploading a medical file
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/EvidenceReferenceInput'}
+      responses:
+        '201': {description: Evidence reference created}
+  /va-conditions:
+    get:
+      summary: List VA conditions and functional impacts
+      responses:
+        '200': {description: VA conditions returned}
+    post:
+      summary: Create a VA condition with functional-impact information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/VAConditionInput'}
+      responses:
+        '201': {description: VA condition created}
+  /notification-preferences/digest:
+    get:
+      summary: Get checklist digest email preferences
+      responses:
+        '200': {description: Digest preferences returned}
+    put:
+      summary: Configure off, daily, or weekly checklist digest emails
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/DigestPreferences'}
+      responses:
+        '200': {description: Digest preferences updated}
+  /notification-preferences/digest/test:
+    post:
+      summary: Send a privacy-filtered test checklist digest
+      responses:
+        '202': {description: Test digest queued}
+  /dashboard:
+    get:
+      summary: Get progress, overdue tasks, upcoming windows, and milestones
+      responses:
+        '200': {description: Dashboard returned}
+  /exports/pdf:
+    post:
+      summary: Generate printable retirement checklist PDF
+      responses:
+        '200':
+          description: PDF generated
+          content:
+            application/pdf: {}
+  /exports/json:
+    get:
+      summary: Export profile and checklist data
+      responses:
+        '200': {description: JSON export}
+components:
+  parameters:
+    TaskId:
+      in: path
+      name: taskId
+      required: true
+      schema: {type: string, format: uuid}
+  schemas:
+    ProfileUpdate:
+      type: object
+      required: [projectedRetirementDate]
+      properties:
+        fullName: {type: string}
+        rank: {type: string}
+        projectedRetirementDate: {type: string, format: date}
+        installation: {type: string}
+        timezone: {type: string}
+        skillbridgeStart: {type: string, format: date}
+        skillbridgeEnd: {type: string, format: date}
+        terminalLeaveStart: {type: string, format: date}
+        finalDutyDay: {type: string, format: date}
+    EvidenceReferenceInput:
+      type: object
+      required: [evidenceType]
+      properties:
+        memberTaskId: {type: string, format: uuid}
+        evidenceType: {type: string, enum: [attestation, confirmation_number, external_storage_reference, record_request_tracker, permitted_nonmedical_attachment]}
+        recordCategory: {type: string}
+        facilityOrOffice: {type: string}
+        requestDate: {type: string, format: date}
+        receivedDate: {type: string, format: date}
+        completeness: {type: string, enum: [not_requested, requested, partial, complete, missing]}
+        confirmationNumber: {type: string}
+        summary: {type: string}
+        externalStorageLabel: {type: string}
+    FunctionalLimitationInput:
+      type: object
+      required: [activity, limitationDescription]
+      properties:
+        activity: {type: string}
+        limitationDescription: {type: string}
+        thresholdValue: {type: number}
+        thresholdUnit: {type: string}
+        frequency: {type: string}
+        severity: {type: string}
+        flareImpact: {type: string}
+        accommodationOrDevice: {type: string}
+    VAConditionInput:
+      type: object
+      required: [conditionName]
+      properties:
+        conditionName: {type: string}
+        bodySystem: {type: string}
+        diagnosisStatus: {type: string}
+        onsetOrServiceEvent: {type: string}
+        symptoms: {type: string}
+        flareUps: {type: string}
+        functionalImpactNarrative: {type: string}
+        treatmentHistory: {type: string}
+        limitations:
+          type: array
+          items: {$ref: '#/components/schemas/FunctionalLimitationInput'}
+    DigestPreferences:
+      type: object
+      required: [cadence, deliveryLocalTime, timezone]
+      properties:
+        cadence: {type: string, enum: [off, daily, weekly]}
+        deliveryLocalTime: {type: string, format: time}
+        weeklyDay: {type: integer, minimum: 0, maximum: 6}
+        timezone: {type: string}
+        includeActivePhase: {type: boolean, default: true}
+        includeOverdue: {type: boolean, default: true}
+        includeWaiting: {type: boolean, default: false}
+        upcomingDays: {type: integer, minimum: 0, maximum: 90, default: 7}
+        sendEmptyDigest: {type: boolean, default: false}
+        pausedUntil: {type: string, format: date-time}
+    TaskUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [not_started, in_progress, waiting, complete, not_applicable]
+        dateCompleted: {type: string, format: date}
+        notes: {type: string}
+        manualDueDate: {type: string, format: date}
+        dateOverride: {type: boolean}

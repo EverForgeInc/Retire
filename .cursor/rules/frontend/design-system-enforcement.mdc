@@ -1,0 +1,50 @@
+---
+description: "Enforce the project design system so visual work stays consistent across pages and components."
+globs: "src/**/*.{tsx,jsx,ts,js,css,scss},app/**/*.{tsx,jsx,ts,js,css,scss},components/**/*.{tsx,jsx,ts,js,css,scss},pages/**/*.{tsx,jsx,ts,js,css,scss}"
+alwaysApply: false
+---
+
+# Design System Enforcement
+
+## Purpose
+
+Enforce the project design system so visual work stays consistent across pages and components.
+
+## When This Applies
+
+- This rule applies when files matched by the glob are changed or generated.
+- Use it when the task affects the behavior described by the purpose statement.
+
+## Required Workflow
+
+1. Inspect tokens, theme files, CSS variables, and shared components.
+2. Use existing colors, spacing, radius, shadows, and typography.
+3. Create new tokens only when the current system cannot express the need.
+4. Keep design decisions consistent across light, dark, and responsive states.
+
+## Standards
+
+- Follow the existing project pattern before introducing a new one.
+- Keep the implementation small, explicit, and easy to review.
+- Prefer reusable project primitives, shared utilities, and documented conventions.
+- Verify the change using the checks available in the project.
+
+## Do Not
+
+- Do not hardcode colors when tokens exist.
+- Do not create one off visual styles.
+- Do not bypass shared primitives.
+- Do not break dark mode or accessibility contrast.
+
+## Verification Checklist
+
+- The existing project pattern was inspected before changes were made.
+- The implementation is scoped to the user request.
+- Unsafe files, secrets, and unrelated changes are excluded.
+- Applicable lint, typecheck, test, build, or validation commands were run when available.
+- Any skipped or failed verification is reported clearly.
+
+## Related Skills
+
+- Use the matching `.cursor/skills/` workflow when one exists for this rule.
+- When no matching skill exists, follow this rule directly and keep changes minimal, safe, and verifiable.

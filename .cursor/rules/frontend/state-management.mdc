@@ -1,0 +1,50 @@
+---
+description: "Choose the smallest reliable state management approach for the feature."
+globs: "src/**/*.{tsx,jsx,ts,js,css,scss},app/**/*.{tsx,jsx,ts,js,css,scss},components/**/*.{tsx,jsx,ts,js,css,scss},pages/**/*.{tsx,jsx,ts,js,css,scss}"
+alwaysApply: false
+---
+
+# State Management
+
+## Purpose
+
+Choose the smallest reliable state management approach for the feature.
+
+## When This Applies
+
+- This rule applies when files matched by the glob are changed or generated.
+- Use it when the task affects the behavior described by the purpose statement.
+
+## Required Workflow
+
+1. Use local state for local UI state.
+2. Use URL state for shareable filters and navigation state.
+3. Use server state tools for fetched data when present.
+4. Use global state only for genuinely global concerns.
+
+## Standards
+
+- Follow the existing project pattern before introducing a new one.
+- Keep the implementation small, explicit, and easy to review.
+- Prefer reusable project primitives, shared utilities, and documented conventions.
+- Verify the change using the checks available in the project.
+
+## Do Not
+
+- Do not add a state library casually.
+- Do not store server data in local global state without need.
+- Do not create prop drilling chains when context or composition is cleaner.
+- Do not make state impossible to reset or test.
+
+## Verification Checklist
+
+- The existing project pattern was inspected before changes were made.
+- The implementation is scoped to the user request.
+- Unsafe files, secrets, and unrelated changes are excluded.
+- Applicable lint, typecheck, test, build, or validation commands were run when available.
+- Any skipped or failed verification is reported clearly.
+
+## Related Skills
+
+- Use the matching `.cursor/skills/` workflow when one exists for this rule.
+- When no matching skill exists, follow this rule directly and keep changes minimal, safe, and verifiable.

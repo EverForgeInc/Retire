@@ -1,0 +1,57 @@
+---
+description: "Define the minimum completion standard before the agent claims a task is finished."
+globs: "**/*"
+alwaysApply: true
+---
+
+# Task Completion Checklist
+
+## Purpose
+
+Define the minimum completion standard before the agent claims a task is finished.
+
+## When This Applies
+
+- Completed code changes
+- Fixes
+- Features
+- Refactors
+- Configuration changes
+- Documentation updates
+
+## Required Workflow
+
+1. Review the changed files.
+2. Run applicable checks such as lint, typecheck, test, and build.
+3. Verify the requested behavior is implemented.
+4. Check for unsafe files, secrets, and unrelated changes.
+5. Summarize what changed and what remains.
+
+## Standards
+
+- The final answer must be grounded in actual completed work.
+- Failed or skipped checks must be reported honestly.
+- Do not claim deployment or push success unless it happened.
+- Prefer a short implementation summary plus verification results.
+- Include next risks only when they are real.
+
+## Do Not
+
+- Do not say done if build or tests fail without explaining.
+- Do not hide skipped verification.
+- Do not invent files, commits, URLs, or test results.
+- Do not leave TODOs in changed code unless the user asked for a stub.
+- Do not include unrelated cleanup unless it was necessary.
+
+## Verification Checklist
+
+- The existing project pattern was inspected before changes were made.
+- The implementation is scoped to the user request.
+- Unsafe files, secrets, and unrelated changes are excluded.
+- Applicable lint, typecheck, test, build, or validation commands were run when available.
+- Any skipped or failed verification is reported clearly.
+
+## Related Skills
+
+- Use the matching `.cursor/skills/` workflow when one exists for this rule.
+- When no matching skill exists, follow this rule directly and keep changes minimal, safe, and verifiable.

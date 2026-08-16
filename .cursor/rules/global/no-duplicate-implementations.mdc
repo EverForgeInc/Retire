@@ -1,0 +1,57 @@
+---
+description: "Prevent duplicate components, utilities, services, routes, schemas, hooks, and feature implementations."
+globs: "**/*"
+alwaysApply: true
+---
+
+# No Duplicate Implementations
+
+## Purpose
+
+Prevent duplicate components, utilities, services, routes, schemas, hooks, and feature implementations.
+
+## When This Applies
+
+- Creating components
+- Creating helper functions
+- Adding API clients
+- Adding services
+- Creating hooks
+- Adding pages or routes
+
+## Required Workflow
+
+1. Search for existing implementations before adding a new one.
+2. Extend or compose existing code when it fits.
+3. Extract shared logic when duplication appears.
+4. Delete or consolidate obsolete duplicates only when safe.
+5. Document any intentional duplicate with a clear reason.
+
+## Standards
+
+- One responsibility should have one primary implementation.
+- Prefer shared primitives over repeated custom variants.
+- Keep naming clear so future agents can find the implementation.
+- Refactor duplicate logic when it is in the scope of the task.
+- Use existing design system and API clients first.
+
+## Do Not
+
+- Do not create ButtonNew, DashboardV2, FinalComponent, or temporary alternate implementations.
+- Do not copy paste existing logic into a new file without refactoring.
+- Do not leave old dead code after replacement.
+- Do not create a second API client for the same backend.
+- Do not duplicate validation schemas across frontend and backend when shared types exist.
+
+## Verification Checklist
+
+- The existing project pattern was inspected before changes were made.
+- The implementation is scoped to the user request.
+- Unsafe files, secrets, and unrelated changes are excluded.
+- Applicable lint, typecheck, test, build, or validation commands were run when available.
+- Any skipped or failed verification is reported clearly.
+
+## Related Skills
+
+- Use the matching `.cursor/skills/` workflow when one exists for this rule.
+- When no matching skill exists, follow this rule directly and keep changes minimal, safe, and verifiable.

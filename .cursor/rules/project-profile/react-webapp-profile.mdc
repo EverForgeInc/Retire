@@ -1,0 +1,50 @@
+---
+description: "Project profile for React web applications built with Vite, CRA style setups, or similar SPA tooling."
+globs: "**/*"
+alwaysApply: true
+---
+
+# React Webapp Profile
+
+## Purpose
+
+Project profile for React web applications built with Vite, CRA style setups, or similar SPA tooling.
+
+## When This Applies
+
+- This rule applies when files matched by the glob are changed or generated.
+- Use it when the task affects the behavior described by the purpose statement.
+
+## Required Workflow
+
+1. Use component, hook, state, routing, accessibility, and performance rules.
+2. Prefer existing UI primitives and tokens.
+3. Keep client side routing and data loading coherent.
+4. Run frontend checks before completion.
+
+## Standards
+
+- Follow the existing project pattern before introducing a new one.
+- Keep the implementation small, explicit, and easy to review.
+- Prefer reusable project primitives, shared utilities, and documented conventions.
+- Verify the change using the checks available in the project.
+
+## Do Not
+
+- Do not assume Next.js server features.
+- Do not add backend logic into browser only code.
+- Do not bypass accessibility and responsive standards.
+- Do not create duplicate UI systems.
+
+## Verification Checklist
+
+- The existing project pattern was inspected before changes were made.
+- The implementation is scoped to the user request.
+- Unsafe files, secrets, and unrelated changes are excluded.
+- Applicable lint, typecheck, test, build, or validation commands were run when available.
+- Any skipped or failed verification is reported clearly.
+
+## Related Skills
+
+- Use the matching `.cursor/skills/` workflow when one exists for this rule.
+- When no matching skill exists, follow this rule directly and keep changes minimal, safe, and verifiable.
