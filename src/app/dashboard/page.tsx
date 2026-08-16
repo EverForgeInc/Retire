@@ -162,7 +162,7 @@ export default async function DashboardPage() {
               <div className="text-muted-foreground">{dashboard.profile.projectedRetirementDate}</div>
             </li>
           </ul>
-          <Button className="mt-4" render={<Link href="/timeline" />}>
+          <Button className="mt-4" nativeButton={false} render={<Link href="/timeline" />}>
             Open timeline calendar
           </Button>
         </Panel>
