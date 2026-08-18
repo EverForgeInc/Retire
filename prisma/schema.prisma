@@ -45,7 +45,7 @@ model MemberProfile {
   createdAt               DateTime  @default(now())
   updatedAt               DateTime  @updatedAt
 
-  user                User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   tasks               MemberTask[]
   attachments         Attachment[]
   auditEvents         AuditEvent[]
@@ -277,13 +277,13 @@ model BenefitRateVersion {
   approvedAt    DateTime?
   approvedById  String?
 
-  approvedBy          User?                 @relation("RateApprovedBy", fields: [approvedById], references: [id])
+  approvedBy          User?                @relation("RateApprovedBy", fields: [approvedById], references: [id])
   vaCompensationRates VaCompensationRate[]
   militaryPayTables   MilitaryPayTable[]
 }
 
 model VaCompensationRate {
-  id                     String  @id @default(uuid())
+  id                     String @id @default(uuid())
   versionId              String
   rating                 Int
   dependentKey           String
