@@ -27,6 +27,10 @@ export async function POST(request: Request) {
     const body = await request.json();
     assertNoSsnFields(body);
     const data = vaConditionSchema.parse(body);
+    if (data.secondaryConditionId) {
+      const related = await prisma.vaCondition.findFirst({ where: { id: data.secondaryConditionId, memberProfileId: profile.id } });
+      if (!related) return new Response(JSON.stringify({ error: "Referenced condition was not found" }), { status: 400 });
+    }
 
     const created = await prisma.vaCondition.create({
       data: {
@@ -41,6 +45,13 @@ export async function POST(request: Request) {
         treatmentHistory: data.treatmentHistory,
         claimStatus: data.claimStatus,
         examStatus: data.examStatus,
+        memberPrimaryTheory: data.memberPrimaryTheory,
+        memberAlternateTheory: data.memberAlternateTheory,
+        representativePrimaryTheory: data.representativePrimaryTheory,
+        representativeAlternateTheory: data.representativeAlternateTheory,
+        vaFinalPrimaryDetermination: data.vaFinalPrimaryDetermination,
+        vaFinalAlternateDetermination: data.vaFinalAlternateDetermination,
+        secondaryConditionId: data.secondaryConditionId,
         limitations: data.limitations
           ? {
               create: data.limitations.map((l) => ({

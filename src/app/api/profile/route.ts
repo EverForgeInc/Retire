@@ -17,6 +17,9 @@ function serializeProfile(profile: NonNullable<Awaited<ReturnType<typeof getSess
     installation: profile.installation,
     timezone: profile.timezone,
     projectedRetirementDate: toDateOnly(profile.projectedRetirementDate),
+    officialSeparationDate: profile.officialSeparationDate ? toDateOnly(profile.officialSeparationDate) : null,
+    transitionType: profile.transitionType,
+    desIdesStatus: profile.desIdesStatus,
     skillbridgeStart: profile.skillbridgeStart ? toDateOnly(profile.skillbridgeStart) : null,
     skillbridgeEnd: profile.skillbridgeEnd ? toDateOnly(profile.skillbridgeEnd) : null,
     terminalLeaveStart: profile.terminalLeaveStart ? toDateOnly(profile.terminalLeaveStart) : null,
@@ -55,6 +58,9 @@ export async function PUT(request: Request) {
       installation: data.installation,
       timezone: data.timezone,
       projectedRetirementDate: retirementDate,
+      officialSeparationDate: data.officialSeparationDate ? parseDateOnly(data.officialSeparationDate) : null,
+      transitionType: data.transitionType,
+      desIdesStatus: data.desIdesStatus,
       skillbridgeStart: data.skillbridgeStart ? parseDateOnly(data.skillbridgeStart) : null,
       skillbridgeEnd: data.skillbridgeEnd ? parseDateOnly(data.skillbridgeEnd) : null,
       terminalLeaveStart: data.terminalLeaveStart
@@ -74,6 +80,9 @@ export async function PUT(request: Request) {
         memberProfileId: profile.id,
         retirementDate,
         userId: session.userId,
+        transitionType: profile.transitionType,
+        desIdesStatus: profile.desIdesStatus,
+        officialSeparationDate: profile.officialSeparationDate ?? retirementDate,
       });
       await writeAudit({
         userId: session.userId,
@@ -95,12 +104,18 @@ export async function PUT(request: Request) {
           previousDate,
           nextDate: retirementDate,
           userId: session.userId,
+          transitionType: profile.transitionType,
+          desIdesStatus: profile.desIdesStatus,
+          officialSeparationDate: profile.officialSeparationDate ?? retirementDate,
         });
       } else {
         await generateMemberTasks({
           memberProfileId: profile.id,
           retirementDate,
           userId: session.userId,
+          transitionType: profile.transitionType,
+          desIdesStatus: profile.desIdesStatus,
+          officialSeparationDate: profile.officialSeparationDate ?? retirementDate,
         });
       }
       await writeAudit({

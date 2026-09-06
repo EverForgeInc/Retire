@@ -113,6 +113,17 @@ export function daysUntilRetirement(retirementDate: Date | string, today: Date =
   return differenceInCalendarDays(parseDateOnly(retirementDate), startOfDay(today));
 }
 
+export function bddWindow(separationDate: Date | string) {
+  const date = parseDateOnly(separationDate);
+  return { opens: daysBefore(date, 180), closes: daysBefore(date, 90) };
+}
+
+export function isBddOpen(separationDate: Date | string, today: Date = new Date()): boolean {
+  const window = bddWindow(separationDate);
+  const current = parseDateOnly(today);
+  return current >= window.opens && current <= window.closes;
+}
+
 export function findActivePhase(
   retirementDate: Date | string,
   today: Date = new Date(),

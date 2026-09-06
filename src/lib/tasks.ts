@@ -2,12 +2,27 @@ import { prisma } from "@/lib/db";
 import { getSectionWindowById, isDateInWindow, parseDateOnly } from "@/lib/rules/date-engine";
 import { writeAudit } from "@/lib/audit";
 
+export function shouldSuppressTask(params: {
+  externalKey: string;
+  title: string;
+  transitionType?: string;
+  desIdesStatus?: string;
+}) {
+  const medicalTransition = params.transitionType === "medical_separation" || params.transitionType === "medical_retirement";
+  const activeIdes = params.desIdesStatus && params.desIdesStatus !== "not_applicable" && params.desIdesStatus !== "complete";
+  const text = `${params.externalKey} ${params.title}`.toLowerCase();
+  return (!medicalTransition && /\b(des|ides)\b/.test(text)) || (Boolean(activeIdes) && text.includes("bdd"));
+}
+
 export async function generateMemberTasks(params: {
   memberProfileId: string;
   retirementDate: Date | string;
   userId?: string;
+  transitionType?: string;
+  desIdesStatus?: string;
+  officialSeparationDate?: Date | string;
 }) {
-  const retirementDate = parseDateOnly(params.retirementDate);
+  const retirementDate = parseDateOnly(params.officialSeparationDate ?? params.retirementDate);
   const templates = await prisma.taskTemplate.findMany({
     where: { active: true },
     orderBy: { sortOrder: "asc" },
@@ -21,8 +36,15 @@ export async function generateMemberTasks(params: {
     where: { memberProfileId: params.memberProfileId },
   });
   const byKey = new Map(existing.filter((t) => t.externalKey).map((t) => [t.externalKey!, t]));
-
   for (const template of templates) {
+    const suppressed = shouldSuppressTask({ ...params, externalKey: template.externalKey, title: template.title });
+    if (suppressed) {
+      const current = byKey.get(template.externalKey);
+      if (current && current.status !== "complete") {
+        await prisma.memberTask.update({ where: { id: current.id }, data: { status: "not_applicable" } });
+      }
+      continue;
+    }
     const window = getSectionWindowById(retirementDate, template.sectionId);
     const current = byKey.get(template.externalKey);
 
@@ -90,6 +112,9 @@ export async function recalculateOnRetirementDateChange(params: {
   previousDate: Date;
   nextDate: Date;
   userId: string;
+  transitionType?: string;
+  desIdesStatus?: string;
+  officialSeparationDate?: Date | string;
 }) {
   await writeAudit({
     userId: params.userId,
@@ -105,5 +130,8 @@ export async function recalculateOnRetirementDateChange(params: {
     memberProfileId: params.memberProfileId,
     retirementDate: params.nextDate,
     userId: params.userId,
+    transitionType: params.transitionType,
+    desIdesStatus: params.desIdesStatus,
+    officialSeparationDate: params.officialSeparationDate,
   });
 }

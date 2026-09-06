@@ -133,6 +133,9 @@ async function main() {
       finalDutyDay: parseDateOnly("2027-05-31"),
       retirementLocation: "Misawa, Japan",
       overseasStatus: true,
+      officialSeparationDate: retirementDate,
+      transitionType: "standard_retirement",
+      desIdesStatus: "not_applicable",
     },
     create: {
       userId: user.id,
@@ -149,6 +152,9 @@ async function main() {
       finalDutyDay: parseDateOnly("2027-05-31"),
       retirementLocation: "Misawa, Japan",
       overseasStatus: true,
+      officialSeparationDate: retirementDate,
+      transitionType: "standard_retirement",
+      desIdesStatus: "not_applicable",
     },
   });
 
@@ -363,6 +369,9 @@ async function main() {
     memberProfileId: profile.id,
     retirementDate,
     userId: user.id,
+    transitionType: profile.transitionType,
+    desIdesStatus: profile.desIdesStatus,
+    officialSeparationDate: profile.officialSeparationDate ?? retirementDate,
   });
 
   // Mark a realistic subset complete for dashboard demo
