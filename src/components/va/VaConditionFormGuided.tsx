@@ -197,7 +197,7 @@ export function VaConditionFormGuided({ conditions = [] }: { conditions?: { id: 
         });
         setCurrentStep("body-part");
       }, 1500);
-    } catch (err) {
+    } catch (_err) {
       setSaving(false);
       setError("Failed to save condition. Please try again.");
     }

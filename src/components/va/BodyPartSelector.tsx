@@ -54,23 +54,6 @@ export function BodyPartSelector({ selectedPart, onSelect }: BodyPartSelectorPro
   const [hoveredPart, setHoveredPart] = useState<string | null>(null);
   const [view, setView] = useState<"quick" | "detailed">("quick");
 
-  // Group body parts by region for visual organization
-  const grouped = {
-    head: BODY_PARTS.filter((p) => p.region === "head"),
-    neck: BODY_PARTS.filter((p) => p.region === "neck"),
-    shoulder: BODY_PARTS.filter((p) => p.region === "shoulder"),
-    arm: BODY_PARTS.filter((p) => p.region === "arm"),
-    hand: BODY_PARTS.filter((p) => p.region === "hand"),
-    chest: BODY_PARTS.filter((p) => p.region === "chest"),
-    back: BODY_PARTS.filter((p) => p.region === "back"),
-    abdomen: BODY_PARTS.filter((p) => p.region === "abdomen"),
-    hip: BODY_PARTS.filter((p) => p.region === "hip"),
-    leg: BODY_PARTS.filter((p) => p.region === "leg"),
-    foot: BODY_PARTS.filter((p) => p.region === "foot"),
-    mental: BODY_PARTS.filter((p) => p.region === "mental"),
-    skin: BODY_PARTS.filter((p) => p.region === "skin"),
-  };
-
   return (
     <div className="space-y-4">
       <div className="rounded-lg border bg-muted/30 p-1" role="tablist" aria-label="Body map view">
