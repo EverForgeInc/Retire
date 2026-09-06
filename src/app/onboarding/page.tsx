@@ -74,7 +74,7 @@ export default function OnboardingPage() {
               ["medical_retirement", "Medical Retirement"],
               ["not_yet_determined", "Not Yet Determined"],
             ]} />
-            <SelectField name="desIdesStatus" label="DES/IDES status" defaultValue="not_applicable" options={[
+            <SelectField name="desIdesStatus" label="Medical Disability Evaluation (DES/IDES) status" defaultValue="not_applicable" options={[
               ["not_applicable", "Not applicable"], ["not_started", "Not started"], ["referred", "Referred"],
               ["in_process", "In process"], ["found_fit", "Found fit"], ["found_unfit", "Found unfit"], ["complete", "Complete"],
             ]} />

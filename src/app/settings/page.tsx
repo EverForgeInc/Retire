@@ -56,10 +56,10 @@ export default async function SettingsPage() {
 
         <Panel title="Exports">
           <div className="flex flex-wrap gap-2">
-            <a href="/api/exports/json" className={buttonVariants()}>
+            <a href="/api/exports/json" className={buttonVariants({ variant: "outline" })} download>
               Export JSON
             </a>
-            <a href="/api/exports/csv" className={buttonVariants({ variant: "secondary" })}>
+            <a href="/api/exports/csv" className={buttonVariants({ variant: "secondary" })} download>
               Export CSV
             </a>
             <form action="/api/exports/pdf" method="post">

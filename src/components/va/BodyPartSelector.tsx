@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -51,30 +52,72 @@ interface BodyPartSelectorProps {
 
 export function BodyPartSelector({ selectedPart, onSelect }: BodyPartSelectorProps) {
   const [hoveredPart, setHoveredPart] = useState<string | null>(null);
-
-  // Group body parts by region for visual organization
-  const grouped = {
-    head: BODY_PARTS.filter((p) => p.region === "head"),
-    neck: BODY_PARTS.filter((p) => p.region === "neck"),
-    shoulder: BODY_PARTS.filter((p) => p.region === "shoulder"),
-    arm: BODY_PARTS.filter((p) => p.region === "arm"),
-    hand: BODY_PARTS.filter((p) => p.region === "hand"),
-    chest: BODY_PARTS.filter((p) => p.region === "chest"),
-    back: BODY_PARTS.filter((p) => p.region === "back"),
-    abdomen: BODY_PARTS.filter((p) => p.region === "abdomen"),
-    hip: BODY_PARTS.filter((p) => p.region === "hip"),
-    leg: BODY_PARTS.filter((p) => p.region === "leg"),
-    foot: BODY_PARTS.filter((p) => p.region === "foot"),
-    mental: BODY_PARTS.filter((p) => p.region === "mental"),
-    skin: BODY_PARTS.filter((p) => p.region === "skin"),
-  };
+  const [view, setView] = useState<"quick" | "detailed">("quick");
 
   return (
     <div className="space-y-4">
+      <div className="rounded-lg border bg-muted/30 p-1" role="tablist" aria-label="Body map view">
+        <div className="grid grid-cols-2 gap-1">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={view === "quick"}
+            onClick={() => setView("quick")}
+            className={cn(
+              "rounded-md px-3 py-2 text-sm font-medium transition-colors",
+              view === "quick"
+                ? "bg-background text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            Quick Select
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={view === "detailed"}
+            onClick={() => setView("detailed")}
+            className={cn(
+              "rounded-md px-3 py-2 text-sm font-medium transition-colors",
+              view === "detailed"
+                ? "bg-background text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            Detailed Worksheet
+          </button>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Left side - Visual representation */}
         <div className="flex flex-col items-center justify-center p-6 border rounded-lg bg-slate-50">
           <div className="w-full max-w-xs">
+            <div className="relative overflow-hidden rounded-md border bg-white">
+              <Image
+                src={
+                  view === "quick"
+                    ? "/images/va/va-claims-body-map.png"
+                    : "/images/va/detailed-body-location-map.png"
+                }
+                alt={
+                  view === "quick"
+                    ? "VA claims body map showing common body regions"
+                    : "Detailed numbered front and back body-location worksheet"
+                }
+                width={view === "quick" ? 1103 : 1222}
+                height={view === "quick" ? 1426 : 1287}
+                className="h-auto max-h-[400px] w-full object-contain"
+                priority
+              />
+            </div>
+            <p className="text-xs text-center text-muted-foreground mt-4">
+              {view === "quick"
+                ? "Use the visual guide, then choose a matching region below."
+                : "Use the numbered worksheet as an advanced reference, then choose a region below."}
+            </p>
+          </div>
+          <div className="hidden">
             <svg
               viewBox="0 0 100 250"
               className="w-full h-auto"
@@ -283,9 +326,6 @@ export function BodyPartSelector({ selectedPart, onSelect }: BodyPartSelectorPro
                 />
               </g>
             </svg>
-            <p className="text-xs text-center text-muted-foreground mt-4">
-              Click on a body region or select below
-            </p>
           </div>
         </div>
 

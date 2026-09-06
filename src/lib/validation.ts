@@ -151,6 +151,18 @@ export const incomeScenarioSchema = z.object({
   dependentConfiguration: z.record(z.unknown()).optional(),
 });
 
+export const savedLocationSchema = z.object({
+  city: z.string().trim().min(1),
+  state: z.string().trim().optional(),
+  country: z.string().trim().min(1),
+  countryCode: z.string().trim().length(2).transform((value) => value.toUpperCase()),
+  currency: z.string().trim().min(3).max(3).transform((value) => value.toUpperCase()),
+  latitude: z.number().finite().optional(),
+  longitude: z.number().finite().optional(),
+  isPreferred: z.boolean().optional(),
+  manualCosts: z.record(z.number().finite().nonnegative()).optional(),
+});
+
 export const rateImportSchema = z.object({
   benefitType: z.enum(["va_compensation", "military_pay"]),
   effectiveDate: dateString,

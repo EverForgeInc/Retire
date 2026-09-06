@@ -20,6 +20,8 @@ export async function GET() {
       },
       orderBy: { createdAt: "desc" },
     });
+    const savedLocations = await prisma.savedLocation.findMany({ where: { memberProfileId: profile.id } });
+    const savedByLocationId = new Map(savedLocations.filter((item) => item.locationId).map((item) => [item.locationId, item]));
 
     const approvedVa = await prisma.benefitRateVersion.findFirst({
       where: { benefitType: "va_compensation", status: "approved" },
@@ -31,9 +33,13 @@ export async function GET() {
       const comparisons = scenario.locations.map((sel) => {
         const expensesFromCustom = JSON.parse(sel.customExpenses || "{}") as Record<string, number>;
         const expensesFromApproved = Object.fromEntries(
-          sel.location.costVersions.map((c) => [c.category, c.amountUsd ?? 0]),
+          sel.location.costVersions
+            .filter((c) => c.amountUsd != null)
+            .map((c) => [c.category, c.amountUsd as number]),
         );
-        const expenses = { ...expensesFromApproved, ...expensesFromCustom };
+        const savedLocation = savedByLocationId.get(sel.location.id);
+        const manualCosts = savedLocation ? JSON.parse(savedLocation.manualCosts || "{}") as Record<string, number> : {};
+        const expenses = { ...expensesFromApproved, ...manualCosts, ...expensesFromCustom };
         const result = compareLocationCash(
           {
             estimatedRetiredPay: scenario.estimatedRetiredPay ?? 0,
@@ -51,9 +57,16 @@ export async function GET() {
           expenses,
           ...result,
           provenance: {
-            source: "approved_location_cost_versions + scenario overrides",
-            confidence: "medium",
-            userOverride: Object.keys(expensesFromCustom).length > 0,
+            sources: sel.location.costVersions.map((cost) => ({
+              category: cost.category,
+              sourceType: cost.sourceType,
+              sourceUrl: cost.sourceUrl,
+              sourceDate: cost.sourceDate,
+              lastUpdated: cost.lastUpdated ?? cost.lastVerified,
+              confidence: cost.confidence,
+              manualOverride: cost.isManualOverride,
+            })),
+            userOverride: Object.keys(manualCosts).length > 0 || Object.keys(expensesFromCustom).length > 0,
           },
         };
       });

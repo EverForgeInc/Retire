@@ -54,6 +54,7 @@ model MemberProfile {
   auditEvents             AuditEvent[]
   transitionScenarios     TransitionScenario[]
   incomeScenarios         IncomeScenario[]
+  savedLocations          SavedLocation[]
   evidenceReferences      EvidenceReference[]
   vaConditions            VaCondition[]
   medicalTransitionEvents MedicalTransitionEvent[]
@@ -206,15 +207,39 @@ model TimelineEvent {
 }
 
 model Location {
-  id       String  @id @default(uuid())
-  city     String
-  region   String?
-  country  String
-  currency String
-  active   Boolean @default(true)
+  id          String  @id @default(uuid())
+  city        String
+  region      String?
+  country     String
+  countryCode String?
+  currency    String
+  active      Boolean @default(true)
 
   costVersions LocationCostVersion[]
   selections   ScenarioLocationSelection[]
+  savedBy      SavedLocation[]
+}
+
+model SavedLocation {
+  id              String   @id @default(uuid())
+  memberProfileId String
+  locationId      String?
+  city            String
+  state           String?
+  country         String
+  countryCode     String
+  currency        String
+  latitude        Float?
+  longitude       Float?
+  isPreferred     Boolean  @default(false)
+  manualCosts     String   @default("{}")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  memberProfile MemberProfile @relation(fields: [memberProfileId], references: [id], onDelete: Cascade)
+  location      Location?     @relation(fields: [locationId], references: [id], onDelete: SetNull)
+
+  @@index([memberProfileId, isPreferred])
 }
 
 model LocationCostVersion {
@@ -232,6 +257,9 @@ model LocationCostVersion {
   exchangeRateDate DateTime?
   confidence       String?
   approved         Boolean   @default(false)
+  provenance       String?
+  lastUpdated      DateTime?
+  isManualOverride Boolean   @default(false)
 
   location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
 }
