@@ -50,6 +50,17 @@ export default async function VaPage() {
                   <p className="mt-1 text-sm text-muted-foreground">
                     {condition.bodySystem || "Unspecified system"}
                   </p>
+                  {condition.memberPrimaryTheory ? (
+                    <p className="mt-2 text-sm text-slate-700">
+                      Member theory: {condition.memberPrimaryTheory}
+                      {condition.memberAlternateTheory ? `; alternate: ${condition.memberAlternateTheory}` : ""}
+                    </p>
+                  ) : null}
+                  {condition.representativePrimaryTheory || condition.vaFinalPrimaryDetermination ? (
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Reviewed theory: {condition.representativePrimaryTheory || "Not reviewed"}; VA determination: {condition.vaFinalPrimaryDetermination || "Not determined"}
+                    </p>
+                  ) : null}
                   {condition.functionalImpactNarrative ? (
                     <p className="mt-3 text-sm text-slate-700">{condition.functionalImpactNarrative}</p>
                   ) : null}
@@ -70,7 +81,7 @@ export default async function VaPage() {
             </ul>
           )}
         </Panel>
-        <VaConditionFormGuided />
+        <VaConditionFormGuided conditions={conditions.map(({ id, conditionName }) => ({ id, conditionName }))} />
       </div>
     </AppShell>
   );

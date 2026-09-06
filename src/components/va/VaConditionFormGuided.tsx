@@ -35,6 +35,9 @@ interface FormData {
   severity: string;
   claimStatus: string;
   examStatus: string;
+  memberPrimaryTheory: string;
+  memberAlternateTheory: string;
+  secondaryConditionId: string;
 }
 
 const STEP_LABELS: Record<Step, string> = {
@@ -46,7 +49,7 @@ const STEP_LABELS: Record<Step, string> = {
   "review": "6. Review & Save",
 };
 
-export function VaConditionFormGuided() {
+export function VaConditionFormGuided({ conditions = [] }: { conditions?: { id: string; conditionName: string }[] }) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<Step>("body-part");
   const [error, setError] = useState<string | null>(null);
@@ -67,6 +70,9 @@ export function VaConditionFormGuided() {
     severity: "",
     claimStatus: "",
     examStatus: "",
+    memberPrimaryTheory: "",
+    memberAlternateTheory: "",
+    secondaryConditionId: "",
   });
 
   const steps: Step[] = ["body-part", "condition-info", "impact", "limitations", "status", "review"];
@@ -138,6 +144,9 @@ export function VaConditionFormGuided() {
           functionalImpactNarrative: formData.functionalImpactNarrative,
           claimStatus: formData.claimStatus || undefined,
           examStatus: formData.examStatus || undefined,
+          memberPrimaryTheory: formData.memberPrimaryTheory || undefined,
+          memberAlternateTheory: formData.memberAlternateTheory || undefined,
+          secondaryConditionId: formData.secondaryConditionId || undefined,
           limitations:
             formData.activity && formData.limitationDescription
               ? [
@@ -182,6 +191,9 @@ export function VaConditionFormGuided() {
           severity: "",
           claimStatus: "",
           examStatus: "",
+          memberPrimaryTheory: "",
+          memberAlternateTheory: "",
+          secondaryConditionId: "",
         });
         setCurrentStep("body-part");
       }, 1500);
@@ -428,6 +440,21 @@ export function VaConditionFormGuided() {
                 </SelectContent>
               </Select>
             </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <TheoryField label="My primary relationship theory" name="memberPrimaryTheory" value={formData.memberPrimaryTheory} onChange={handleSelectChange} />
+              <TheoryField label="My alternate relationship theory" name="memberAlternateTheory" value={formData.memberAlternateTheory} onChange={handleSelectChange} />
+            </div>
+            {formData.memberPrimaryTheory === "secondary" ? (
+              <div className="space-y-2">
+                <Label htmlFor="secondaryConditionId">Related VA condition</Label>
+                <select id="secondaryConditionId" value={formData.secondaryConditionId} onChange={(event) => handleSelectChange("secondaryConditionId", event.target.value)} className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm">
+                  <option value="">Select a tracked condition</option>
+                  {conditions.map((condition) => <option key={condition.id} value={condition.id}>{condition.conditionName}</option>)}
+                </select>
+              </div>
+            ) : null}
+            <p className="text-xs text-muted-foreground">These are your selected theories only. They do not mean VA has determined service connection.</p>
           </div>
         )}
 
@@ -565,6 +592,25 @@ function Field({
         value={value}
         onChange={onChange}
       />
+    </div>
+  );
+}
+
+function TheoryField({ label, name, value, onChange }: { label: string; name: string; value: string; onChange: (name: string, value: string) => void }) {
+  const options = [
+    ["direct_in_service", "Direct/In-service"],
+    ["presumptive", "Presumptive"],
+    ["secondary", "Secondary"],
+    ["pre_service_aggravated", "Pre-service aggravated"],
+    ["unsure_needs_review", "Unsure/Needs review"],
+  ];
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={name}>{label}</Label>
+      <select id={name} value={value} onChange={(event) => onChange(name, event.target.value)} className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm">
+        <option value="">Not selected</option>
+        {options.map(([optionValue, optionLabel]) => <option key={optionValue} value={optionValue}>{optionLabel}</option>)}
+      </select>
     </div>
   );
 }

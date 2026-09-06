@@ -66,6 +66,18 @@ export default function OnboardingPage() {
             <Field name="skillbridgeEnd" label="SkillBridge end" type="date" defaultValue="2027-05-15" />
             <Field name="terminalLeaveStart" label="Terminal leave start" type="date" defaultValue="2027-05-22" />
             <Field name="finalDutyDay" label="Final duty day" type="date" defaultValue="2027-05-31" />
+            <Field name="officialSeparationDate" label="Official retirement/separation date" type="date" />
+            <SelectField name="transitionType" label="Transition type" defaultValue="not_yet_determined" options={[
+              ["standard_retirement", "Standard Retirement"],
+              ["voluntary_normal_separation", "Voluntary/Normal Separation"],
+              ["medical_separation", "Medical Separation"],
+              ["medical_retirement", "Medical Retirement"],
+              ["not_yet_determined", "Not Yet Determined"],
+            ]} />
+            <SelectField name="desIdesStatus" label="DES/IDES status" defaultValue="not_applicable" options={[
+              ["not_applicable", "Not applicable"], ["not_started", "Not started"], ["referred", "Referred"],
+              ["in_process", "In process"], ["found_fit", "Found fit"], ["found_unfit", "Found unfit"], ["complete", "Complete"],
+            ]} />
           </div>
           <div className="flex items-center gap-2">
             <Checkbox
@@ -106,6 +118,17 @@ function Field({
     <div className="space-y-2">
       <Label htmlFor={name}>{label}</Label>
       <Input id={name} name={name} type={type} defaultValue={defaultValue} required={required} />
+    </div>
+  );
+}
+
+function SelectField({ name, label, options, defaultValue }: { name: string; label: string; options: string[][]; defaultValue: string }) {
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={name}>{label}</Label>
+      <select id={name} name={name} defaultValue={defaultValue} className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm">
+        {options.map(([value, text]) => <option key={value} value={value}>{text}</option>)}
+      </select>
     </div>
   );
 }

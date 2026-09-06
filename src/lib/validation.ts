@@ -1,6 +1,9 @@
 import { z } from "zod";
 
 const dateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Expected YYYY-MM-DD");
+export const transitionTypes = ["standard_retirement", "voluntary_normal_separation", "medical_separation", "medical_retirement", "not_yet_determined"] as const;
+export const desIdesStatuses = ["not_applicable", "not_started", "referred", "in_process", "found_fit", "found_unfit", "complete"] as const;
+export const relationshipTheories = ["direct_in_service", "presumptive", "secondary", "pre_service_aggravated", "unsure_needs_review"] as const;
 
 /** Reject any accidental SSN-shaped fields at the API boundary. */
 export function assertNoSsnFields(payload: unknown) {
@@ -26,6 +29,9 @@ export const profileUpdateSchema = z.object({
   installation: z.string().optional(),
   timezone: z.string().optional(),
   projectedRetirementDate: dateString,
+  officialSeparationDate: dateString.nullable().optional(),
+  transitionType: z.enum(transitionTypes).optional(),
+  desIdesStatus: z.enum(desIdesStatuses).optional(),
   skillbridgeStart: dateString.nullable().optional(),
   skillbridgeEnd: dateString.nullable().optional(),
   terminalLeaveStart: dateString.nullable().optional(),
@@ -87,7 +93,18 @@ export const vaConditionSchema = z.object({
   treatmentHistory: z.string().optional(),
   claimStatus: z.string().optional(),
   examStatus: z.string().optional(),
+  memberPrimaryTheory: z.enum(relationshipTheories).optional(),
+  memberAlternateTheory: z.enum(relationshipTheories).optional(),
+  representativePrimaryTheory: z.enum(relationshipTheories).nullable().optional(),
+  representativeAlternateTheory: z.enum(relationshipTheories).nullable().optional(),
+  vaFinalPrimaryDetermination: z.enum(relationshipTheories).nullable().optional(),
+  vaFinalAlternateDetermination: z.enum(relationshipTheories).nullable().optional(),
+  secondaryConditionId: z.string().uuid().nullable().optional(),
   limitations: z.array(functionalLimitationSchema).optional(),
+}).superRefine((value, ctx) => {
+  if (value.memberPrimaryTheory === "secondary" && !value.secondaryConditionId) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "A secondary theory must reference another condition", path: ["secondaryConditionId"] });
+  }
 });
 
 export const digestPreferencesSchema = z
@@ -112,6 +129,12 @@ export const digestPreferencesSchema = z
       });
     }
   });
+  
+export const medicalTransitionEventSchema = z.object({
+  eventType: z.enum(["referred", "case_opened", "medical_evaluation", "found_fit", "found_unfit", "separation_or_retirement_ordered", "case_closed"]),
+  occurredAt: dateString,
+  notes: z.string().optional(),
+});
 
 export const incomeScenarioSchema = z.object({
   name: z.string().min(1),

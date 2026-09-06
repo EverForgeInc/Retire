@@ -36,6 +36,9 @@ model MemberProfile {
   installation            String?
   timezone                String?   @default("America/New_York")
   projectedRetirementDate DateTime
+  officialSeparationDate  DateTime?
+  transitionType          String    @default("not_yet_determined")
+  desIdesStatus           String    @default("not_applicable")
   skillbridgeStart        DateTime?
   skillbridgeEnd          DateTime?
   terminalLeaveStart      DateTime?
@@ -45,14 +48,15 @@ model MemberProfile {
   createdAt               DateTime  @default(now())
   updatedAt               DateTime  @updatedAt
 
-  user                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tasks               MemberTask[]
-  attachments         Attachment[]
-  auditEvents         AuditEvent[]
-  transitionScenarios TransitionScenario[]
-  incomeScenarios     IncomeScenario[]
-  evidenceReferences  EvidenceReference[]
-  vaConditions        VaCondition[]
+  user                    User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks                   MemberTask[]
+  attachments             Attachment[]
+  auditEvents             AuditEvent[]
+  transitionScenarios     TransitionScenario[]
+  incomeScenarios         IncomeScenario[]
+  evidenceReferences      EvidenceReference[]
+  vaConditions            VaCondition[]
+  medicalTransitionEvents MedicalTransitionEvent[]
 }
 
 model ChecklistTemplate {
@@ -333,26 +337,47 @@ model EvidenceReference {
 }
 
 model VaCondition {
-  id                        String   @id @default(uuid())
-  memberProfileId           String
-  conditionName             String
-  bodySystem                String?
-  diagnosisStatus           String?
-  onsetOrServiceEvent       String?
-  symptoms                  String?
-  flareUps                  String?
-  functionalImpactNarrative String?
-  treatmentHistory          String?
-  claimStatus               String?
-  examStatus                String?
-  decisionRating            Float?
-  createdAt                 DateTime @default(now())
-  updatedAt                 DateTime @updatedAt
+  id                            String   @id @default(uuid())
+  memberProfileId               String
+  conditionName                 String
+  bodySystem                    String?
+  diagnosisStatus               String?
+  onsetOrServiceEvent           String?
+  symptoms                      String?
+  flareUps                      String?
+  functionalImpactNarrative     String?
+  treatmentHistory              String?
+  claimStatus                   String?
+  examStatus                    String?
+  memberPrimaryTheory           String?
+  memberAlternateTheory         String?
+  representativePrimaryTheory   String?
+  representativeAlternateTheory String?
+  vaFinalPrimaryDetermination   String?
+  vaFinalAlternateDetermination String?
+  secondaryConditionId          String?
+  createdAt                     DateTime @default(now())
+  updatedAt                     DateTime @updatedAt
 
-  memberProfile MemberProfile            @relation(fields: [memberProfileId], references: [id], onDelete: Cascade)
-  limitations   VaFunctionalLimitation[]
+  memberProfile       MemberProfile            @relation(fields: [memberProfileId], references: [id], onDelete: Cascade)
+  limitations         VaFunctionalLimitation[]
+  secondaryCondition  VaCondition?             @relation("SecondaryCondition", fields: [secondaryConditionId], references: [id])
+  secondaryConditions VaCondition[]            @relation("SecondaryCondition")
 
   @@index([memberProfileId])
+}
+
+model MedicalTransitionEvent {
+  id              String   @id @default(uuid())
+  memberProfileId String
+  eventType       String
+  occurredAt      DateTime
+  notes           String?
+  createdAt       DateTime @default(now())
+
+  memberProfile MemberProfile @relation(fields: [memberProfileId], references: [id], onDelete: Cascade)
+
+  @@index([memberProfileId, occurredAt])
 }
 
 model VaFunctionalLimitation {
