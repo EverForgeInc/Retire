@@ -28,4 +28,24 @@ describe("privacy guards", () => {
     expect(documents).toMatch(/Medical-file uploads are disabled/);
     expect(documents).not.toMatch(/input type=\"file\".*medical/i);
   });
+
+  it("keeps VA narratives out of audit payloads", () => {
+    const route = readFileSync(
+      path.join(process.cwd(), "src", "app", "api", "va-conditions", "route.ts"),
+      "utf8",
+    );
+    expect(route).not.toMatch(/afterValue:\s*data/);
+    expect(route).toMatch(/conditionName/);
+  });
+
+  it("has member-owned VA update and delete routes", () => {
+    const route = readFileSync(
+      path.join(process.cwd(), "src", "app", "api", "va-conditions", "[id]", "route.ts"),
+      "utf8",
+    );
+    expect(route).toMatch(/memberProfileId: profile\.id/);
+    expect(route).toMatch(/export async function PUT/);
+    expect(route).toMatch(/export async function DELETE/);
+    expect(route).toMatch(/secondaryConditionId === id/);
+  });
 });
