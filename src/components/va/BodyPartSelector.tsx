@@ -16,32 +16,43 @@ export type BodyPart = {
 
 export const BODY_PARTS: BodyPart[] = [
   // Head & Neck
-  { id: "head", name: "Head", bodySystem: "neurological", region: "head", description: "Head/brain trauma or conditions" },
-  { id: "neck", name: "Neck", bodySystem: "musculoskeletal", region: "neck", description: "Neck injuries or cervical issues" },
-  { id: "eyes", name: "Eyes", bodySystem: "sensory", region: "head", description: "Vision or eye conditions" },
-  { id: "ears", name: "Ears", bodySystem: "sensory", region: "head", description: "Hearing or ear-related issues" },
+  { id: "head", name: "Head / Brain", bodySystem: "neurological", region: "head", description: "Head, brain, or scalp conditions" },
+  { id: "face", name: "Face", bodySystem: "sensory", region: "face", description: "Facial conditions or injury" },
+  { id: "jaw-tmj", name: "Jaw / TMJ", bodySystem: "dental", region: "jaw", description: "Jaw, bite, or temporomandibular issues" },
+  { id: "eyes", name: "Eyes / Vision", bodySystem: "sensory", region: "vision", description: "Left, right, or bilateral vision conditions" },
+  { id: "ears", name: "Ears / Hearing", bodySystem: "sensory", region: "hearing", description: "Left, right, or bilateral hearing conditions" },
+  { id: "nose-sinus", name: "Nose / Sinus", bodySystem: "respiratory", region: "nose-sinus", description: "Nasal or sinus conditions" },
 
   // Upper Body
-  { id: "shoulder", name: "Shoulder", bodySystem: "musculoskeletal", region: "shoulder", description: "Shoulder joint/rotator cuff" },
-  { id: "arm", name: "Arm", bodySystem: "musculoskeletal", region: "arm", description: "Upper arm injuries" },
-  { id: "elbow", name: "Elbow", bodySystem: "musculoskeletal", region: "arm", description: "Elbow joint/tennis elbow" },
-  { id: "wrist-hand", name: "Wrist & Hand", bodySystem: "musculoskeletal", region: "hand", description: "Wrist, hand, or finger conditions" },
-  { id: "chest", name: "Chest", bodySystem: "cardiopulmonary", region: "chest", description: "Chest wall or respiratory issues" },
-  { id: "back-upper", name: "Upper Back", bodySystem: "musculoskeletal", region: "back", description: "Upper/mid-back pain" },
+  { id: "shoulder", name: "Shoulder", bodySystem: "musculoskeletal", region: "shoulder", description: "Left, right, or bilateral shoulder conditions" },
+  { id: "upper-arm", name: "Upper Arm", bodySystem: "musculoskeletal", region: "upper-arm", description: "Upper arm injuries" },
+  { id: "elbow", name: "Elbow", bodySystem: "musculoskeletal", region: "elbow", description: "Left or right elbow conditions" },
+  { id: "forearm", name: "Forearm", bodySystem: "musculoskeletal", region: "forearm", description: "Forearm conditions" },
+  { id: "wrist", name: "Wrist", bodySystem: "musculoskeletal", region: "wrist", description: "Left or right wrist conditions" },
+  { id: "hand-fingers", name: "Hand / Fingers", bodySystem: "musculoskeletal", region: "hand", description: "Hand, thumb, or finger conditions" },
+  { id: "chest", name: "Chest / Ribs", bodySystem: "cardiopulmonary", region: "chest", description: "Chest wall, rib, or respiratory issues" },
+  { id: "back-upper", name: "Thoracic / Upper Back", bodySystem: "musculoskeletal", region: "thoracic-spine", description: "Upper or mid-back conditions" },
 
   // Core & Lower Back
-  { id: "back-lower", name: "Lower Back", bodySystem: "musculoskeletal", region: "back", description: "Lower back/lumbar spine issues" },
+  { id: "back-lower", name: "Lumbar / Lower Back", bodySystem: "musculoskeletal", region: "lumbar-spine", description: "Lower back or lumbar spine issues" },
   { id: "abdomen", name: "Abdomen", bodySystem: "gastrointestinal", region: "abdomen", description: "GI or abdominal conditions" },
+  { id: "pelvis-groin", name: "Pelvis / Groin", bodySystem: "genitourinary", region: "pelvis", description: "Pelvic, groin, or reproductive conditions" },
 
   // Lower Body
-  { id: "hip", name: "Hip", bodySystem: "musculoskeletal", region: "hip", description: "Hip joint or sciatic issues" },
-  { id: "knee", name: "Knee", bodySystem: "musculoskeletal", region: "leg", description: "Knee joint or ACL injuries" },
-  { id: "ankle", name: "Ankle", bodySystem: "musculoskeletal", region: "foot", description: "Ankle sprains or arthritis" },
-  { id: "foot", name: "Foot", bodySystem: "musculoskeletal", region: "foot", description: "Foot pain or plantar issues" },
-  { id: "leg", name: "Leg", bodySystem: "musculoskeletal", region: "leg", description: "Shin splints or calf issues" },
+  { id: "hip", name: "Hip", bodySystem: "musculoskeletal", region: "hip", description: "Left, right, or bilateral hip conditions" },
+  { id: "thigh", name: "Thigh", bodySystem: "musculoskeletal", region: "thigh", description: "Thigh conditions" },
+  { id: "knee", name: "Knee", bodySystem: "musculoskeletal", region: "knee", description: "Left, right, or bilateral knee conditions" },
+  { id: "shin-calf", name: "Shin / Calf", bodySystem: "musculoskeletal", region: "lower-leg", description: "Shin or calf conditions" },
+  { id: "ankle", name: "Ankle", bodySystem: "musculoskeletal", region: "ankle", description: "Left or right ankle conditions" },
+  { id: "heel-foot", name: "Heel / Foot", bodySystem: "musculoskeletal", region: "foot", description: "Heel, arch, ball, or foot conditions" },
+  { id: "toes", name: "Big Toe / Toes", bodySystem: "musculoskeletal", region: "toes", description: "Big toe or other toe conditions" },
 
   // Systemic
-  { id: "mental-health", name: "Mental Health", bodySystem: "neurological", region: "mental", description: "PTSD, anxiety, depression" },
+  { id: "mental-health", name: "Mental Health", bodySystem: "mental-health", region: "mental", description: "PTSD, anxiety, depression, or other mental health concerns" },
+  { id: "sleep", name: "Sleep", bodySystem: "sleep", region: "sleep", description: "Sleep conditions or disturbances" },
+  { id: "respiratory", name: "Respiratory", bodySystem: "respiratory", region: "respiratory", description: "Breathing or lung conditions" },
+  { id: "digestive", name: "Digestive", bodySystem: "gastrointestinal", region: "digestive", description: "Digestive system conditions" },
+  { id: "genitourinary", name: "Genitourinary / Reproductive", bodySystem: "genitourinary", region: "genitourinary", description: "Genitourinary or reproductive conditions" },
   { id: "skin", name: "Skin", bodySystem: "dermatological", region: "skin", description: "Rashes, eczema, or scarring" },
 ];
 
@@ -337,6 +348,7 @@ export function BodyPartSelector({ selectedPart, onSelect }: BodyPartSelectorPro
               {BODY_PARTS.map((part) => (
                 <button
                   key={part.id}
+                  type="button"
                   onClick={() => onSelect(part)}
                   onMouseEnter={() => setHoveredPart(part.region)}
                   onMouseLeave={() => setHoveredPart(null)}
