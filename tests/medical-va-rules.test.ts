@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { bddWindow, isBddOpen, parseDateOnly, toDateOnly } from "@/lib/rules/date-engine";
 import { shouldSuppressTask } from "@/lib/tasks";
 import { statusByEvent } from "@/lib/rules/medical-transition";
-import { vaConditionSchema } from "@/lib/validation";
+import { profileUpdateSchema, vaConditionSchema } from "@/lib/validation";
 
 describe("medical transition and VA rules", () => {
   it("anchors BDD dates to the official separation date", () => {
@@ -20,6 +20,17 @@ describe("medical transition and VA rules", () => {
     expect(shouldSuppressTask({ externalKey: "va_bdd_window", title: "Confirm BDD eligibility", desIdesStatus: "not_applicable" })).toBe(false);
     expect(shouldSuppressTask({ externalKey: "ides_referral", title: "Record IDES referral", transitionType: "medical_retirement" })).toBe(false);
     expect(shouldSuppressTask({ externalKey: "ides_referral", title: "Record IDES referral", transitionType: "standard_retirement" })).toBe(true);
+  });
+
+  it("allows an early DES/IDES state without an official separation date", () => {
+    expect(profileUpdateSchema.parse({
+      projectedRetirementDate: "2027-06-01",
+      officialSeparationDate: null,
+      desIdesStatus: "referred",
+    })).toMatchObject({
+      officialSeparationDate: null,
+      desIdesStatus: "referred",
+    });
   });
 
   it("requires a referenced condition for a member secondary theory", () => {
