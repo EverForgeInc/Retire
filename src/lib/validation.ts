@@ -3,6 +3,7 @@ import { z } from "zod";
 const dateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Expected YYYY-MM-DD");
 export const transitionTypes = ["standard_retirement", "voluntary_normal_separation", "medical_separation", "medical_retirement", "not_yet_determined"] as const;
 export const desIdesStatuses = ["not_applicable", "not_started", "referred", "in_process", "peb_in_progress", "awaiting_final_decision", "found_fit", "found_unfit", "complete"] as const;
+export const claimWorkflowStates = ["not_started", "planning", "bdd_eligible", "bdd_filed", "fdc", "standard_claim", "ides_controlled", "claim_submitted", "exams_evidence_in_progress", "decision_pending", "complete"] as const;
 export const relationshipTheories = ["direct_in_service", "presumptive", "secondary", "pre_service_aggravated", "unsure_needs_review"] as const;
 
 /** Reject any accidental SSN-shaped fields at the API boundary. */
@@ -32,6 +33,7 @@ export const profileUpdateSchema = z.object({
   officialSeparationDate: dateString.nullable().optional(),
   transitionType: z.enum(transitionTypes).optional(),
   desIdesStatus: z.enum(desIdesStatuses).optional(),
+  claimWorkflowState: z.enum(claimWorkflowStates).optional(),
   skillbridgeStart: dateString.nullable().optional(),
   skillbridgeEnd: dateString.nullable().optional(),
   terminalLeaveStart: dateString.nullable().optional(),

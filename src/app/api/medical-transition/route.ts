@@ -33,6 +33,7 @@ export async function POST(request: Request) {
       officialSeparationDate: profile.officialSeparationDate ?? undefined,
       transitionType: profile.transitionType,
       desIdesStatus,
+      claimWorkflowState: profile.claimWorkflowState,
       userId: session.userId,
     });
     await writeAudit({

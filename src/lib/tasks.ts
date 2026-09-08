@@ -7,11 +7,13 @@ export function shouldSuppressTask(params: {
   title: string;
   transitionType?: string;
   desIdesStatus?: string;
+  claimWorkflowState?: string;
 }) {
   const medicalTransition = params.transitionType === "medical_separation" || params.transitionType === "medical_retirement";
   const activeIdes = params.desIdesStatus && params.desIdesStatus !== "not_applicable" && params.desIdesStatus !== "complete";
+  const postFilingState = ["bdd_filed", "fdc", "standard_claim", "claim_submitted", "exams_evidence_in_progress", "decision_pending", "complete"].includes(params.claimWorkflowState ?? "");
   const text = `${params.externalKey} ${params.title}`.toLowerCase();
-  return (!medicalTransition && /\b(des|ides)\b/.test(text)) || (Boolean(activeIdes) && text.includes("bdd"));
+  return (!medicalTransition && /\b(des|ides)\b/.test(text)) || (Boolean(activeIdes) && text.includes("bdd")) || (postFilingState && text.includes("bdd"));
 }
 
 export function getTaskStatusAfterApplicabilityChange(status: string, autoSuppressed: boolean) {
@@ -24,6 +26,7 @@ export async function generateMemberTasks(params: {
   userId?: string;
   transitionType?: string;
   desIdesStatus?: string;
+  claimWorkflowState?: string;
   officialSeparationDate?: Date | string;
 }) {
   const retirementDate = parseDateOnly(params.officialSeparationDate ?? params.retirementDate);
@@ -120,6 +123,7 @@ export async function recalculateOnRetirementDateChange(params: {
   userId: string;
   transitionType?: string;
   desIdesStatus?: string;
+  claimWorkflowState?: string;
   officialSeparationDate?: Date | string;
 }) {
   await writeAudit({
@@ -138,6 +142,7 @@ export async function recalculateOnRetirementDateChange(params: {
     userId: params.userId,
     transitionType: params.transitionType,
     desIdesStatus: params.desIdesStatus,
+    claimWorkflowState: params.claimWorkflowState,
     officialSeparationDate: params.officialSeparationDate,
   });
 }

@@ -20,6 +20,7 @@ function serializeProfile(profile: NonNullable<Awaited<ReturnType<typeof getSess
     officialSeparationDate: profile.officialSeparationDate ? toDateOnly(profile.officialSeparationDate) : null,
     transitionType: profile.transitionType,
     desIdesStatus: profile.desIdesStatus,
+    claimWorkflowState: profile.claimWorkflowState,
     skillbridgeStart: profile.skillbridgeStart ? toDateOnly(profile.skillbridgeStart) : null,
     skillbridgeEnd: profile.skillbridgeEnd ? toDateOnly(profile.skillbridgeEnd) : null,
     terminalLeaveStart: profile.terminalLeaveStart ? toDateOnly(profile.terminalLeaveStart) : null,
@@ -61,6 +62,7 @@ export async function PUT(request: Request) {
       officialSeparationDate: data.officialSeparationDate ? parseDateOnly(data.officialSeparationDate) : null,
       transitionType: data.transitionType,
       desIdesStatus: data.desIdesStatus,
+      claimWorkflowState: data.claimWorkflowState,
       skillbridgeStart: data.skillbridgeStart ? parseDateOnly(data.skillbridgeStart) : null,
       skillbridgeEnd: data.skillbridgeEnd ? parseDateOnly(data.skillbridgeEnd) : null,
       terminalLeaveStart: data.terminalLeaveStart
@@ -82,6 +84,7 @@ export async function PUT(request: Request) {
         userId: session.userId,
         transitionType: profile.transitionType,
         desIdesStatus: profile.desIdesStatus,
+        claimWorkflowState: profile.claimWorkflowState,
         officialSeparationDate: profile.officialSeparationDate ?? retirementDate,
       });
       await writeAudit({
@@ -106,6 +109,7 @@ export async function PUT(request: Request) {
           userId: session.userId,
           transitionType: profile.transitionType,
           desIdesStatus: profile.desIdesStatus,
+          claimWorkflowState: profile.claimWorkflowState,
           officialSeparationDate: profile.officialSeparationDate ?? retirementDate,
         });
       } else {
@@ -115,6 +119,7 @@ export async function PUT(request: Request) {
           userId: session.userId,
           transitionType: profile.transitionType,
           desIdesStatus: profile.desIdesStatus,
+          claimWorkflowState: profile.claimWorkflowState,
           officialSeparationDate: profile.officialSeparationDate ?? retirementDate,
         });
       }
