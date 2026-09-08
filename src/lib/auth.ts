@@ -1,7 +1,7 @@
 import { compare, hash } from "bcryptjs";
-import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/db";
+import { createSessionToken as createSignedSessionToken, verifySessionToken } from "@/lib/session-token";
 
 const COOKIE_NAME = "milretire_session";
 const SESSION_DAYS = 14;
@@ -28,16 +28,16 @@ export async function verifyPassword(password: string, passwordHash: string) {
 }
 
 export async function createSessionToken(user: SessionUser) {
-  return new SignJWT({
-    email: user.email,
-    displayName: user.displayName,
-    role: user.role,
-  })
-    .setProtectedHeader({ alg: "HS256" })
-    .setSubject(user.userId)
-    .setIssuedAt()
-    .setExpirationTime(`${SESSION_DAYS}d`)
-    .sign(getSecret());
+  return createSignedSessionToken(
+    {
+      userId: user.userId,
+      email: user.email,
+      displayName: user.displayName,
+      role: user.role,
+    },
+    new TextDecoder().decode(getSecret()),
+    SESSION_DAYS,
+  );
 }
 
 export async function setSessionCookie(token: string) {
@@ -61,7 +61,7 @@ export async function getSession(): Promise<SessionUser | null> {
   const token = jar.get(COOKIE_NAME)?.value;
   if (!token) return null;
   try {
-    const { payload } = await jwtVerify(token, getSecret());
+    const payload = await verifySessionToken(token, new TextDecoder().decode(getSecret()));
     if (!payload.sub || typeof payload.email !== "string") return null;
     return {
       userId: payload.sub,

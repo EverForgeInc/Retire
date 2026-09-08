@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { jwtVerify } from "jose";
+import { verifySessionToken } from "@/lib/session-token";
 
 const PUBLIC_PATHS = ["/login", "/api/auth/login"];
 
@@ -21,7 +21,7 @@ export async function middleware(request: NextRequest) {
   if (isPublic) {
     if (token && secret && pathname === "/login") {
       try {
-        await jwtVerify(token, new TextEncoder().encode(secret));
+        await verifySessionToken(token, secret);
         return NextResponse.redirect(new URL("/dashboard", request.url));
       } catch {
         return NextResponse.next();
@@ -38,7 +38,7 @@ export async function middleware(request: NextRequest) {
   }
 
   try {
-    await jwtVerify(token, new TextEncoder().encode(secret));
+    await verifySessionToken(token, secret);
     return NextResponse.next();
   } catch {
     if (pathname.startsWith("/api/")) {
