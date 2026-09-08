@@ -26,22 +26,26 @@ export async function buildDashboard(memberProfileId: string) {
   const overdue = applicable.filter(
     (t) =>
       t.status !== "complete" &&
-      t.calculatedEnd != null &&
-      startOfDay(t.calculatedEnd) < today,
+      (t.followUpDate ?? t.calculatedEnd) != null &&
+      startOfDay(t.followUpDate ?? t.calculatedEnd!) < today,
   );
   const waiting = applicable.filter((t) => t.status === "waiting");
   const dueSoon = applicable.filter((t) => {
     if (t.status === "complete") return false;
-    if (!t.calculatedEnd) return false;
-    const end = startOfDay(t.calculatedEnd);
+    const dueDate = t.followUpDate ?? t.calculatedEnd;
+    if (!dueDate) return false;
+    const end = startOfDay(dueDate);
     return end >= today && end <= in7;
   });
   const upcoming = applicable
     .filter((t) => t.status !== "complete")
-    .filter((t) => t.calculatedEnd == null || startOfDay(t.calculatedEnd) >= today)
+    .filter((t) => {
+      const dueDate = t.followUpDate ?? t.calculatedEnd;
+      return dueDate == null || startOfDay(dueDate) >= today;
+    })
     .sort((a, b) => {
-      const ae = a.calculatedEnd?.getTime() ?? Number.MAX_SAFE_INTEGER;
-      const be = b.calculatedEnd?.getTime() ?? Number.MAX_SAFE_INTEGER;
+      const ae = (a.followUpDate ?? a.calculatedEnd)?.getTime() ?? Number.MAX_SAFE_INTEGER;
+      const be = (b.followUpDate ?? b.calculatedEnd)?.getTime() ?? Number.MAX_SAFE_INTEGER;
       return ae - be;
     })
     .slice(0, 5);
@@ -127,6 +131,9 @@ export function serializeTask(task: {
   calculatedStart: Date | null;
   calculatedEnd: Date | null;
   dateCompleted: Date | null;
+  waitingOnWho: string | null;
+  waitingOnWhat: string | null;
+  followUpDate: Date | null;
   ownerLabel: string | null;
   requiredLevel: string | null;
   notes: string | null;
@@ -143,6 +150,9 @@ export function serializeTask(task: {
     calculatedStart: task.calculatedStart ? toDateOnly(task.calculatedStart) : null,
     calculatedEnd: task.calculatedEnd ? toDateOnly(task.calculatedEnd) : null,
     dateCompleted: task.dateCompleted ? toDateOnly(task.dateCompleted) : null,
+    waitingOnWho: task.waitingOnWho,
+    waitingOnWhat: task.waitingOnWhat,
+    followUpDate: task.followUpDate ? toDateOnly(task.followUpDate) : null,
     ownerLabel: task.ownerLabel,
     requiredLevel: task.requiredLevel,
     notes: task.notes,

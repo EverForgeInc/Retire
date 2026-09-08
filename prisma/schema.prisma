@@ -113,6 +113,9 @@ model MemberTask {
   dateOverride      Boolean   @default(false)
   status            String    @default("not_started")
   autoSuppressed    Boolean   @default(false)
+  waitingOnWho      String?
+  waitingOnWhat     String?
+  followUpDate      DateTime?
   completedAt       DateTime?
   completedByUserId String?
   dateCompleted     DateTime?

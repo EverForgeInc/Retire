@@ -21,6 +21,9 @@ type Task = {
   status: string;
   dateCompleted: string | null;
   notes: string | null;
+  waitingOnWho: string | null;
+  waitingOnWhat: string | null;
+  followUpDate: string | null;
 };
 
 export function TaskDetailForm({ task }: { task: Task }) {
@@ -43,6 +46,9 @@ export function TaskDetailForm({ task }: { task: Task }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         status,
+        waitingOnWho: form.get("waitingOnWho") || null,
+        waitingOnWhat: form.get("waitingOnWhat") || null,
+        followUpDate: form.get("followUpDate") || null,
         dateCompleted: form.get("dateCompleted") || null,
         notes: form.get("notes"),
       }),
@@ -104,6 +110,18 @@ export function TaskDetailForm({ task }: { task: Task }) {
               <SelectItem value="not_applicable">Not applicable</SelectItem>
             </SelectContent>
           </Select>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="waitingOnWho">Waiting on</Label>
+          <Input id="waitingOnWho" name="waitingOnWho" defaultValue={task.waitingOnWho ?? ""} placeholder="Person or office" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="waitingOnWhat">Waiting for</Label>
+          <Input id="waitingOnWhat" name="waitingOnWhat" defaultValue={task.waitingOnWhat ?? ""} placeholder="Response or item" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="followUpDate">Follow-up date</Label>
+          <Input id="followUpDate" name="followUpDate" type="date" defaultValue={task.followUpDate ?? ""} />
         </div>
         <div className="space-y-2">
           <Label htmlFor="dateCompleted">Optional completion date</Label>
