@@ -9,6 +9,39 @@ import {
   type TimelineEventType,
 } from "@/lib/rules/leave";
 import { toDateOnly } from "@/lib/rules/date-engine";
+import { parseDateOnly } from "@/lib/rules/date-engine";
+import { transitionScenarioSchema } from "@/lib/validation";
+
+export async function POST(request: Request) {
+  try {
+    const { profile } = await requireMemberContext();
+    const data = transitionScenarioSchema.parse(await request.json());
+    const scenario = await prisma.transitionScenario.create({
+      data: {
+        memberProfileId: profile.id,
+        name: data.name,
+        projectedRetirementDate: profile.projectedRetirementDate,
+        currentLeaveBalance: data.currentLeaveBalance ?? 30,
+        leaveAccrualPerMonth: data.leaveAccrualPerMonth ?? 2.5,
+        maximumSkillbridgeDays: data.maximumSkillbridgeDays,
+        policyCombinationLimitDays: data.policyCombinationLimitDays,
+        events: {
+          create: (data.events ?? []).map((event) => ({
+            eventType: event.eventType,
+            title: event.title,
+            startDate: parseDateOnly(event.startDate),
+            endDate: parseDateOnly(event.endDate),
+            chargeableLeave: isChargeableLeave(event.eventType, event.chargeableLeave),
+          })),
+        },
+      },
+      include: { events: { orderBy: { startDate: "asc" } } },
+    });
+    return jsonOk({ scenario: { id: scenario.id, name: scenario.name, eventCount: scenario.events.length } }, { status: 201 });
+  } catch (error) {
+    return handleRouteError(error);
+  }
+}
 
 export async function GET() {
   try {

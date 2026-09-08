@@ -193,3 +193,28 @@ export const rateImportSchema = z.object({
   sourceUrl: z.string().url(),
   rows: z.array(z.record(z.union([z.string(), z.number()]))).min(1),
 });
+
+const transitionEventSchema = z.object({
+  eventType: z.enum([
+    "duty", "ordinary_leave", "terminal_leave", "ptdy", "skillbridge", "tdy",
+    "outprocessing", "medical_va", "weekend", "federal_holiday", "final_out", "retirement",
+    "retirement_ceremony",
+  ]),
+  title: z.string().trim().min(1),
+  startDate: dateString,
+  endDate: dateString,
+  chargeableLeave: z.boolean().optional(),
+}).superRefine((value, ctx) => {
+  if (value.endDate < value.startDate) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Event endDate must be on or after startDate", path: ["endDate"] });
+  }
+});
+
+export const transitionScenarioSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  currentLeaveBalance: z.number().finite().min(0).max(120).optional(),
+  leaveAccrualPerMonth: z.number().finite().min(0).max(10).optional(),
+  maximumSkillbridgeDays: z.number().int().min(0).max(365).nullable().optional(),
+  policyCombinationLimitDays: z.number().int().min(0).max(365).nullable().optional(),
+  events: z.array(transitionEventSchema).max(100).optional(),
+});
