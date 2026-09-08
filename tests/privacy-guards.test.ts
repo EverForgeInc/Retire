@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { csvEscape } from "@/lib/rules/csv";
 import { handleRouteError, PublicApiError } from "@/lib/api";
 import { assertNoSsnFields } from "@/lib/validation";
+import { savedLocationSchema } from "@/lib/validation";
+import { unavailableGeocodingProvider, unavailableCostOfLivingProvider } from "@/lib/providers/location";
 import { readFileSync } from "fs";
 import path from "path";
 
@@ -12,6 +14,19 @@ describe("privacy guards", () => {
     expect(csvEscape("-1")).toBe("'-1");
     expect(csvEscape("@cmd")).toBe("'@cmd");
     expect(csvEscape('normal, "quoted"')).toBe('"normal, ""quoted"""');
+  });
+
+  it("keeps manual locations and unavailable provider values explicit", async () => {
+    const location = savedLocationSchema.parse({
+      city: "Anywhere",
+      country: "United States",
+      countryCode: "us",
+      currency: "usd",
+      manualCosts: { housing: 1800 },
+    });
+    expect(location).toMatchObject({ countryCode: "US", currency: "USD", manualCosts: { housing: 1800 } });
+    expect(await unavailableGeocodingProvider.geocode({ city: location.city, country: location.country, countryCode: location.countryCode })).toBeNull();
+    expect(await unavailableCostOfLivingProvider.getMonthlyCosts({ city: location.city, country: location.country, countryCode: location.countryCode })).toEqual([]);
   });
   it("rejects SSN-shaped payload keys", () => {
     expect(() => assertNoSsnFields({ last4: "1234" })).toThrow(/Forbidden field/);

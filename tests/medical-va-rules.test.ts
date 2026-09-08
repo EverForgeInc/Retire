@@ -3,7 +3,7 @@ import { bddWindow, isBddOpen, parseDateOnly, toDateOnly } from "@/lib/rules/dat
 import { getTaskStatusAfterApplicabilityChange, shouldSuppressTask } from "@/lib/tasks";
 import { statusByEvent } from "@/lib/rules/medical-transition";
 import { getVaClaimRoute } from "@/lib/rules/va-claim";
-import { profileUpdateSchema, vaConditionSchema } from "@/lib/validation";
+import { profileUpdateSchema, taskUpdateSchema, vaConditionSchema } from "@/lib/validation";
 
 describe("medical transition and VA rules", () => {
   it("anchors BDD dates to the official separation date", () => {
@@ -30,11 +30,16 @@ describe("medical transition and VA rules", () => {
     expect(getVaClaimRoute({ separationDate: "2027-06-01", today: parseDateOnly("2027-03-04"), claimFiled: false })).toBe("standard");
     expect(getVaClaimRoute({ separationDate: "2027-06-01", today: parseDateOnly("2027-01-01"), claimFiled: true })).toBe("filed");
     expect(getVaClaimRoute({ separationDate: "2027-06-01", today: parseDateOnly("2027-01-01"), claimFiled: false, desIdesStatus: "in_process" })).toBe("ides");
+    expect(getVaClaimRoute({ separationDate: "2027-06-01", today: parseDateOnly("2026-10-01"), claimFiled: false })).toBe("pre_bdd");
+    expect(getVaClaimRoute({ separationDate: "2027-06-01", today: parseDateOnly("2027-01-01"), claimFiled: true, desIdesStatus: "in_process" })).toBe("ides");
   });
 
   it("restores rule-suppressed tasks without overriding member-selected Not Applicable", () => {
     expect(getTaskStatusAfterApplicabilityChange("not_applicable", true)).toBe("not_started");
     expect(getTaskStatusAfterApplicabilityChange("not_applicable", false)).toBe("not_applicable");
+    expect(getTaskStatusAfterApplicabilityChange("complete", true)).toBe("complete");
+    expect(getTaskStatusAfterApplicabilityChange("waiting", true)).toBe("waiting");
+    expect(taskUpdateSchema.parse({ status: "waiting", waitingOnWho: "Personnel", followUpDate: "2027-01-01" })).toMatchObject({ status: "waiting" });
   });
 
   it("allows an early DES/IDES state without an official separation date", () => {
