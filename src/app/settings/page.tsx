@@ -62,6 +62,9 @@ export default async function SettingsPage() {
             <a href="/api/exports/csv" className={buttonVariants({ variant: "secondary" })} download>
               Export CSV
             </a>
+            <a href="/api/exports/account" className={buttonVariants({ variant: "outline" })} download>
+              Export account data
+            </a>
             <form action="/api/exports/pdf" method="post">
               <button type="submit" className={buttonVariants({ variant: "outline" })}>
                 Printable checklist
