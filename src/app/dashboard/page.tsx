@@ -32,9 +32,10 @@ export default async function DashboardPage() {
   const topLocation = income?.locations
     .map((sel) => {
       const expenses = {
-        ...Object.fromEntries(sel.location.costVersions.map((c) => [c.category, c.amountUsd ?? 0])),
+        ...Object.fromEntries(sel.location.costVersions.filter((c) => c.amountUsd != null).map((c) => [c.category, c.amountUsd as number])),
         ...JSON.parse(sel.customExpenses || "{}"),
       };
+      if (Object.keys(expenses).length === 0) return null;
       const cash = compareLocationCash(
         {
           estimatedRetiredPay: income.estimatedRetiredPay ?? 0,
@@ -48,6 +49,7 @@ export default async function DashboardPage() {
         totalIncome: (income.estimatedRetiredPay ?? 0) + (income.memberVaPay ?? 0),
       };
     })
+    .filter((location): location is NonNullable<typeof location> => location !== null)
     .sort((a, b) => b.remainingMonthlyCash - a.remainingMonthlyCash)[0];
 
   const vaConditions = await prisma.vaCondition.count({
@@ -63,14 +65,14 @@ export default async function DashboardPage() {
         complete: dashboard.metrics.completeCount,
         total: dashboard.metrics.applicableCount,
         days: dashboard.metrics.daysToRetirement,
-        retirementDate: dashboard.profile.projectedRetirementDate,
+        retirementDate: dashboard.profile.authoritativeRetirementDate,
       }}
     >
       <div className="grid gap-4 md:grid-cols-5">
         <KpiCard
           label="Days to retirement"
           value={dashboard.metrics.daysToRetirement}
-          hint={dashboard.profile.projectedRetirementDate}
+          hint={dashboard.profile.retirementDateSource === "official" ? `${dashboard.profile.authoritativeRetirementDate} (official)` : `${dashboard.profile.authoritativeRetirementDate} (projected)`}
           href="/timeline"
         />
         <KpiCard
@@ -125,7 +127,13 @@ export default async function DashboardPage() {
                   <Link href={`/checklist/${task.id}`} className="block">
                     <div className="text-sm font-medium text-slate-900">{task.title}</div>
                     <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                      <span>{task.calculatedEnd ? `Due ${task.calculatedEnd}` : "Open window"}</span>
+                      <span>
+                        {task.followUpDate
+                          ? `Follow up ${task.followUpDate}`
+                          : task.calculatedEnd
+                            ? `Due ${task.calculatedEnd}`
+                            : "Open window"}
+                      </span>
                       <StatusChip status={task.status === "waiting" ? "waiting" : "upcoming"} />
                     </div>
                   </Link>
@@ -159,7 +167,9 @@ export default async function DashboardPage() {
             ) : null}
             <li>
               <div className="font-medium text-emerald-700">Retirement date</div>
-              <div className="text-muted-foreground">{dashboard.profile.projectedRetirementDate}</div>
+              <div className="text-muted-foreground">
+                {dashboard.profile.authoritativeRetirementDate} ({dashboard.profile.retirementDateSource})
+              </div>
             </li>
           </ul>
           <Button variant="secondary" className="mt-4" nativeButton={false} render={<Link href="/timeline" />}>

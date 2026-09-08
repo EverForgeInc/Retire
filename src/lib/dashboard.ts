@@ -20,6 +20,7 @@ export async function buildDashboard(memberProfileId: string) {
   });
 
   const today = startOfDay(new Date());
+  const authoritativeRetirementDate = profile.officialSeparationDate ?? profile.projectedRetirementDate;
   const in7 = addDays(today, 7);
   const applicable = tasks.filter((t) => t.status !== "not_applicable");
   const complete = applicable.filter((t) => t.status === "complete");
@@ -50,10 +51,10 @@ export async function buildDashboard(memberProfileId: string) {
     })
     .slice(0, 5);
 
-  const activePhase = findActivePhase(profile.projectedRetirementDate, today);
+  const activePhase = findActivePhase(authoritativeRetirementDate, today);
   const phaseTasks = applicable.filter((t) => t.sectionId === activePhase.sectionId);
   const phaseComplete = phaseTasks.filter((t) => t.status === "complete");
-  const sections = calculateAllSectionWindows(profile.projectedRetirementDate).map((window) => {
+  const sections = calculateAllSectionWindows(authoritativeRetirementDate).map((window) => {
     const sectionTasks = applicable.filter((t) => t.sectionId === window.sectionId);
     const sectionComplete = sectionTasks.filter((t) => t.status === "complete");
     return {
@@ -81,6 +82,9 @@ export async function buildDashboard(memberProfileId: string) {
       fullName: profile.fullName,
       rank: profile.rank,
       projectedRetirementDate: toDateOnly(profile.projectedRetirementDate),
+      officialSeparationDate: profile.officialSeparationDate ? toDateOnly(profile.officialSeparationDate) : null,
+      authoritativeRetirementDate: toDateOnly(authoritativeRetirementDate),
+      retirementDateSource: profile.officialSeparationDate ? "official" : "projected",
       skillbridgeStart: profile.skillbridgeStart ? toDateOnly(profile.skillbridgeStart) : null,
       skillbridgeEnd: profile.skillbridgeEnd ? toDateOnly(profile.skillbridgeEnd) : null,
       terminalLeaveStart: profile.terminalLeaveStart
@@ -91,7 +95,7 @@ export async function buildDashboard(memberProfileId: string) {
       installation: profile.installation,
     },
     metrics: {
-      daysToRetirement: daysUntilRetirement(profile.projectedRetirementDate, today),
+      daysToRetirement: daysUntilRetirement(authoritativeRetirementDate, today),
       progressPercent,
       completeCount: complete.length,
       applicableCount: applicable.length,
