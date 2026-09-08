@@ -35,7 +35,14 @@ export async function POST(request: Request) {
       desIdesStatus,
       userId: session.userId,
     });
-    await writeAudit({ userId: session.userId, memberProfileId: profile.id, entityType: "medical_transition_event", entityId: event.id, action: "created", afterValue: data });
+    await writeAudit({
+      userId: session.userId,
+      memberProfileId: profile.id,
+      entityType: "medical_transition_event",
+      entityId: event.id,
+      action: "created",
+      afterValue: { eventType: event.eventType, occurredAt: event.occurredAt.toISOString() },
+    });
     return jsonOk({ event }, { status: 201 });
   } catch (error) {
     return handleRouteError(error);

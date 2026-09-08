@@ -62,6 +62,16 @@ describe("privacy guards", () => {
     expect(route).toMatch(/conditionName/);
   });
 
+  it("keeps medical-transition notes out of audit payloads", () => {
+    const route = readFileSync(
+      path.join(process.cwd(), "src", "app", "api", "medical-transition", "route.ts"),
+      "utf8",
+    );
+    expect(route).not.toMatch(/afterValue:\s*data/);
+    expect(route).not.toMatch(/afterValue:[\s\S]*notes/);
+    expect(route).toMatch(/eventType/);
+  });
+
   it("has member-owned VA update and delete routes", () => {
     const route = readFileSync(
       path.join(process.cwd(), "src", "app", "api", "va-conditions", "[id]", "route.ts"),
