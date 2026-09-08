@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { bddWindow, isBddOpen, parseDateOnly, toDateOnly } from "@/lib/rules/date-engine";
 import { getTaskStatusAfterApplicabilityChange, shouldSuppressTask } from "@/lib/tasks";
 import { statusByEvent } from "@/lib/rules/medical-transition";
+import { getVaClaimRoute } from "@/lib/rules/va-claim";
 import { profileUpdateSchema, vaConditionSchema } from "@/lib/validation";
 
 describe("medical transition and VA rules", () => {
@@ -20,6 +21,15 @@ describe("medical transition and VA rules", () => {
     expect(shouldSuppressTask({ externalKey: "va_bdd_window", title: "Confirm BDD eligibility", desIdesStatus: "not_applicable" })).toBe(false);
     expect(shouldSuppressTask({ externalKey: "ides_referral", title: "Record IDES referral", transitionType: "medical_retirement" })).toBe(false);
     expect(shouldSuppressTask({ externalKey: "ides_referral", title: "Record IDES referral", transitionType: "standard_retirement" })).toBe(true);
+  });
+
+  it("routes BDD boundaries, filed claims, and IDES workflows explicitly", () => {
+    expect(getVaClaimRoute({ separationDate: "2027-06-01", today: parseDateOnly("2026-12-03"), claimFiled: false })).toBe("bdd");
+    expect(getVaClaimRoute({ separationDate: "2027-06-01", today: parseDateOnly("2027-02-17"), claimFiled: false })).toBe("bdd");
+    expect(getVaClaimRoute({ separationDate: "2027-06-01", today: parseDateOnly("2027-03-03"), claimFiled: false })).toBe("bdd");
+    expect(getVaClaimRoute({ separationDate: "2027-06-01", today: parseDateOnly("2027-03-04"), claimFiled: false })).toBe("standard");
+    expect(getVaClaimRoute({ separationDate: "2027-06-01", today: parseDateOnly("2027-01-01"), claimFiled: true })).toBe("filed");
+    expect(getVaClaimRoute({ separationDate: "2027-06-01", today: parseDateOnly("2027-01-01"), claimFiled: false, desIdesStatus: "in_process" })).toBe("ides");
   });
 
   it("restores rule-suppressed tasks without overriding member-selected Not Applicable", () => {
