@@ -13,7 +13,7 @@ export async function PUT(request: Request, { params }: Context) {
     if (!existing) return new Response(JSON.stringify({ error: "Location not found" }), { status: 404 });
     const data = savedLocationSchema.parse(await request.json());
     if (data.isPreferred) await prisma.savedLocation.updateMany({ where: { memberProfileId: profile.id }, data: { isPreferred: false } });
-    const updated = await prisma.savedLocation.update({ where: { id }, data: { ...data, manualCosts: data.manualCosts ? JSON.stringify(data.manualCosts) : undefined, isPreferred: data.isPreferred ?? existing.isPreferred } });
+    const updated = await prisma.savedLocation.update({ where: { id }, data: { ...data, manualCosts: data.manualCosts ? JSON.stringify(data.manualCosts) : undefined, locationSource: data.providerPlaceId ? "provider" : "manual", locationUpdatedAt: new Date(), isPreferred: data.isPreferred ?? existing.isPreferred } });
     await writeAudit({ userId: session.userId, memberProfileId: profile.id, entityType: "saved_location", entityId: id, action: "updated", afterValue: { id, city: updated.city, country: updated.country } });
     return jsonOk({ location: updated });
   } catch (error) {

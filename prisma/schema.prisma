@@ -39,6 +39,7 @@ model MemberProfile {
   officialSeparationDate  DateTime?
   transitionType          String    @default("not_yet_determined")
   desIdesStatus           String    @default("not_applicable")
+  claimWorkflowState      String    @default("not_started")
   skillbridgeStart        DateTime?
   skillbridgeEnd          DateTime?
   terminalLeaveStart      DateTime?

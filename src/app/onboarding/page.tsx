@@ -74,9 +74,17 @@ export default function OnboardingPage() {
               ["medical_retirement", "Medical Retirement"],
               ["not_yet_determined", "Not Yet Determined"],
             ]} />
-            <SelectField name="desIdesStatus" label="Medical Disability Evaluation (DES/IDES) status" defaultValue="not_applicable" options={[
-              ["not_applicable", "Not applicable"], ["not_started", "Not started"], ["referred", "Referred"],
-              ["in_process", "In process"], ["found_fit", "Found fit"], ["found_unfit", "Found unfit"], ["complete", "Complete"],
+            <SelectField name="desIdesStatus" label="Medical Disability Evaluation (DES/IDES)" defaultValue="not_applicable" options={[
+              ["not_applicable", "No / Not applicable"], ["referred", "Referred / Just started"],
+              ["in_process", "MEB or PEB in progress"], ["found_fit", "Found fit"],
+              ["found_unfit", "Found unfit"], ["complete", "Complete"],
+            ]} />
+            <SelectField name="claimWorkflowState" label="VA claim workflow" defaultValue="not_started" options={[
+              ["not_started", "Not started"], ["planning", "Planning"], ["bdd_eligible", "BDD eligible"],
+              ["bdd_filed", "BDD filed"], ["fdc", "Fully Developed Claim (FDC)"],
+              ["standard_claim", "Standard claim"], ["ides_controlled", "IDES controlled"],
+              ["claim_submitted", "Claim submitted"], ["exams_evidence_in_progress", "Exams / evidence requests in progress"],
+              ["decision_pending", "Decision pending"], ["complete", "Complete"],
             ]} />
           </div>
           <div className="flex items-center gap-2">

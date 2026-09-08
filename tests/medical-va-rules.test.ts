@@ -32,6 +32,13 @@ describe("medical transition and VA rules", () => {
     expect(getVaClaimRoute({ separationDate: "2027-06-01", today: parseDateOnly("2027-01-01"), claimFiled: false, desIdesStatus: "in_process" })).toBe("ides");
     expect(getVaClaimRoute({ separationDate: "2027-06-01", today: parseDateOnly("2026-10-01"), claimFiled: false })).toBe("pre_bdd");
     expect(getVaClaimRoute({ separationDate: "2027-06-01", today: parseDateOnly("2027-01-01"), claimFiled: true, desIdesStatus: "in_process" })).toBe("ides");
+    expect(getVaClaimRoute({ separationDate: "2027-06-01", today: parseDateOnly("2027-01-01"), claimFiled: false, workflowState: "bdd_filed" })).toBe("filed");
+    expect(getVaClaimRoute({ separationDate: "2027-06-01", today: parseDateOnly("2027-01-01"), claimFiled: false, workflowState: "ides_controlled" })).toBe("ides");
+  });
+
+  it("suppresses BDD pre-filing tasks after the workflow is filed", () => {
+    expect(shouldSuppressTask({ externalKey: "va_bdd_window", title: "Confirm BDD eligibility", claimWorkflowState: "bdd_filed" })).toBe(true);
+    expect(shouldSuppressTask({ externalKey: "va_bdd_window", title: "Confirm BDD eligibility", claimWorkflowState: "planning" })).toBe(false);
   });
 
   it("restores rule-suppressed tasks without overriding member-selected Not Applicable", () => {
@@ -47,9 +54,11 @@ describe("medical transition and VA rules", () => {
       projectedRetirementDate: "2027-06-01",
       officialSeparationDate: null,
       desIdesStatus: "referred",
+      claimWorkflowState: "planning",
     })).toMatchObject({
       officialSeparationDate: null,
       desIdesStatus: "referred",
+      claimWorkflowState: "planning",
     });
   });
 
