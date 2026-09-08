@@ -63,6 +63,25 @@ Demo login (from seed):
 - JSON / CSV / printable checklist export
 - Staged official-rate imports with approval
 
+## Codespaces / devcontainer
+
+This repository includes a lightweight devcontainer aimed at fast startup and predictable Codespaces behavior:
+
+- Node 22 slim base image
+- non-root `node` user
+- dependency cache via `npm ci` and lockfile reuse
+- Prisma generation in the image build
+- forwarded port for the app at `:3000`
+- primary app port labeled as "Retire App"
+- common commands displayed at shell startup
+
+To rebuild the devcontainer after dependency or Dockerfile changes:
+
+```bash
+# from the repo root
+docker build -f .devcontainer/Dockerfile -t retire-dev .
+```
+
 ## PostgreSQL (optional)
 
 If Docker is installed:
@@ -78,6 +97,13 @@ DATABASE_URL="postgresql://milretire:milretire@localhost:5432/milretire?schema=p
 ```
 
 Update `prisma/schema.prisma` datasource provider to `postgresql` before migrating.
+
+## Security and CI
+
+- GitHub Actions runs lint, type-check, unit tests, and production build on push/PR.
+- Secret scanning uses `gitleaks` in CI.
+- Dependency auditing runs with `npm audit --audit-level=moderate`.
+- Keep API keys and credentials in `.env` only, never in committed files.
 
 ## Environment
 

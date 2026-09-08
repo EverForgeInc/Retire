@@ -1,0 +1,47 @@
+{
+  "name": "Retire",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "remoteUser": "node",
+  "containerUser": "node",
+  "updateRemoteUserUID": true,
+  "overrideCommand": false,
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Retire App",
+      "onAutoForward": "openBrowser",
+      "protocol": "http"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "files.watcherExclude": {
+          "**/.git/objects/**": true,
+          "**/.git/subtree-cache/**": true,
+          "**/node_modules/**": true,
+          "**/.next/**": true
+        },
+        "search.exclude": {
+          "**/.next": true,
+          "**/node_modules": true,
+          "**/coverage": true
+        }
+      },
+      "extensions": [
+        "Prisma.prisma",
+        "dbaeumer.vscode-eslint",
+        "bradlc.vscode-tailwindcss",
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "eamodio.gitlens"
+      ]
+    }
+  },
+  "postCreateCommand": "bash -lc 'npm ci --include=dev --no-audit --prefer-offline && npx prisma generate'",
+  "postStartCommand": "bash -lc 'echo \"\" && git --no-pager branch --show-current && echo \"\" && echo \"Common commands:\" && echo \"  npm run dev\" && echo \"  npm run build\" && echo \"  npm test\" && echo \"  npx prisma db push\" && echo \"\" && echo \"Main must remain deployable.\" && echo \"Forwarded port: http://localhost:3000\"'"
+}

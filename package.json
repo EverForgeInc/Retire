@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint --max-warnings=0",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
@@ -15,6 +16,8 @@
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio",
+    "security:audit": "npm audit --audit-level=moderate",
+    "ci:check": "npm run lint && npm run typecheck && npm test && npm run build",
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -26,7 +29,7 @@
     "date-fns": "^4.1.0",
     "jose": "^6.0.10",
     "lucide-react": "^0.487.0",
-    "next": "^15.5.23",
+    "next": "15.5.25",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "shadcn": "^4.16.2",
