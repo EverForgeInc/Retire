@@ -3,6 +3,7 @@ import { bddWindow, isBddOpen, parseDateOnly, toDateOnly } from "@/lib/rules/dat
 import { getTaskStatusAfterApplicabilityChange, shouldSuppressTask } from "@/lib/tasks";
 import { statusByEvent } from "@/lib/rules/medical-transition";
 import { getVaClaimRoute } from "@/lib/rules/va-claim";
+import { deriveActionQueue } from "@/lib/dashboard";
 import { profileUpdateSchema, taskUpdateSchema, vaConditionSchema } from "@/lib/validation";
 
 describe("medical transition and VA rules", () => {
@@ -39,6 +40,50 @@ describe("medical transition and VA rules", () => {
   it("suppresses BDD pre-filing tasks after the workflow is filed", () => {
     expect(shouldSuppressTask({ externalKey: "va_bdd_window", title: "Confirm BDD eligibility", claimWorkflowState: "bdd_filed" })).toBe(true);
     expect(shouldSuppressTask({ externalKey: "va_bdd_window", title: "Confirm BDD eligibility", claimWorkflowState: "planning" })).toBe(false);
+  });
+
+  it("prioritizes the next best action without duplicating waiting or BDD warnings", () => {
+    const queue = deriveActionQueue(
+      [
+        {
+          id: "overdue-1",
+          title: "Submit VA claim packet",
+          status: "in_progress",
+          calculatedEnd: new Date("2027-01-01"),
+          followUpDate: null,
+          waitingOnWho: null,
+          waitingOnWhat: null,
+          sectionName: "Claim prep",
+        },
+        {
+          id: "waiting-1",
+          title: "Wait for HR response",
+          status: "waiting",
+          calculatedEnd: new Date("2027-01-20"),
+          followUpDate: new Date("2027-01-10"),
+          waitingOnWho: "HR",
+          waitingOnWhat: "documents",
+          sectionName: "Documents",
+        },
+        {
+          id: "bdd-1",
+          title: "Confirm BDD eligibility",
+          status: "not_started",
+          calculatedEnd: new Date("2027-01-15"),
+          followUpDate: null,
+          waitingOnWho: null,
+          waitingOnWhat: null,
+          sectionName: "VA",
+        },
+      ],
+      { authoritativeRetirementDate: "2027-06-01", claimWorkflowState: "planning" },
+      new Date("2027-01-12"),
+    );
+
+    expect(queue[0]?.kind).toBe("overdue");
+    expect(queue[0]?.title).toContain("VA claim packet");
+    expect(queue.some((item) => item.kind === "waiting")).toBe(true);
+    expect(queue.some((item) => item.kind === "bdd_deadline_warning")).toBe(true);
   });
 
   it("restores rule-suppressed tasks without overriding member-selected Not Applicable", () => {

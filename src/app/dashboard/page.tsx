@@ -98,6 +98,21 @@ export default async function DashboardPage() {
       </div>
 
       <div className="mt-4 grid gap-4 xl:grid-cols-3">
+        <Panel title="What should I do next?">
+          {dashboard.nextBestAction ? (
+            <>
+              <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">Next best action</p>
+              <p className="mt-2 text-lg font-semibold text-slate-900">{dashboard.nextBestAction.title}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{dashboard.nextBestAction.detail}</p>
+              {dashboard.nextBestAction.date ? (
+                <p className="mt-2 text-xs text-muted-foreground">Target date: {dashboard.nextBestAction.date}</p>
+              ) : null}
+            </>
+          ) : (
+            <EmptyState title="No urgent actions" description="Your checklist is clear for now." />
+          )}
+        </Panel>
+
         <Panel title="Current phase">
           <p className="text-lg font-semibold text-slate-900">
             Phase {dashboard.currentPhase.phase} of {dashboard.currentPhase.totalPhases}
