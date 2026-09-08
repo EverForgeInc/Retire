@@ -19,7 +19,7 @@ RUN apt-get update \
 USER node
 
 COPY --chown=node:node package*.json ./
-RUN npm ci --include=dev --no-audit --prefer-offline
+RUN npm ci --include=dev --no-audit --prefer-offline --ignore-scripts --ignore-scripts
 
 COPY --chown=node:node . .
 RUN npx prisma generate
