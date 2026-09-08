@@ -14,6 +14,10 @@ export function shouldSuppressTask(params: {
   return (!medicalTransition && /\b(des|ides)\b/.test(text)) || (Boolean(activeIdes) && text.includes("bdd"));
 }
 
+export function getTaskStatusAfterApplicabilityChange(status: string, autoSuppressed: boolean) {
+  return autoSuppressed && status === "not_applicable" ? "not_started" : status;
+}
+
 export async function generateMemberTasks(params: {
   memberProfileId: string;
   retirementDate: Date | string;
@@ -41,7 +45,7 @@ export async function generateMemberTasks(params: {
     if (suppressed) {
       const current = byKey.get(template.externalKey);
       if (current && current.status !== "complete") {
-        await prisma.memberTask.update({ where: { id: current.id }, data: { status: "not_applicable" } });
+        await prisma.memberTask.update({ where: { id: current.id }, data: { status: "not_applicable", autoSuppressed: true } });
       }
       continue;
     }
@@ -79,6 +83,8 @@ export async function generateMemberTasks(params: {
     await prisma.memberTask.update({
       where: { id: current.id },
       data: {
+        status: getTaskStatusAfterApplicabilityChange(current.status, current.autoSuppressed),
+        autoSuppressed: false,
         sectionId: template.sectionId,
         sectionName: template.sectionName,
         title: template.title,

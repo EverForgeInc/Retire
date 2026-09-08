@@ -7,6 +7,7 @@ export type DigestTaskLine = {
   title: string;
   sectionName: string | null;
   calculatedEnd: string | null;
+  followUpDate: string | null;
   status: string;
   deepLink: string;
 };
@@ -45,13 +46,15 @@ export async function buildDigestPayload(userId: string) {
 
   for (const task of tasks) {
     const end = task.calculatedEnd ? startOfDay(task.calculatedEnd) : null;
-    const overdue = end != null && end < today;
+    const followUp = task.followUpDate ? startOfDay(task.followUpDate) : null;
+    const actionableDate = followUp ?? end;
+    const overdue = actionableDate != null && actionableDate < today;
     const inActivePhase = prefs.includeActivePhase && task.sectionId === active.sectionId;
     const waiting = prefs.includeWaiting && task.status === "waiting";
     const upcoming =
-      end != null &&
-      end >= today &&
-      end <= addDays(today, prefs.upcomingDays);
+      actionableDate != null &&
+      actionableDate >= today &&
+      actionableDate <= addDays(today, prefs.upcomingDays);
 
     if ((prefs.includeOverdue && overdue) || inActivePhase || waiting || upcoming) {
       selected.push({
@@ -59,6 +62,7 @@ export async function buildDigestPayload(userId: string) {
         title: task.title,
         sectionName: task.sectionName,
         calculatedEnd: end ? toDateOnly(end) : null,
+        followUpDate: followUp ? toDateOnly(followUp) : null,
         status: task.status,
         deepLink: `${appUrl}/checklist/${task.id}`,
       });
@@ -77,7 +81,7 @@ export async function buildDigestPayload(userId: string) {
     profile,
     subject: `Retirement checklist digest (${selected.length} items)`,
     bodyLines: selected.map(
-      (t) => `- ${t.title}${t.calculatedEnd ? ` (due ${t.calculatedEnd})` : ""}: ${t.deepLink}`,
+      (t) => `- ${t.title}${t.followUpDate ? ` (follow up ${t.followUpDate})` : t.calculatedEnd ? ` (due ${t.calculatedEnd})` : ""}: ${t.deepLink}`,
     ),
   };
 }

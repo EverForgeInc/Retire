@@ -10,13 +10,19 @@ export function jsonError(message: string, status = 400) {
   return NextResponse.json({ error: message }, { status });
 }
 
+export class PublicApiError extends Error {
+  constructor(message: string, public readonly status = 400) {
+    super(message);
+  }
+}
+
 export function handleRouteError(error: unknown) {
   if (error instanceof Response) return error;
   if (error instanceof ZodError) {
     return jsonError(error.issues.map((i) => i.message).join("; "), 400);
   }
-  if (error instanceof Error) {
-    return jsonError(error.message, 400);
+  if (error instanceof PublicApiError) {
+    return jsonError(error.message, error.status);
   }
   return jsonError("Unexpected server error", 500);
 }

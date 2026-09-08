@@ -22,35 +22,48 @@ export default async function IncomePage() {
     include: { vaCompensationRates: true },
     orderBy: { effectiveDate: "desc" },
   });
+  const savedLocations = await prisma.savedLocation.findMany({
+    where: { memberProfileId: ctx.profile!.id },
+    select: { locationId: true, manualCosts: true },
+  });
+  const manualCostsByLocation = new Map(
+    savedLocations.map((savedLocation) => [savedLocation.locationId, JSON.parse(savedLocation.manualCosts || "{}")]),
+  );
 
   const scenario = scenarios[0];
   const comparisons = (scenario?.locations || [])
     .map((sel) => {
       const expenses = {
-        ...Object.fromEntries(sel.location.costVersions.map((c) => [c.category, c.amountUsd ?? 0])),
+        ...Object.fromEntries(sel.location.costVersions.filter((c) => c.amountUsd != null).map((c) => [c.category, c.amountUsd as number])),
+        ...(manualCostsByLocation.get(sel.location.id) || {}),
         ...JSON.parse(sel.customExpenses || "{}"),
       };
-      const result = compareLocationCash(
-        {
-          estimatedRetiredPay: scenario.estimatedRetiredPay ?? 0,
-          memberVaPay: scenario.memberVaPay ?? 0,
-          spouseVaPay: scenario.spouseVaPay ?? 0,
-          civilianIncome: scenario.civilianIncome ?? 0,
-          otherIncome: scenario.otherIncome ?? 0,
-        },
-        expenses,
-      );
+      const result = Object.keys(expenses).length > 0 ? compareLocationCash(
+          {
+            estimatedRetiredPay: scenario.estimatedRetiredPay ?? 0,
+            memberVaPay: scenario.memberVaPay ?? 0,
+            spouseVaPay: scenario.spouseVaPay ?? 0,
+            civilianIncome: scenario.civilianIncome ?? 0,
+            otherIncome: scenario.otherIncome ?? 0,
+          },
+          expenses,
+        ) : null;
       return {
         locationId: sel.location.id,
         label: `${sel.location.city}${sel.location.region ? `, ${sel.location.region}` : ""}, ${sel.location.country}`,
-        ...result,
+        totalMonthlyIncome: result?.totalMonthlyIncome ?? null,
+        totalMonthlyExpenses: result?.totalMonthlyExpenses ?? null,
+        remainingMonthlyCash: result?.remainingMonthlyCash ?? null,
         provenance: {
-          confidence: "medium",
-          userOverride: Object.keys(JSON.parse(sel.customExpenses || "{}")).length > 0,
+          confidence: result ? "medium" : "unavailable",
+          userOverride:
+            Object.keys(manualCostsByLocation.get(sel.location.id) || {}).length > 0 ||
+            Object.keys(JSON.parse(sel.customExpenses || "{}")).length > 0,
+          status: result ? ("available" as const) : ("unavailable" as const),
         },
       };
     })
-    .sort((a, b) => b.remainingMonthlyCash - a.remainingMonthlyCash);
+      .sort((a, b) => (b.remainingMonthlyCash ?? -Infinity) - (a.remainingMonthlyCash ?? -Infinity));
 
   const estimated =
     scenario?.estimatedRetiredPay ??

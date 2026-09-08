@@ -1,9 +1,33 @@
 import { describe, expect, it } from "vitest";
+import { csvEscape } from "@/lib/rules/csv";
+import { handleRouteError, PublicApiError } from "@/lib/api";
 import { assertNoSsnFields } from "@/lib/validation";
+import { savedLocationSchema } from "@/lib/validation";
+import { unavailableGeocodingProvider, unavailableCostOfLivingProvider } from "@/lib/providers/location";
 import { readFileSync } from "fs";
 import path from "path";
 
 describe("privacy guards", () => {
+  it("neutralizes spreadsheet formulas in CSV exports", () => {
+    expect(csvEscape("=HYPERLINK(\"https://example.test\")")).toBe('"\'=HYPERLINK(""https://example.test"")"');
+    expect(csvEscape("+1")).toBe("'+1");
+    expect(csvEscape("-1")).toBe("'-1");
+    expect(csvEscape("@cmd")).toBe("'@cmd");
+    expect(csvEscape('normal, "quoted"')).toBe('"normal, ""quoted"""');
+  });
+
+  it("keeps manual locations and unavailable provider values explicit", async () => {
+    const location = savedLocationSchema.parse({
+      city: "Anywhere",
+      country: "United States",
+      countryCode: "us",
+      currency: "usd",
+      manualCosts: { housing: 1800 },
+    });
+    expect(location).toMatchObject({ countryCode: "US", currency: "USD", manualCosts: { housing: 1800 } });
+    expect(await unavailableGeocodingProvider.geocode({ city: location.city, country: location.country, countryCode: location.countryCode })).toBeNull();
+    expect(await unavailableCostOfLivingProvider.getMonthlyCosts({ city: location.city, country: location.country, countryCode: location.countryCode })).toEqual([]);
+  });
   it("rejects SSN-shaped payload keys", () => {
     expect(() => assertNoSsnFields({ last4: "1234" })).toThrow(/Forbidden field/);
     expect(() => assertNoSsnFields({ ssn: "123-45-6789" })).toThrow(/Forbidden field/);
@@ -38,6 +62,16 @@ describe("privacy guards", () => {
     expect(route).toMatch(/conditionName/);
   });
 
+  it("keeps medical-transition notes out of audit payloads", () => {
+    const route = readFileSync(
+      path.join(process.cwd(), "src", "app", "api", "medical-transition", "route.ts"),
+      "utf8",
+    );
+    expect(route).not.toMatch(/afterValue:\s*data/);
+    expect(route).not.toMatch(/afterValue:[\s\S]*notes/);
+    expect(route).toMatch(/eventType/);
+  });
+
   it("has member-owned VA update and delete routes", () => {
     const route = readFileSync(
       path.join(process.cwd(), "src", "app", "api", "va-conditions", "[id]", "route.ts"),
@@ -47,6 +81,8 @@ describe("privacy guards", () => {
     expect(route).toMatch(/export async function PUT/);
     expect(route).toMatch(/export async function DELETE/);
     expect(route).toMatch(/secondaryConditionId === id/);
+    expect(route).toMatch(/dependentCount/);
+    expect(route).toMatch(/409/);
   });
 
   it("rejects self-references for secondary VA conditions", () => {
@@ -111,3 +147,12 @@ describe("privacy guards", () => {
     expect(settings).not.toMatch(/normal.*export|automatic.*export/i);
   });
 });
+
+  it("does not expose internal route errors", async () => {
+    const internal = handleRouteError(new Error("AUTH_SECRET is not configured"));
+    expect(internal.status).toBe(500);
+    await expect(internal.json()).resolves.toEqual({ error: "Unexpected server error" });
+
+    const publicError = handleRouteError(new PublicApiError("Referenced condition was not found for this member"));
+    expect(publicError.status).toBe(400);
+  });

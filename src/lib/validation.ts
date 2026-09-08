@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const dateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Expected YYYY-MM-DD");
 export const transitionTypes = ["standard_retirement", "voluntary_normal_separation", "medical_separation", "medical_retirement", "not_yet_determined"] as const;
-export const desIdesStatuses = ["not_applicable", "not_started", "referred", "in_process", "found_fit", "found_unfit", "complete"] as const;
+export const desIdesStatuses = ["not_applicable", "not_started", "referred", "in_process", "peb_in_progress", "awaiting_final_decision", "found_fit", "found_unfit", "complete"] as const;
 export const relationshipTheories = ["direct_in_service", "presumptive", "secondary", "pre_service_aggravated", "unsure_needs_review"] as const;
 
 /** Reject any accidental SSN-shaped fields at the API boundary. */
@@ -44,6 +44,9 @@ export const taskUpdateSchema = z.object({
   status: z
     .enum(["not_started", "in_progress", "waiting", "complete", "not_applicable"])
     .optional(),
+  waitingOnWho: z.string().nullable().optional(),
+  waitingOnWhat: z.string().nullable().optional(),
+  followUpDate: dateString.nullable().optional(),
   dateCompleted: dateString.nullable().optional(),
   notes: z.string().nullable().optional(),
   manualDueDate: dateString.nullable().optional(),
@@ -85,6 +88,8 @@ export const functionalLimitationSchema = z.object({
 export const vaConditionSchema = z.object({
   conditionName: z.string().min(1),
   bodySystem: z.string().optional(),
+  bodyRegion: z.string().optional(),
+  laterality: z.enum(["left", "right", "bilateral", "midline", "unspecified"]).optional(),
   diagnosisStatus: z.string().optional(),
   onsetOrServiceEvent: z.string().optional(),
   symptoms: z.string().optional(),
@@ -104,6 +109,9 @@ export const vaConditionSchema = z.object({
 }).superRefine((value, ctx) => {
   if (value.memberPrimaryTheory === "secondary" && !value.secondaryConditionId) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: "A secondary theory must reference another condition", path: ["secondaryConditionId"] });
+  }
+  if (value.memberPrimaryTheory !== "secondary" && value.secondaryConditionId) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "A secondary condition reference requires a secondary theory", path: ["secondaryConditionId"] });
   }
 });
 
@@ -152,10 +160,13 @@ export const incomeScenarioSchema = z.object({
 });
 
 export const savedLocationSchema = z.object({
+  displayName: z.string().trim().optional(),
   city: z.string().trim().min(1),
   state: z.string().trim().optional(),
   country: z.string().trim().min(1),
   countryCode: z.string().trim().length(2).transform((value) => value.toUpperCase()),
+  postalCode: z.string().trim().optional(),
+  providerPlaceId: z.string().trim().optional(),
   currency: z.string().trim().min(3).max(3).transform((value) => value.toUpperCase()),
   latitude: z.number().finite().optional(),
   longitude: z.number().finite().optional(),

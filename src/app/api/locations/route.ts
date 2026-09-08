@@ -21,10 +21,16 @@ export async function POST(request: Request) {
   try {
     const { profile, session } = await requireMemberContext();
     const data = savedLocationSchema.parse(await request.json());
-    const location = await prisma.location.upsert({
-      where: { id: "never-match" },
-      update: {},
-      create: {
+    const location = await prisma.location.findFirst({
+      where: {
+        city: data.city,
+        region: data.state,
+        country: data.country,
+        countryCode: data.countryCode,
+        currency: data.currency,
+      },
+    }) ?? await prisma.location.create({
+      data: {
         city: data.city,
         region: data.state,
         country: data.country,
@@ -40,13 +46,18 @@ export async function POST(request: Request) {
       data: {
         memberProfileId: profile.id,
         locationId: location.id,
+        displayName: data.displayName,
         city: data.city,
         state: data.state,
         country: data.country,
         countryCode: data.countryCode,
+        postalCode: data.postalCode,
+        providerPlaceId: data.providerPlaceId,
         currency: data.currency,
         latitude: data.latitude,
         longitude: data.longitude,
+        locationSource: data.providerPlaceId ? "provider" : "manual",
+        locationUpdatedAt: new Date(),
         isPreferred,
         manualCosts: JSON.stringify(data.manualCosts ?? {}),
       },

@@ -1,4 +1,4 @@
-import { handleRouteError, jsonOk, requireMemberContext } from "@/lib/api";
+import { handleRouteError, jsonOk, PublicApiError, requireMemberContext } from "@/lib/api";
 import { prisma } from "@/lib/db";
 import { toDateOnly } from "@/lib/rules/date-engine";
 
@@ -36,7 +36,7 @@ export async function GET() {
 
     const serialized = JSON.stringify(payload);
     if (/"ssn"|last4|socialSecurity/i.test(serialized)) {
-      throw new Error("Export blocked: forbidden identity fields detected");
+      throw new PublicApiError("Export blocked: forbidden identity fields detected");
     }
 
     return jsonOk(payload);

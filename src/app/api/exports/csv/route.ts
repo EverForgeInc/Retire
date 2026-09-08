@@ -1,12 +1,7 @@
-import { handleRouteError, requireMemberContext } from "@/lib/api";
+import { handleRouteError, PublicApiError, requireMemberContext } from "@/lib/api";
 import { prisma } from "@/lib/db";
 import { toDateOnly } from "@/lib/rules/date-engine";
-
-function csvEscape(value: string | null | undefined) {
-  const text = value ?? "";
-  if (/[",\n]/.test(text)) return `"${text.replace(/"/g, '""')}"`;
-  return text;
-}
+import { csvEscape } from "@/lib/rules/csv";
 
 export async function GET() {
   try {
@@ -44,7 +39,7 @@ export async function GET() {
     );
     const csv = [header.join(","), ...rows].join("\n");
     if (/ssn|last4|social.?security/i.test(csv)) {
-      throw new Error("Export blocked: forbidden identity fields detected");
+      throw new PublicApiError("Export blocked: forbidden identity fields detected");
     }
 
     return new Response(csv, {

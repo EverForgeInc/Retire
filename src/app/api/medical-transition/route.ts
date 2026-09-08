@@ -3,6 +3,7 @@ import { writeAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import { parseDateOnly } from "@/lib/rules/date-engine";
 import { getStatusForEvent } from "@/lib/rules/medical-transition";
+import { generateMemberTasks } from "@/lib/tasks";
 import { assertNoSsnFields, medicalTransitionEventSchema } from "@/lib/validation";
 
 export async function GET() {
@@ -24,8 +25,24 @@ export async function POST(request: Request) {
     const event = await prisma.medicalTransitionEvent.create({
       data: { memberProfileId: profile.id, eventType: data.eventType, occurredAt: parseDateOnly(data.occurredAt), notes: data.notes },
     });
-    await prisma.memberProfile.update({ where: { id: profile.id }, data: { desIdesStatus: getStatusForEvent(data.eventType) } });
-    await writeAudit({ userId: session.userId, memberProfileId: profile.id, entityType: "medical_transition_event", entityId: event.id, action: "created", afterValue: data });
+    const desIdesStatus = getStatusForEvent(data.eventType);
+    await prisma.memberProfile.update({ where: { id: profile.id }, data: { desIdesStatus } });
+    await generateMemberTasks({
+      memberProfileId: profile.id,
+      retirementDate: profile.projectedRetirementDate,
+      officialSeparationDate: profile.officialSeparationDate ?? undefined,
+      transitionType: profile.transitionType,
+      desIdesStatus,
+      userId: session.userId,
+    });
+    await writeAudit({
+      userId: session.userId,
+      memberProfileId: profile.id,
+      entityType: "medical_transition_event",
+      entityId: event.id,
+      action: "created",
+      afterValue: { eventType: event.eventType, occurredAt: event.occurredAt.toISOString() },
+    });
     return jsonOk({ event }, { status: 201 });
   } catch (error) {
     return handleRouteError(error);

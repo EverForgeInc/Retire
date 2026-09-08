@@ -1,5 +1,6 @@
 import { AppShell } from "@/components/layout/AppShell";
 import { AnnualCalendarControls } from "@/components/timeline/AnnualCalendarControls";
+import type { YearCalendarEvent } from "@/components/timeline/YearCalendar";
 import { getDashboardForPage } from "@/lib/server-data";
 import { prisma } from "@/lib/db";
 import {

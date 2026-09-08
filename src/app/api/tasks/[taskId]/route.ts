@@ -38,6 +38,15 @@ export async function PATCH(request: Request, { params }: Params) {
     const nextStatus = data.status ?? existing.status;
     const update = {
       status: nextStatus,
+      autoSuppressed: false,
+      waitingOnWho: data.waitingOnWho === undefined ? existing.waitingOnWho : data.waitingOnWho,
+      waitingOnWhat: data.waitingOnWhat === undefined ? existing.waitingOnWhat : data.waitingOnWhat,
+      followUpDate:
+        data.followUpDate === undefined
+          ? existing.followUpDate
+          : data.followUpDate
+            ? parseDateOnly(data.followUpDate)
+            : null,
       notes: data.notes === undefined ? existing.notes : data.notes,
       dateCompleted:
         data.dateCompleted === undefined

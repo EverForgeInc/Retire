@@ -20,36 +20,41 @@ export async function buildDashboard(memberProfileId: string) {
   });
 
   const today = startOfDay(new Date());
+  const authoritativeRetirementDate = profile.officialSeparationDate ?? profile.projectedRetirementDate;
   const in7 = addDays(today, 7);
   const applicable = tasks.filter((t) => t.status !== "not_applicable");
   const complete = applicable.filter((t) => t.status === "complete");
   const overdue = applicable.filter(
     (t) =>
       t.status !== "complete" &&
-      t.calculatedEnd != null &&
-      startOfDay(t.calculatedEnd) < today,
+      (t.followUpDate ?? t.calculatedEnd) != null &&
+      startOfDay(t.followUpDate ?? t.calculatedEnd!) < today,
   );
   const waiting = applicable.filter((t) => t.status === "waiting");
   const dueSoon = applicable.filter((t) => {
     if (t.status === "complete") return false;
-    if (!t.calculatedEnd) return false;
-    const end = startOfDay(t.calculatedEnd);
+    const dueDate = t.followUpDate ?? t.calculatedEnd;
+    if (!dueDate) return false;
+    const end = startOfDay(dueDate);
     return end >= today && end <= in7;
   });
   const upcoming = applicable
     .filter((t) => t.status !== "complete")
-    .filter((t) => t.calculatedEnd == null || startOfDay(t.calculatedEnd) >= today)
+    .filter((t) => {
+      const dueDate = t.followUpDate ?? t.calculatedEnd;
+      return dueDate == null || startOfDay(dueDate) >= today;
+    })
     .sort((a, b) => {
-      const ae = a.calculatedEnd?.getTime() ?? Number.MAX_SAFE_INTEGER;
-      const be = b.calculatedEnd?.getTime() ?? Number.MAX_SAFE_INTEGER;
+      const ae = (a.followUpDate ?? a.calculatedEnd)?.getTime() ?? Number.MAX_SAFE_INTEGER;
+      const be = (b.followUpDate ?? b.calculatedEnd)?.getTime() ?? Number.MAX_SAFE_INTEGER;
       return ae - be;
     })
     .slice(0, 5);
 
-  const activePhase = findActivePhase(profile.projectedRetirementDate, today);
+  const activePhase = findActivePhase(authoritativeRetirementDate, today);
   const phaseTasks = applicable.filter((t) => t.sectionId === activePhase.sectionId);
   const phaseComplete = phaseTasks.filter((t) => t.status === "complete");
-  const sections = calculateAllSectionWindows(profile.projectedRetirementDate).map((window) => {
+  const sections = calculateAllSectionWindows(authoritativeRetirementDate).map((window) => {
     const sectionTasks = applicable.filter((t) => t.sectionId === window.sectionId);
     const sectionComplete = sectionTasks.filter((t) => t.status === "complete");
     return {
@@ -77,6 +82,9 @@ export async function buildDashboard(memberProfileId: string) {
       fullName: profile.fullName,
       rank: profile.rank,
       projectedRetirementDate: toDateOnly(profile.projectedRetirementDate),
+      officialSeparationDate: profile.officialSeparationDate ? toDateOnly(profile.officialSeparationDate) : null,
+      authoritativeRetirementDate: toDateOnly(authoritativeRetirementDate),
+      retirementDateSource: profile.officialSeparationDate ? "official" : "projected",
       skillbridgeStart: profile.skillbridgeStart ? toDateOnly(profile.skillbridgeStart) : null,
       skillbridgeEnd: profile.skillbridgeEnd ? toDateOnly(profile.skillbridgeEnd) : null,
       terminalLeaveStart: profile.terminalLeaveStart
@@ -87,7 +95,7 @@ export async function buildDashboard(memberProfileId: string) {
       installation: profile.installation,
     },
     metrics: {
-      daysToRetirement: daysUntilRetirement(profile.projectedRetirementDate, today),
+      daysToRetirement: daysUntilRetirement(authoritativeRetirementDate, today),
       progressPercent,
       completeCount: complete.length,
       applicableCount: applicable.length,
@@ -127,6 +135,9 @@ export function serializeTask(task: {
   calculatedStart: Date | null;
   calculatedEnd: Date | null;
   dateCompleted: Date | null;
+  waitingOnWho: string | null;
+  waitingOnWhat: string | null;
+  followUpDate: Date | null;
   ownerLabel: string | null;
   requiredLevel: string | null;
   notes: string | null;
@@ -143,6 +154,9 @@ export function serializeTask(task: {
     calculatedStart: task.calculatedStart ? toDateOnly(task.calculatedStart) : null,
     calculatedEnd: task.calculatedEnd ? toDateOnly(task.calculatedEnd) : null,
     dateCompleted: task.dateCompleted ? toDateOnly(task.dateCompleted) : null,
+    waitingOnWho: task.waitingOnWho,
+    waitingOnWhat: task.waitingOnWhat,
+    followUpDate: task.followUpDate ? toDateOnly(task.followUpDate) : null,
     ownerLabel: task.ownerLabel,
     requiredLevel: task.requiredLevel,
     notes: task.notes,
