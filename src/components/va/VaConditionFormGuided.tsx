@@ -24,6 +24,7 @@ type Step = "body-part" | "condition-info" | "impact" | "limitations" | "status"
 interface FormData {
   bodyPart: BodyPart | null;
   conditionName: string;
+  laterality: string;
   diagnosisStatus: string;
   symptoms: string;
   functionalImpactNarrative: string;
@@ -59,6 +60,7 @@ export function VaConditionFormGuided({ conditions = [] }: { conditions?: { id: 
   const [formData, setFormData] = useState<FormData>({
     bodyPart: null,
     conditionName: "",
+    laterality: "",
     diagnosisStatus: "",
     symptoms: "",
     functionalImpactNarrative: "",
@@ -139,6 +141,8 @@ export function VaConditionFormGuided({ conditions = [] }: { conditions?: { id: 
         body: JSON.stringify({
           conditionName: formData.conditionName,
           bodySystem: formData.bodyPart?.bodySystem,
+          bodyRegion: formData.bodyPart?.region,
+          laterality: formData.laterality || undefined,
           diagnosisStatus: formData.diagnosisStatus || undefined,
           symptoms: formData.symptoms || undefined,
           functionalImpactNarrative: formData.functionalImpactNarrative,
@@ -180,6 +184,7 @@ export function VaConditionFormGuided({ conditions = [] }: { conditions?: { id: 
         setFormData({
           bodyPart: null,
           conditionName: "",
+          laterality: "",
           diagnosisStatus: "",
           symptoms: "",
           functionalImpactNarrative: "",
@@ -197,7 +202,7 @@ export function VaConditionFormGuided({ conditions = [] }: { conditions?: { id: 
         });
         setCurrentStep("body-part");
       }, 1500);
-    } catch (_err) {
+    } catch {
       setSaving(false);
       setError("Failed to save condition. Please try again.");
     }
@@ -285,6 +290,22 @@ export function VaConditionFormGuided({ conditions = [] }: { conditions?: { id: 
                   <SelectItem value="service_diagnosed">Diagnosed by military</SelectItem>
                   <SelectItem value="va_diagnosed">Diagnosed by VA</SelectItem>
                   <SelectItem value="civilian_diagnosed">Diagnosed by civilian provider</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="laterality">Side or laterality</Label>
+              <Select value={formData.laterality || ""} onValueChange={(value) => handleSelectChange("laterality", value)}>
+                <SelectTrigger id="laterality">
+                  <SelectValue placeholder="Select if applicable" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="left">Left</SelectItem>
+                  <SelectItem value="right">Right</SelectItem>
+                  <SelectItem value="bilateral">Both sides</SelectItem>
+                  <SelectItem value="midline">Midline</SelectItem>
+                  <SelectItem value="unspecified">Not specified</SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -23,12 +23,13 @@ import { formatCurrency } from "@/lib/utils";
 export type IncomeComparisonRow = {
   locationId: string;
   label: string;
-  totalMonthlyIncome: number;
-  totalMonthlyExpenses: number;
-  remainingMonthlyCash: number;
+  totalMonthlyIncome: number | null;
+  totalMonthlyExpenses: number | null;
+  remainingMonthlyCash: number | null;
   provenance: {
     confidence: string;
     userOverride: boolean;
+    status?: "available" | "unavailable";
   };
 };
 
@@ -39,8 +40,8 @@ export function IncomeComparisonTable({ rows }: { rows: IncomeComparisonRow[] })
     const next = [...rows];
     next.sort((a, b) => {
       if (sort === "label") return a.label.localeCompare(b.label);
-      if (sort === "expenses") return b.totalMonthlyExpenses - a.totalMonthlyExpenses;
-      return b.remainingMonthlyCash - a.remainingMonthlyCash;
+      if (sort === "expenses") return (b.totalMonthlyExpenses ?? -Infinity) - (a.totalMonthlyExpenses ?? -Infinity);
+      return (b.remainingMonthlyCash ?? -Infinity) - (a.remainingMonthlyCash ?? -Infinity);
     });
     return next;
   }, [rows, sort]);
@@ -82,14 +83,14 @@ export function IncomeComparisonTable({ rows }: { rows: IncomeComparisonRow[] })
             {sorted.map((row) => (
               <TableRow key={row.locationId}>
                 <TableCell className="px-5 font-medium">{row.label}</TableCell>
-                <TableCell className="px-5">{formatCurrency(row.totalMonthlyIncome)}</TableCell>
-                <TableCell className="px-5">{formatCurrency(row.totalMonthlyExpenses)}</TableCell>
+                <TableCell className="px-5">{row.totalMonthlyIncome == null ? "Data unavailable" : formatCurrency(row.totalMonthlyIncome)}</TableCell>
+                <TableCell className="px-5">{row.totalMonthlyExpenses == null ? "Data unavailable" : formatCurrency(row.totalMonthlyExpenses)}</TableCell>
                 <TableCell className="px-5 font-semibold text-emerald-700">
-                  {formatCurrency(row.remainingMonthlyCash)}
+                  {row.remainingMonthlyCash == null ? "Data unavailable" : formatCurrency(row.remainingMonthlyCash)}
                 </TableCell>
                 <TableCell className="px-5">
                   <Badge variant="outline">
-                    {row.provenance.confidence}
+                    {row.provenance.status === "unavailable" ? "Data unavailable" : row.provenance.confidence}
                     {row.provenance.userOverride ? " · override" : ""}
                   </Badge>
                 </TableCell>

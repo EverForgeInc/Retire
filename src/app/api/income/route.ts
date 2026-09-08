@@ -40,22 +40,30 @@ export async function GET() {
         const savedLocation = savedByLocationId.get(sel.location.id);
         const manualCosts = savedLocation ? JSON.parse(savedLocation.manualCosts || "{}") as Record<string, number> : {};
         const expenses = { ...expensesFromApproved, ...manualCosts, ...expensesFromCustom };
-        const result = compareLocationCash(
-          {
-            estimatedRetiredPay: scenario.estimatedRetiredPay ?? 0,
-            memberVaPay: scenario.memberVaPay ?? 0,
-            spouseVaPay: scenario.spouseVaPay ?? 0,
-            civilianIncome: scenario.civilianIncome ?? 0,
-            otherIncome: scenario.otherIncome ?? 0,
-          },
-          expenses,
-        );
+        const hasUsableCostData = Object.keys(expenses).length > 0;
+        const result = hasUsableCostData
+          ? compareLocationCash(
+              {
+                estimatedRetiredPay: scenario.estimatedRetiredPay ?? 0,
+                memberVaPay: scenario.memberVaPay ?? 0,
+                spouseVaPay: scenario.spouseVaPay ?? 0,
+                civilianIncome: scenario.civilianIncome ?? 0,
+                otherIncome: scenario.otherIncome ?? 0,
+              },
+              expenses,
+            )
+          : null;
         return {
           locationId: sel.location.id,
           label: `${sel.location.city}${sel.location.region ? `, ${sel.location.region}` : ""}, ${sel.location.country}`,
           currency: sel.location.currency,
           expenses,
-          ...result,
+          totalMonthlyIncome: result?.totalMonthlyIncome ?? null,
+          totalMonthlyExpenses: result?.totalMonthlyExpenses ?? null,
+          remainingMonthlyCash: result?.remainingMonthlyCash ?? null,
+          remainingAnnualCash: result?.remainingAnnualCash ?? null,
+          expenseToIncomeRatio: result?.expenseToIncomeRatio ?? null,
+          housingToIncomeRatio: result?.housingToIncomeRatio ?? null,
           provenance: {
             sources: sel.location.costVersions.map((cost) => ({
               category: cost.category,
@@ -67,11 +75,12 @@ export async function GET() {
               manualOverride: cost.isManualOverride,
             })),
             userOverride: Object.keys(manualCosts).length > 0 || Object.keys(expensesFromCustom).length > 0,
+            status: hasUsableCostData ? "available" : "unavailable",
           },
         };
       });
 
-      comparisons.sort((a, b) => b.remainingMonthlyCash - a.remainingMonthlyCash);
+        comparisons.sort((a, b) => (b.remainingMonthlyCash ?? -Infinity) - (a.remainingMonthlyCash ?? -Infinity));
 
       return {
         id: scenario.id,

@@ -37,6 +37,8 @@ export async function POST(request: Request) {
         memberProfileId: profile.id,
         conditionName: data.conditionName,
         bodySystem: data.bodySystem,
+        bodyRegion: data.bodyRegion,
+        laterality: data.laterality,
         diagnosisStatus: data.diagnosisStatus,
         onsetOrServiceEvent: data.onsetOrServiceEvent,
         symptoms: data.symptoms,
