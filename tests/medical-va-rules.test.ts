@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { bddWindow, isBddOpen, parseDateOnly, toDateOnly } from "@/lib/rules/date-engine";
-import { shouldSuppressTask } from "@/lib/tasks";
+import { getTaskStatusAfterApplicabilityChange, shouldSuppressTask } from "@/lib/tasks";
 import { statusByEvent } from "@/lib/rules/medical-transition";
 import { profileUpdateSchema, vaConditionSchema } from "@/lib/validation";
 
@@ -20,6 +20,11 @@ describe("medical transition and VA rules", () => {
     expect(shouldSuppressTask({ externalKey: "va_bdd_window", title: "Confirm BDD eligibility", desIdesStatus: "not_applicable" })).toBe(false);
     expect(shouldSuppressTask({ externalKey: "ides_referral", title: "Record IDES referral", transitionType: "medical_retirement" })).toBe(false);
     expect(shouldSuppressTask({ externalKey: "ides_referral", title: "Record IDES referral", transitionType: "standard_retirement" })).toBe(true);
+  });
+
+  it("restores rule-suppressed tasks without overriding member-selected Not Applicable", () => {
+    expect(getTaskStatusAfterApplicabilityChange("not_applicable", true)).toBe("not_started");
+    expect(getTaskStatusAfterApplicabilityChange("not_applicable", false)).toBe("not_applicable");
   });
 
   it("allows an early DES/IDES state without an official separation date", () => {

@@ -38,6 +38,7 @@ export async function PATCH(request: Request, { params }: Params) {
     const nextStatus = data.status ?? existing.status;
     const update = {
       status: nextStatus,
+      autoSuppressed: false,
       notes: data.notes === undefined ? existing.notes : data.notes,
       dateCompleted:
         data.dateCompleted === undefined

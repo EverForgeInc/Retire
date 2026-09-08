@@ -112,6 +112,7 @@ model MemberTask {
   manualDueDate     DateTime?
   dateOverride      Boolean   @default(false)
   status            String    @default("not_started")
+  autoSuppressed    Boolean   @default(false)
   completedAt       DateTime?
   completedByUserId String?
   dateCompleted     DateTime?
@@ -221,20 +222,25 @@ model Location {
 }
 
 model SavedLocation {
-  id              String   @id @default(uuid())
-  memberProfileId String
-  locationId      String?
-  city            String
-  state           String?
-  country         String
-  countryCode     String
-  currency        String
-  latitude        Float?
-  longitude       Float?
-  isPreferred     Boolean  @default(false)
-  manualCosts     String   @default("{}")
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id                String    @id @default(uuid())
+  memberProfileId   String
+  locationId        String?
+  displayName       String?
+  city              String
+  state             String?
+  country           String
+  countryCode       String
+  postalCode        String?
+  providerPlaceId   String?
+  currency          String
+  latitude          Float?
+  longitude         Float?
+  locationSource    String?
+  locationUpdatedAt DateTime?
+  isPreferred       Boolean   @default(false)
+  manualCosts       String    @default("{}")
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   memberProfile MemberProfile @relation(fields: [memberProfileId], references: [id], onDelete: Cascade)
   location      Location?     @relation(fields: [locationId], references: [id], onDelete: SetNull)
@@ -369,6 +375,8 @@ model VaCondition {
   memberProfileId               String
   conditionName                 String
   bodySystem                    String?
+  bodyRegion                    String?
+  laterality                    String?
   diagnosisStatus               String?
   onsetOrServiceEvent           String?
   symptoms                      String?
