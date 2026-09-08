@@ -5,7 +5,7 @@
     "context": ".."
   },
   "remoteUser": "node",
-  "overrideCommand": false,
+  "overrideCommand": true,
   "forwardPorts": [3000],
   "portsAttributes": {
     "3000": {
