@@ -1,4 +1,4 @@
-import { handleRouteError, jsonOk, requireMemberContext } from "@/lib/api";
+import { handleRouteError, jsonOk, PublicApiError, requireMemberContext } from "@/lib/api";
 import { writeAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import { assertNoSsnFields, vaConditionSchema } from "@/lib/validation";
@@ -12,6 +12,7 @@ async function getOwnedCondition(id: string, memberProfileId: string) {
 function assertValidSecondary(id: string, secondaryConditionId: string | null | undefined, related: { id: string; memberProfileId: string } | null) {
   if (!secondaryConditionId) return;
   if (secondaryConditionId === id || !related) throw new Error("Referenced condition was not found for this member");
+  if (secondaryConditionId === id || !related) throw new PublicApiError("Referenced condition was not found for this member");
 }
 
 export async function PUT(request: Request, { params }: Context) {
@@ -34,6 +35,8 @@ export async function PUT(request: Request, { params }: Context) {
         data: {
           conditionName: data.conditionName,
           bodySystem: data.bodySystem,
+          bodyRegion: data.bodyRegion,
+          laterality: data.laterality,
           diagnosisStatus: data.diagnosisStatus,
           onsetOrServiceEvent: data.onsetOrServiceEvent,
           symptoms: data.symptoms,

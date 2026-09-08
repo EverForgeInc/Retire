@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { csvEscape } from "@/lib/rules/csv";
+import { handleRouteError, PublicApiError } from "@/lib/api";
 import { assertNoSsnFields } from "@/lib/validation";
 import { readFileSync } from "fs";
 import path from "path";
@@ -119,3 +120,12 @@ describe("privacy guards", () => {
     expect(settings).not.toMatch(/normal.*export|automatic.*export/i);
   });
 });
+
+  it("does not expose internal route errors", async () => {
+    const internal = handleRouteError(new Error("AUTH_SECRET is not configured"));
+    expect(internal.status).toBe(500);
+    await expect(internal.json()).resolves.toEqual({ error: "Unexpected server error" });
+
+    const publicError = handleRouteError(new PublicApiError("Referenced condition was not found for this member"));
+    expect(publicError.status).toBe(400);
+  });
