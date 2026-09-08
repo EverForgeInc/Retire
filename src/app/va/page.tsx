@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { EmptyState, Panel } from "@/components/ui/Panel";
 import { prisma } from "@/lib/db";
 import { getDashboardForPage } from "@/lib/server-data";
+import { getVaClaimRoute } from "@/lib/rules/va-claim";
 
 export default async function VaPage() {
   const { ctx, dashboard } = await getDashboardForPage();
@@ -13,6 +14,20 @@ export default async function VaPage() {
     include: { limitations: true },
     orderBy: { createdAt: "desc" },
   });
+  const claimRoute = getVaClaimRoute({
+    separationDate: ctx.profile!.officialSeparationDate ?? ctx.profile!.projectedRetirementDate,
+    today: new Date(),
+    claimFiled: ["bdd_filed", "fdc", "standard_claim", "claim_submitted", "exams_evidence_in_progress", "decision_pending", "complete"].includes(ctx.profile!.claimWorkflowState),
+    desIdesStatus: ctx.profile!.desIdesStatus,
+    workflowState: ctx.profile!.claimWorkflowState as Parameters<typeof getVaClaimRoute>[0]["workflowState"],
+  });
+  const claimRouteLabel = {
+    ides: "IDES-controlled workflow",
+    filed: "Claim filed or in adjudication",
+    bdd: "BDD filing window is open",
+    standard: "Standard claim route",
+    pre_bdd: "Planning before BDD window",
+  }[claimRoute];
 
   return (
     <AppShell
@@ -33,6 +48,20 @@ export default async function VaPage() {
           coach exaggeration, or predict a VA rating.
         </AlertDescription>
       </Alert>
+
+      <Panel title="Claim workflow" className="mb-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-lg font-semibold text-slate-900">{claimRouteLabel}</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Profile state: {ctx.profile!.claimWorkflowState.replaceAll("_", " ")}
+            </p>
+          </div>
+          <Badge variant={claimRoute === "bdd" || claimRoute === "ides" ? "default" : "outline"}>
+            {claimRoute.toUpperCase()}
+          </Badge>
+        </div>
+      </Panel>
 
       <div className="grid gap-4 lg:grid-cols-[1.2fr_1fr]">
         <Panel title="Tracked conditions">
