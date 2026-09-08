@@ -142,17 +142,21 @@ function Field({
   type = "text",
   defaultValue,
   required,
+  min,
+  max,
 }: {
   name: string;
   label: string;
   type?: string;
   defaultValue?: string;
   required?: boolean;
+  min?: number;
+  max?: number;
 }) {
   return (
     <div className="space-y-2">
       <Label htmlFor={name}>{label}</Label>
-      <Input id={name} name={name} type={type} defaultValue={defaultValue} required={required} />
+      <Input id={name} name={name} type={type} defaultValue={defaultValue} required={required} min={min} max={max} />
     </div>
   );
 }

@@ -123,7 +123,7 @@ export function AppShell({
 
         <div className="space-y-1 border-t border-white/10 p-3">
           <Link
-            href="/settings"
+            href="/resources"
             className={cn(
               buttonVariants({ variant: "ghost" }),
               "w-full justify-start text-slate-200 hover:bg-white/5 hover:text-white",
