@@ -107,6 +107,35 @@ describe("medical transition and VA rules", () => {
     });
   });
 
+  it("captures onboarding fields that drive retirement planning decisions", () => {
+    expect(profileUpdateSchema.parse({
+      projectedRetirementDate: "2027-06-01",
+      service: "Air Force",
+      intendedPostServiceCountry: "United States",
+      moving: true,
+      spouse: true,
+      dependents: 2,
+      skillbridgeIntent: "yes",
+      vaClaimIntent: "maybe",
+      vaHealthCareIntent: "yes",
+      civilianEmployment: "planning",
+      federalEmployment: "no",
+      ceremony: "yes",
+    })).toMatchObject({
+      service: "Air Force",
+      intendedPostServiceCountry: "United States",
+      moving: true,
+      spouse: true,
+      dependents: 2,
+      skillbridgeIntent: "yes",
+      vaClaimIntent: "maybe",
+      vaHealthCareIntent: "yes",
+      civilianEmployment: "planning",
+      federalEmployment: "no",
+      ceremony: "yes",
+    });
+  });
+
   it("rejects a secondary reference without a secondary theory", () => {
     expect(() => vaConditionSchema.parse({
       conditionName: "Back pain",

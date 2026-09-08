@@ -27,27 +27,38 @@ model User {
 }
 
 model MemberProfile {
-  id                      String    @id @default(uuid())
-  userId                  String    @unique
-  fullName                String?
-  rank                    String?
-  branch                  String    @default("USAF")
-  component               String    @default("Active Duty")
-  installation            String?
-  timezone                String?   @default("America/New_York")
-  projectedRetirementDate DateTime
-  officialSeparationDate  DateTime?
-  transitionType          String    @default("not_yet_determined")
-  desIdesStatus           String    @default("not_applicable")
-  claimWorkflowState      String    @default("not_started")
-  skillbridgeStart        DateTime?
-  skillbridgeEnd          DateTime?
-  terminalLeaveStart      DateTime?
-  finalDutyDay            DateTime?
-  retirementLocation      String?
-  overseasStatus          Boolean   @default(false)
-  createdAt               DateTime  @default(now())
-  updatedAt               DateTime  @updatedAt
+  id                         String    @id @default(uuid())
+  userId                     String    @unique
+  fullName                   String?
+  rank                       String?
+  branch                     String    @default("USAF")
+  service                    String?
+  component                  String    @default("Active Duty")
+  installation               String?
+  timezone                   String?   @default("America/New_York")
+  projectedRetirementDate    DateTime
+  officialSeparationDate     DateTime?
+  transitionType             String    @default("not_yet_determined")
+  desIdesStatus              String    @default("not_applicable")
+  claimWorkflowState         String    @default("not_started")
+  intendedPostServiceCountry String?
+  moving                     Boolean   @default(false)
+  spouse                     Boolean   @default(false)
+  dependents                 Int       @default(0)
+  skillbridgeIntent          String?   @default("not_yet")
+  skillbridgeStart           DateTime?
+  vaClaimIntent              String?   @default("not_yet")
+  vaHealthCareIntent         String?   @default("not_yet")
+  civilianEmployment         String?   @default("not_yet")
+  federalEmployment          String?   @default("not_yet")
+  ceremony                   String?   @default("not_yet")
+  skillbridgeEnd             DateTime?
+  terminalLeaveStart         DateTime?
+  finalDutyDay               DateTime?
+  retirementLocation         String?
+  overseasStatus             Boolean   @default(false)
+  createdAt                  DateTime  @default(now())
+  updatedAt                  DateTime  @updatedAt
 
   user                    User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
   tasks                   MemberTask[]

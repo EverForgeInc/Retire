@@ -51,6 +51,7 @@ export default function OnboardingPage() {
             <Field name="fullName" label="Full name" defaultValue="David Najera" required />
             <Field name="rank" label="Rank" defaultValue="CMSgt" />
             <Field name="branch" label="Branch" defaultValue="USAF" />
+            <Field name="service" label="Service" defaultValue="Air Force" />
             <Field name="component" label="Component" defaultValue="Active Duty" />
             <Field name="installation" label="Installation" defaultValue="Misawa AB" />
             <Field name="timezone" label="Time zone" defaultValue="Asia/Tokyo" />
@@ -62,6 +63,8 @@ export default function OnboardingPage() {
               required
             />
             <Field name="retirementLocation" label="Retirement location" defaultValue="Misawa, Japan" />
+            <Field name="intendedPostServiceCountry" label="Intended post-service country" defaultValue="Japan" />
+            <Field name="dependents" label="Dependents" type="number" defaultValue="1" min={0} max={20} />
             <Field name="skillbridgeStart" label="SkillBridge start" type="date" defaultValue="2027-04-01" />
             <Field name="skillbridgeEnd" label="SkillBridge end" type="date" defaultValue="2027-05-15" />
             <Field name="terminalLeaveStart" label="Terminal leave start" type="date" defaultValue="2027-05-22" />
@@ -86,14 +89,38 @@ export default function OnboardingPage() {
               ["claim_submitted", "Claim submitted"], ["exams_evidence_in_progress", "Exams / evidence requests in progress"],
               ["decision_pending", "Decision pending"], ["complete", "Complete"],
             ]} />
+            <SelectField name="skillbridgeIntent" label="SkillBridge intent" defaultValue="not_yet" options={[
+              ["not_yet", "Not yet decided"], ["yes", "Yes"], ["no", "No"], ["maybe", "Maybe"],
+            ]} />
+            <SelectField name="vaClaimIntent" label="VA claim intent" defaultValue="not_yet" options={[
+              ["not_yet", "Not yet decided"], ["yes", "Yes"], ["no", "No"], ["maybe", "Maybe"],
+            ]} />
+            <SelectField name="vaHealthCareIntent" label="VA health-care intent" defaultValue="not_yet" options={[
+              ["not_yet", "Not yet decided"], ["yes", "Yes"], ["no", "No"], ["maybe", "Maybe"],
+            ]} />
+            <SelectField name="civilianEmployment" label="Civilian employment" defaultValue="not_yet" options={[
+              ["not_yet", "Not yet decided"], ["employed", "Already employed"], ["planning", "Planning"], ["seeking", "Seeking"], ["none", "No plans"],
+            ]} />
+            <SelectField name="federalEmployment" label="Federal employment" defaultValue="not_yet" options={[
+              ["not_yet", "Not yet decided"], ["yes", "Yes"], ["no", "No"], ["considering", "Considering"],
+            ]} />
+            <SelectField name="ceremony" label="Retirement ceremony" defaultValue="not_yet" options={[
+              ["not_yet", "Not yet decided"], ["yes", "Yes"], ["no", "No"], ["maybe", "Maybe"],
+            ]} />
           </div>
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="overseasStatus"
-              checked={overseas}
-              onCheckedChange={(value) => setOverseas(value === true)}
-            />
-            <Label htmlFor="overseasStatus">Overseas / OCONUS retirement location</Label>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="flex items-center gap-2 rounded-lg border p-3">
+              <Checkbox id="moving" name="moving" defaultChecked={false} />
+              <Label htmlFor="moving">Planning a move</Label>
+            </div>
+            <div className="flex items-center gap-2 rounded-lg border p-3">
+              <Checkbox id="spouse" name="spouse" defaultChecked={false} />
+              <Label htmlFor="spouse">Spouse or family support</Label>
+            </div>
+            <div className="flex items-center gap-2 rounded-lg border p-3">
+              <Checkbox id="overseasStatus" name="overseasStatus" checked={overseas} onCheckedChange={(value) => setOverseas(value === true)} />
+              <Label htmlFor="overseasStatus">Overseas / OCONUS retirement location</Label>
+            </div>
           </div>
           {error ? (
             <Alert variant="destructive">
