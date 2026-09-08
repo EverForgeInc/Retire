@@ -1,12 +1,7 @@
 import { handleRouteError, requireMemberContext } from "@/lib/api";
 import { prisma } from "@/lib/db";
 import { toDateOnly } from "@/lib/rules/date-engine";
-
-function csvEscape(value: string | null | undefined) {
-  const text = value ?? "";
-  if (/[",\n]/.test(text)) return `"${text.replace(/"/g, '""')}"`;
-  return text;
-}
+import { csvEscape } from "@/lib/rules/csv";
 
 export async function GET() {
   try {

@@ -1,9 +1,17 @@
 import { describe, expect, it } from "vitest";
+import { csvEscape } from "@/lib/rules/csv";
 import { assertNoSsnFields } from "@/lib/validation";
 import { readFileSync } from "fs";
 import path from "path";
 
 describe("privacy guards", () => {
+  it("neutralizes spreadsheet formulas in CSV exports", () => {
+    expect(csvEscape("=HYPERLINK(\"https://example.test\")")).toBe('"\'=HYPERLINK(""https://example.test"")"');
+    expect(csvEscape("+1")).toBe("'+1");
+    expect(csvEscape("-1")).toBe("'-1");
+    expect(csvEscape("@cmd")).toBe("'@cmd");
+    expect(csvEscape('normal, "quoted"')).toBe('"normal, ""quoted"""');
+  });
   it("rejects SSN-shaped payload keys", () => {
     expect(() => assertNoSsnFields({ last4: "1234" })).toThrow(/Forbidden field/);
     expect(() => assertNoSsnFields({ ssn: "123-45-6789" })).toThrow(/Forbidden field/);
