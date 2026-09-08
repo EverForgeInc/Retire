@@ -81,6 +81,8 @@ describe("privacy guards", () => {
     expect(route).toMatch(/export async function PUT/);
     expect(route).toMatch(/export async function DELETE/);
     expect(route).toMatch(/secondaryConditionId === id/);
+    expect(route).toMatch(/dependentCount/);
+    expect(route).toMatch(/409/);
   });
 
   it("rejects self-references for secondary VA conditions", () => {

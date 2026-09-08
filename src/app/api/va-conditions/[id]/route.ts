@@ -11,7 +11,6 @@ async function getOwnedCondition(id: string, memberProfileId: string) {
 
 function assertValidSecondary(id: string, secondaryConditionId: string | null | undefined, related: { id: string; memberProfileId: string } | null) {
   if (!secondaryConditionId) return;
-  if (secondaryConditionId === id || !related) throw new Error("Referenced condition was not found for this member");
   if (secondaryConditionId === id || !related) throw new PublicApiError("Referenced condition was not found for this member");
 }
 
@@ -70,6 +69,13 @@ export async function DELETE(_request: Request, { params }: Context) {
     const { id } = await params;
     const existing = await getOwnedCondition(id, profile.id);
     if (!existing) return new Response(JSON.stringify({ error: "Condition not found" }), { status: 404 });
+    const dependentCount = await prisma.vaCondition.count({ where: { secondaryConditionId: id } });
+    if (dependentCount > 0) {
+      throw new PublicApiError(
+        "Cannot delete this condition because another condition references it. Update the related condition first.",
+        409,
+      );
+    }
     await prisma.vaCondition.delete({ where: { id } });
     await writeAudit({ userId: session.userId, memberProfileId: profile.id, entityType: "va_condition", entityId: id, action: "deleted", afterValue: { id } });
     return jsonOk({ deleted: true });
