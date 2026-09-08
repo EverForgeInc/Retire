@@ -5,8 +5,6 @@
     "context": ".."
   },
   "remoteUser": "node",
-  "containerUser": "node",
-  "updateRemoteUserUID": true,
   "overrideCommand": false,
   "forwardPorts": [3000],
   "portsAttributes": {

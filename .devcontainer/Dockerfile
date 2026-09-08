@@ -1,5 +1,7 @@
 FROM node:22-bookworm-slim AS base
 
+RUN id -u node >/dev/null 2>&1 || useradd --create-home --shell /bin/bash node
+
 ENV DEBIAN_FRONTEND=noninteractive \
     PATH=/home/node/.local/bin:$PATH \
     npm_config_cache=/home/node/.npm \
