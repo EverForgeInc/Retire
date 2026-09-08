@@ -110,6 +110,9 @@ export const vaConditionSchema = z.object({
   if (value.memberPrimaryTheory === "secondary" && !value.secondaryConditionId) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: "A secondary theory must reference another condition", path: ["secondaryConditionId"] });
   }
+  if (value.memberPrimaryTheory !== "secondary" && value.secondaryConditionId) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "A secondary condition reference requires a secondary theory", path: ["secondaryConditionId"] });
+  }
 });
 
 export const digestPreferencesSchema = z

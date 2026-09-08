@@ -48,6 +48,14 @@ describe("medical transition and VA rules", () => {
     });
   });
 
+  it("rejects a secondary reference without a secondary theory", () => {
+    expect(() => vaConditionSchema.parse({
+      conditionName: "Back pain",
+      memberPrimaryTheory: "direct_in_service",
+      secondaryConditionId: "00000000-0000-0000-0000-000000000001",
+    })).toThrow(/secondary condition reference/i);
+  });
+
   it("requires a referenced condition for a member secondary theory", () => {
     expect(() => vaConditionSchema.parse({ conditionName: "Back pain", memberPrimaryTheory: "secondary" })).toThrow(/secondary theory/);
     expect(vaConditionSchema.parse({ conditionName: "Back pain", memberPrimaryTheory: "secondary", secondaryConditionId: "00000000-0000-0000-0000-000000000001" })).toMatchObject({
