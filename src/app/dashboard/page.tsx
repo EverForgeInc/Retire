@@ -141,7 +141,7 @@ export default async function DashboardPage() {
               <li>
                 <div className="font-medium">SkillBridge</div>
                 <div className="text-muted-foreground">
-                  {dashboard.profile.skillbridgeStart} to {dashboard.profile.skillbridgeEnd}
+                  {dashboard.profile.skillbridgeStart} to {dashboard.profile.skillbridgeEnd ?? "date not set"}
                 </div>
               </li>
             ) : null}

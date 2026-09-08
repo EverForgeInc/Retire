@@ -61,7 +61,8 @@ export function TaskDetailForm({ task }: { task: Task }) {
     event.preventDefault();
     setError(null);
     setSaving(true);
-    const form = new FormData(event.currentTarget);
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     const response = await fetch("/api/evidence-references", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -82,7 +83,7 @@ export function TaskDetailForm({ task }: { task: Task }) {
       return;
     }
     setMessage("Evidence reference saved.");
-    event.currentTarget.reset();
+    formElement.reset();
     router.refresh();
   }
 
