@@ -82,3 +82,20 @@ Update `prisma/schema.prisma` datasource provider to `postgresql` before migrati
 ## Environment
 
 Copy `.env.example` to `.env`. Never commit real secrets.
+
+## Provider status and fallback mode
+
+- Geocoding and cost-of-living providers currently use interface-only adapters. The default adapters return no provider data, so manual locations remain available and unknown coordinates/costs remain unavailable rather than becoming zero.
+- The Income Planner accepts member-entered manual costs and preserves approved source values when they exist. Provider source, retrieval, and effective-date metadata should be retained for future integrations.
+- Email digests currently support preference management and a local test queue only. No transactional email vendor or delivery credential is configured.
+- Do not add vendor API keys to the repository. Add a provider adapter and documented environment variable only after the integration is implemented and approved.
+
+## Rules and privacy model
+
+- Projected dates drive early planning; an official separation date is authoritative once available. Active DES/IDES workflows suppress standard BDD routing, and BDD is inclusive from 180 through 90 days remaining.
+- Waiting tasks can record who or what the member is waiting on and a follow-up date. Follow-ups appear in dashboard/digest action queues without changing task status automatically.
+- VA preparation data is member-owned and sensitive. Routes authenticate and scope records to the current member, audit events store metadata rather than narratives, and medical documents stay outside the MVP by default.
+
+## Branch workflow
+
+Work on the assigned feature branch only. Before moving between coherent phases, run the focused tests, commit a descriptive checkpoint, push the feature branch, and verify the commit in `git log`. Never force-push or merge directly to `main`.
