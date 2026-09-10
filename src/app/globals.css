@@ -5,6 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  color-scheme: light;
   --navy-950: #0b1c33;
   --navy-900: #12243a;
   --navy-800: #1a3354;
@@ -106,6 +107,10 @@
 html,
 body {
   min-height: 100%;
+}
+
+html {
+  background: var(--slate-50);
 }
 
 body {
