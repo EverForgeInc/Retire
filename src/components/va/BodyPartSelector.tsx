@@ -15,15 +15,12 @@ export type BodyPart = {
 };
 
 export const BODY_PARTS: BodyPart[] = [
-  // Head & Neck
   { id: "head", name: "Head / Brain", bodySystem: "neurological", region: "head", description: "Head, brain, or scalp conditions" },
   { id: "face", name: "Face", bodySystem: "sensory", region: "face", description: "Facial conditions or injury" },
   { id: "jaw-tmj", name: "Jaw / TMJ", bodySystem: "dental", region: "jaw", description: "Jaw, bite, or temporomandibular issues" },
   { id: "eyes", name: "Eyes / Vision", bodySystem: "sensory", region: "vision", description: "Left, right, or bilateral vision conditions" },
   { id: "ears", name: "Ears / Hearing", bodySystem: "sensory", region: "hearing", description: "Left, right, or bilateral hearing conditions" },
   { id: "nose-sinus", name: "Nose / Sinus", bodySystem: "respiratory", region: "nose-sinus", description: "Nasal or sinus conditions" },
-
-  // Upper Body
   { id: "shoulder", name: "Shoulder", bodySystem: "musculoskeletal", region: "shoulder", description: "Left, right, or bilateral shoulder conditions" },
   { id: "upper-arm", name: "Upper Arm", bodySystem: "musculoskeletal", region: "upper-arm", description: "Upper arm injuries" },
   { id: "elbow", name: "Elbow", bodySystem: "musculoskeletal", region: "elbow", description: "Left or right elbow conditions" },
@@ -32,13 +29,9 @@ export const BODY_PARTS: BodyPart[] = [
   { id: "hand-fingers", name: "Hand / Fingers", bodySystem: "musculoskeletal", region: "hand", description: "Hand, thumb, or finger conditions" },
   { id: "chest", name: "Chest / Ribs", bodySystem: "cardiopulmonary", region: "chest", description: "Chest wall, rib, or respiratory issues" },
   { id: "back-upper", name: "Thoracic / Upper Back", bodySystem: "musculoskeletal", region: "thoracic-spine", description: "Upper or mid-back conditions" },
-
-  // Core & Lower Back
   { id: "back-lower", name: "Lumbar / Lower Back", bodySystem: "musculoskeletal", region: "lumbar-spine", description: "Lower back or lumbar spine issues" },
   { id: "abdomen", name: "Abdomen", bodySystem: "gastrointestinal", region: "abdomen", description: "GI or abdominal conditions" },
   { id: "pelvis-groin", name: "Pelvis / Groin", bodySystem: "genitourinary", region: "pelvis", description: "Pelvic, groin, or reproductive conditions" },
-
-  // Lower Body
   { id: "hip", name: "Hip", bodySystem: "musculoskeletal", region: "hip", description: "Left, right, or bilateral hip conditions" },
   { id: "thigh", name: "Thigh", bodySystem: "musculoskeletal", region: "thigh", description: "Thigh conditions" },
   { id: "knee", name: "Knee", bodySystem: "musculoskeletal", region: "knee", description: "Left, right, or bilateral knee conditions" },
@@ -46,8 +39,6 @@ export const BODY_PARTS: BodyPart[] = [
   { id: "ankle", name: "Ankle", bodySystem: "musculoskeletal", region: "ankle", description: "Left or right ankle conditions" },
   { id: "heel-foot", name: "Heel / Foot", bodySystem: "musculoskeletal", region: "foot", description: "Heel, arch, ball, or foot conditions" },
   { id: "toes", name: "Big Toe / Toes", bodySystem: "musculoskeletal", region: "toes", description: "Big toe or other toe conditions" },
-
-  // Systemic
   { id: "mental-health", name: "Mental Health", bodySystem: "mental-health", region: "mental", description: "PTSD, anxiety, depression, or other mental health concerns" },
   { id: "sleep", name: "Sleep", bodySystem: "sleep", region: "sleep", description: "Sleep conditions or disturbances" },
   { id: "respiratory", name: "Respiratory", bodySystem: "respiratory", region: "respiratory", description: "Breathing or lung conditions" },
@@ -62,7 +53,6 @@ interface BodyPartSelectorProps {
 }
 
 export function BodyPartSelector({ selectedPart, onSelect }: BodyPartSelectorProps) {
-  const [hoveredPart, setHoveredPart] = useState<string | null>(null);
   const [view, setView] = useState<"quick" | "detailed">("quick");
 
   return (
@@ -76,9 +66,7 @@ export function BodyPartSelector({ selectedPart, onSelect }: BodyPartSelectorPro
             onClick={() => setView("quick")}
             className={cn(
               "rounded-md px-3 py-2 text-sm font-medium transition-colors",
-              view === "quick"
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
+              view === "quick" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
             )}
           >
             Quick Select
@@ -90,9 +78,7 @@ export function BodyPartSelector({ selectedPart, onSelect }: BodyPartSelectorPro
             onClick={() => setView("detailed")}
             className={cn(
               "rounded-md px-3 py-2 text-sm font-medium transition-colors",
-              view === "detailed"
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
+              view === "detailed" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
             )}
           >
             Detailed Worksheet
@@ -100,279 +86,54 @@ export function BodyPartSelector({ selectedPart, onSelect }: BodyPartSelectorPro
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Left side - Visual representation */}
-        <div className="flex flex-col items-center justify-center p-6 border rounded-lg bg-slate-50">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="flex flex-col items-center justify-center rounded-lg border bg-slate-50 p-6">
           <div className="w-full max-w-xs">
             <div className="relative overflow-hidden rounded-md border bg-white">
               <Image
-                src={
-                  view === "quick"
-                    ? "/images/va/va-claims-body-map.png"
-                    : "/images/va/detailed-body-location-map.png"
-                }
-                alt={
-                  view === "quick"
-                    ? "VA claims body map showing common body regions"
-                    : "Detailed numbered front and back body-location worksheet"
-                }
+                src={view === "quick" ? "/images/va/va-claims-body-map.png" : "/images/va/detailed-body-location-map.png"}
+                alt={view === "quick" ? "VA claims body map showing common body regions" : "Detailed numbered front and back body-location worksheet"}
                 width={view === "quick" ? 1103 : 1222}
                 height={view === "quick" ? 1426 : 1287}
                 className="h-auto max-h-[400px] w-full object-contain"
                 priority
               />
             </div>
-            <p className="text-xs text-center text-muted-foreground mt-4">
+            <p className="mt-4 text-center text-xs text-muted-foreground">
               {view === "quick"
-                ? "Use the visual guide, then choose a matching region below."
-                : "Use the numbered worksheet as an advanced reference, then choose a region below."}
+                ? "Use the visual guide, then choose a matching region."
+                : "Use the numbered worksheet as a reference, then choose a matching region."}
             </p>
-          </div>
-          <div className="hidden">
-            <svg
-              viewBox="0 0 100 250"
-              className="w-full h-auto"
-              style={{ maxHeight: "400px" }}
-            >
-              {/* Head */}
-              <circle
-                cx="50"
-                cy="25"
-                r="15"
-                className={cn(
-                  "cursor-pointer transition-all",
-                  selectedPart?.region === "head"
-                    ? "fill-emerald-500 stroke-emerald-700"
-                    : hoveredPart === "head"
-                      ? "fill-blue-300 stroke-blue-500"
-                      : "fill-slate-300 stroke-slate-400"
-                )}
-                strokeWidth="1"
-                onClick={() => onSelect(BODY_PARTS[0])}
-                onMouseEnter={() => setHoveredPart("head")}
-                onMouseLeave={() => setHoveredPart(null)}
-              />
-
-              {/* Neck */}
-              <rect
-                x="45"
-                y="40"
-                width="10"
-                height="8"
-                className={cn(
-                  "cursor-pointer transition-all",
-                  selectedPart?.region === "neck"
-                    ? "fill-emerald-500 stroke-emerald-700"
-                    : hoveredPart === "neck"
-                      ? "fill-blue-300 stroke-blue-500"
-                      : "fill-slate-300 stroke-slate-400"
-                )}
-                strokeWidth="1"
-                onClick={() => onSelect(BODY_PARTS[1])}
-                onMouseEnter={() => setHoveredPart("neck")}
-                onMouseLeave={() => setHoveredPart(null)}
-              />
-
-              {/* Torso */}
-              <rect
-                x="35"
-                y="48"
-                width="30"
-                height="45"
-                className={cn(
-                  "cursor-pointer transition-all",
-                  selectedPart?.region === "chest" || selectedPart?.region === "back"
-                    ? "fill-emerald-500 stroke-emerald-700"
-                    : hoveredPart === "chest" || hoveredPart === "back"
-                      ? "fill-blue-300 stroke-blue-500"
-                      : "fill-slate-300 stroke-slate-400"
-                )}
-                strokeWidth="1"
-                onClick={() => onSelect(BODY_PARTS[8])}
-                onMouseEnter={() => setHoveredPart("chest")}
-                onMouseLeave={() => setHoveredPart(null)}
-              />
-
-              {/* Left Arm */}
-              <g
-                className="cursor-pointer transition-all"
-                onClick={() => onSelect(BODY_PARTS[5])}
-                onMouseEnter={() => setHoveredPart("arm")}
-                onMouseLeave={() => setHoveredPart(null)}
-              >
-                <rect
-                  x="10"
-                  y="50"
-                  width="22"
-                  height="40"
-                  className={cn(
-                    "transition-all",
-                    selectedPart?.region === "arm"
-                      ? "fill-emerald-500 stroke-emerald-700"
-                      : hoveredPart === "arm"
-                        ? "fill-blue-300 stroke-blue-500"
-                        : "fill-slate-300 stroke-slate-400"
-                  )}
-                  strokeWidth="1"
-                />
-              </g>
-
-              {/* Right Arm */}
-              <g
-                className="cursor-pointer transition-all"
-                onClick={() => onSelect(BODY_PARTS[5])}
-                onMouseEnter={() => setHoveredPart("arm")}
-                onMouseLeave={() => setHoveredPart(null)}
-              >
-                <rect
-                  x="68"
-                  y="50"
-                  width="22"
-                  height="40"
-                  className={cn(
-                    "transition-all",
-                    selectedPart?.region === "arm"
-                      ? "fill-emerald-500 stroke-emerald-700"
-                      : hoveredPart === "arm"
-                        ? "fill-blue-300 stroke-blue-500"
-                        : "fill-slate-300 stroke-slate-400"
-                  )}
-                  strokeWidth="1"
-                />
-              </g>
-
-              {/* Left Leg */}
-              <g
-                className="cursor-pointer transition-all"
-                onClick={() => onSelect(BODY_PARTS[12])}
-                onMouseEnter={() => setHoveredPart("leg")}
-                onMouseLeave={() => setHoveredPart(null)}
-              >
-                <rect
-                  x="38"
-                  y="93"
-                  width="10"
-                  height="50"
-                  className={cn(
-                    "transition-all",
-                    selectedPart?.region === "leg"
-                      ? "fill-emerald-500 stroke-emerald-700"
-                      : hoveredPart === "leg"
-                        ? "fill-blue-300 stroke-blue-500"
-                        : "fill-slate-300 stroke-slate-400"
-                  )}
-                  strokeWidth="1"
-                />
-              </g>
-
-              {/* Right Leg */}
-              <g
-                className="cursor-pointer transition-all"
-                onClick={() => onSelect(BODY_PARTS[12])}
-                onMouseEnter={() => setHoveredPart("leg")}
-                onMouseLeave={() => setHoveredPart(null)}
-              >
-                <rect
-                  x="52"
-                  y="93"
-                  width="10"
-                  height="50"
-                  className={cn(
-                    "transition-all",
-                    selectedPart?.region === "leg"
-                      ? "fill-emerald-500 stroke-emerald-700"
-                      : hoveredPart === "leg"
-                        ? "fill-blue-300 stroke-blue-500"
-                        : "fill-slate-300 stroke-slate-400"
-                  )}
-                  strokeWidth="1"
-                />
-              </g>
-
-              {/* Left Foot */}
-              <g
-                className="cursor-pointer transition-all"
-                onClick={() => onSelect(BODY_PARTS[14])}
-                onMouseEnter={() => setHoveredPart("foot")}
-                onMouseLeave={() => setHoveredPart(null)}
-              >
-                <rect
-                  x="38"
-                  y="143"
-                  width="10"
-                  height="12"
-                  className={cn(
-                    "transition-all",
-                    selectedPart?.region === "foot"
-                      ? "fill-emerald-500 stroke-emerald-700"
-                      : hoveredPart === "foot"
-                        ? "fill-blue-300 stroke-blue-500"
-                        : "fill-slate-300 stroke-slate-400"
-                  )}
-                  strokeWidth="1"
-                />
-              </g>
-
-              {/* Right Foot */}
-              <g
-                className="cursor-pointer transition-all"
-                onClick={() => onSelect(BODY_PARTS[14])}
-                onMouseEnter={() => setHoveredPart("foot")}
-                onMouseLeave={() => setHoveredPart(null)}
-              >
-                <rect
-                  x="52"
-                  y="143"
-                  width="10"
-                  height="12"
-                  className={cn(
-                    "transition-all",
-                    selectedPart?.region === "foot"
-                      ? "fill-emerald-500 stroke-emerald-700"
-                      : hoveredPart === "foot"
-                        ? "fill-blue-300 stroke-blue-500"
-                        : "fill-slate-300 stroke-slate-400"
-                  )}
-                  strokeWidth="1"
-                />
-              </g>
-            </svg>
           </div>
         </div>
 
-        {/* Right side - Detailed options */}
         <div className="space-y-4">
           <div>
-            <h3 className="font-semibold text-sm mb-2">Select injury location:</h3>
-            <div className="space-y-2 max-h-[400px] overflow-y-auto">
+            <h3 className="mb-2 text-sm font-semibold">Select injury location:</h3>
+            <div className="max-h-[400px] space-y-2 overflow-y-auto">
               {BODY_PARTS.map((part) => (
                 <button
                   key={part.id}
                   type="button"
                   onClick={() => onSelect(part)}
-                  onMouseEnter={() => setHoveredPart(part.region)}
-                  onMouseLeave={() => setHoveredPart(null)}
                   className={cn(
-                    "w-full text-left p-3 rounded-lg border transition-all",
+                    "w-full rounded-lg border p-3 text-left transition-all",
                     selectedPart?.id === part.id
                       ? "border-emerald-500 bg-emerald-50 ring-2 ring-emerald-500"
-                      : "border-border hover:border-emerald-300 hover:bg-emerald-50"
+                      : "border-border hover:border-emerald-300 hover:bg-emerald-50",
                   )}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-sm">{part.name}</span>
-                    <Badge variant="outline" className="text-xs">
-                      {part.bodySystem}
-                    </Badge>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm font-medium">{part.name}</span>
+                    <Badge variant="outline" className="text-xs">{part.bodySystem}</Badge>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">{part.description}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{part.description}</p>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Selected part summary */}
-          {selectedPart && (
+          {selectedPart ? (
             <Card className="border-emerald-200 bg-emerald-50">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm">Selected</CardTitle>
@@ -385,7 +146,7 @@ export function BodyPartSelector({ selectedPart, onSelect }: BodyPartSelectorPro
                 </div>
               </CardContent>
             </Card>
-          )}
+          ) : null}
         </div>
       </div>
     </div>
