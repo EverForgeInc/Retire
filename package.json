@@ -26,7 +26,7 @@
     "date-fns": "^4.1.0",
     "jose": "^6.0.10",
     "lucide-react": "^0.487.0",
-    "next": "^15.5.23",
+    "next": "16.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "shadcn": "^4.16.2",
@@ -43,14 +43,17 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "15.5.7",
+    "eslint-config-next": "16.3.4",
     "prisma": "^6.5.0",
     "tailwindcss": "^4",
     "tsx": "^4.19.3",
     "typescript": "^5",
-    "vitest": "^3.1.1"
+    "vitest": "4.1.11"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
+  },
+  "overrides": {
+    "deepmerge-ts": "^8.0.0"
   }
 }
