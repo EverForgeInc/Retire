@@ -46,10 +46,10 @@ export function TaskDetailForm({ task }: { task: Task }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         status,
-        waitingOnWho: form.get("waitingOnWho") || null,
-        waitingOnWhat: form.get("waitingOnWhat") || null,
-        followUpDate: form.get("followUpDate") || null,
-        dateCompleted: form.get("dateCompleted") || null,
+        waitingOnWho: status === "waiting" ? form.get("waitingOnWho") || null : null,
+        waitingOnWhat: status === "waiting" ? form.get("waitingOnWhat") || null : null,
+        followUpDate: status === "waiting" ? form.get("followUpDate") || null : null,
+        dateCompleted: status === "complete" ? form.get("dateCompleted") || null : null,
         notes: form.get("notes"),
       }),
     });
@@ -111,27 +111,33 @@ export function TaskDetailForm({ task }: { task: Task }) {
             </SelectContent>
           </Select>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="waitingOnWho">Waiting on</Label>
-          <Input id="waitingOnWho" name="waitingOnWho" defaultValue={task.waitingOnWho ?? ""} placeholder="Person or office" />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="waitingOnWhat">Waiting for</Label>
-          <Input id="waitingOnWhat" name="waitingOnWhat" defaultValue={task.waitingOnWhat ?? ""} placeholder="Response or item" />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="followUpDate">Follow-up date</Label>
-          <Input id="followUpDate" name="followUpDate" type="date" defaultValue={task.followUpDate ?? ""} />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="dateCompleted">Optional completion date</Label>
-          <Input
-            id="dateCompleted"
-            name="dateCompleted"
-            type="date"
-            defaultValue={task.dateCompleted ?? ""}
-          />
-        </div>
+
+        {status === "waiting" ? (
+          <div className="space-y-4 rounded-lg border p-4">
+            <p className="text-sm text-muted-foreground">Waiting details are only needed while a task is in Waiting status.</p>
+            <div className="space-y-2">
+              <Label htmlFor="waitingOnWho">Waiting on</Label>
+              <Input id="waitingOnWho" name="waitingOnWho" defaultValue={task.waitingOnWho ?? ""} placeholder="Person or office" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="waitingOnWhat">Waiting for</Label>
+              <Input id="waitingOnWhat" name="waitingOnWhat" defaultValue={task.waitingOnWhat ?? ""} placeholder="Response or item" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="followUpDate">Follow-up date</Label>
+              <Input id="followUpDate" name="followUpDate" type="date" defaultValue={task.followUpDate ?? ""} />
+            </div>
+          </div>
+        ) : null}
+
+        {status === "complete" ? (
+          <div className="space-y-2">
+            <Label htmlFor="dateCompleted">Completion date</Label>
+            <Input id="dateCompleted" name="dateCompleted" type="date" defaultValue={task.dateCompleted ?? ""} />
+            <p className="text-xs text-muted-foreground">Leave blank when first marking complete and the app will record today automatically.</p>
+          </div>
+        ) : null}
+
         <div className="space-y-2">
           <Label htmlFor="notes">Notes</Label>
           <Textarea
@@ -168,11 +174,7 @@ export function TaskDetailForm({ task }: { task: Task }) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="recordCategory">Record category</Label>
-            <Input
-              id="recordCategory"
-              name="recordCategory"
-              placeholder="Administrative / medical request metadata"
-            />
+            <Input id="recordCategory" name="recordCategory" placeholder="Administrative / medical request metadata" />
           </div>
           <div className="space-y-2">
             <Label htmlFor="confirmationNumber">Confirmation number</Label>
@@ -180,11 +182,7 @@ export function TaskDetailForm({ task }: { task: Task }) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="externalStorageLabel">External secure storage label</Label>
-            <Input
-              id="externalStorageLabel"
-              name="externalStorageLabel"
-              placeholder="MHS GENESIS download saved in encrypted personal drive"
-            />
+            <Input id="externalStorageLabel" name="externalStorageLabel" placeholder="MHS GENESIS download saved in encrypted personal drive" />
           </div>
           <div className="space-y-2">
             <Label>Completeness</Label>
