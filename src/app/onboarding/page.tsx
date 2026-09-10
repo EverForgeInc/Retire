@@ -42,10 +42,7 @@ export default function OnboardingPage() {
 
   return (
     <AppShell title="Onboarding" subtitle="Set your retirement anchors. No SSN is requested.">
-      <Panel
-        title="Member profile"
-        description="Saving generates or recalculates your 93-task chronological checklist."
-      >
+      <Panel title="Member profile" description="Saving generates or recalculates your 93-task chronological checklist.">
         <form className="space-y-4" onSubmit={onSubmit}>
           <div className="grid gap-4 md:grid-cols-2">
             <Field name="fullName" label="Full name" defaultValue="David Najera" required />
@@ -54,13 +51,7 @@ export default function OnboardingPage() {
             <Field name="component" label="Component" defaultValue="Active Duty" />
             <Field name="installation" label="Installation" defaultValue="Misawa AB" />
             <Field name="timezone" label="Time zone" defaultValue="Asia/Tokyo" />
-            <Field
-              name="projectedRetirementDate"
-              label="Projected retirement date"
-              type="date"
-              defaultValue="2027-06-01"
-              required
-            />
+            <Field name="projectedRetirementDate" label="Projected retirement date" type="date" defaultValue="2027-06-01" required />
             <Field name="retirementLocation" label="Retirement location" defaultValue="Misawa, Japan" />
             <Field name="skillbridgeStart" label="SkillBridge start" type="date" defaultValue="2027-04-01" />
             <Field name="skillbridgeEnd" label="SkillBridge end" type="date" defaultValue="2027-05-15" />
@@ -74,11 +65,20 @@ export default function OnboardingPage() {
               ["medical_retirement", "Medical Retirement"],
               ["not_yet_determined", "Not Yet Determined"],
             ]} />
-            <SelectField name="desIdesStatus" label="Medical Disability Evaluation (DES/IDES)" defaultValue="not_applicable" options={[
-              ["not_applicable", "No / Not applicable"], ["referred", "Referred / Just started"],
-              ["in_process", "MEB or PEB in progress"], ["found_fit", "Found fit"],
-              ["found_unfit", "Found unfit"], ["complete", "Complete"],
-            ]} />
+            <div className="space-y-2">
+              <SelectField name="desIdesStatus" label="Disability Evaluation System (DES/IDES)" defaultValue="not_applicable" options={[
+                ["not_applicable", "No / Not applicable"],
+                ["not_started", "Applicable, but not started"],
+                ["referred", "Referred / Just started"],
+                ["in_process", "MEB or PEB in progress"],
+                ["found_fit", "Found fit"],
+                ["found_unfit", "Found unfit"],
+                ["complete", "Complete"],
+              ]} />
+              <p className="text-xs text-muted-foreground">
+                DES is the military disability evaluation process; IDES coordinates that process with the VA. Choose Not applicable for a normal retirement unless you have been referred for disability evaluation.
+              </p>
+            </div>
             <SelectField name="claimWorkflowState" label="VA claim workflow" defaultValue="not_started" options={[
               ["not_started", "Not started"], ["planning", "Planning"], ["bdd_eligible", "BDD eligible"],
               ["bdd_filed", "BDD filed"], ["fdc", "Fully Developed Claim (FDC)"],
@@ -88,11 +88,7 @@ export default function OnboardingPage() {
             ]} />
           </div>
           <div className="flex items-center gap-2">
-            <Checkbox
-              id="overseasStatus"
-              checked={overseas}
-              onCheckedChange={(value) => setOverseas(value === true)}
-            />
+            <Checkbox id="overseasStatus" checked={overseas} onCheckedChange={(value) => setOverseas(value === true)} />
             <Label htmlFor="overseasStatus">Overseas / OCONUS retirement location</Label>
           </div>
           {error ? (
@@ -100,28 +96,14 @@ export default function OnboardingPage() {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           ) : null}
-          <Button type="submit" disabled={loading}>
-            {loading ? "Saving..." : "Generate my 93-task checklist"}
-          </Button>
+          <Button type="submit" disabled={loading}>{loading ? "Saving..." : "Generate my 93-task checklist"}</Button>
         </form>
       </Panel>
     </AppShell>
   );
 }
 
-function Field({
-  name,
-  label,
-  type = "text",
-  defaultValue,
-  required,
-}: {
-  name: string;
-  label: string;
-  type?: string;
-  defaultValue?: string;
-  required?: boolean;
-}) {
+function Field({ name, label, type = "text", defaultValue, required }: { name: string; label: string; type?: string; defaultValue?: string; required?: boolean }) {
   return (
     <div className="space-y-2">
       <Label htmlFor={name}>{label}</Label>
