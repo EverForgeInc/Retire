@@ -43,33 +43,35 @@ export async function searchNominatimLocations(query: string): Promise<Searchabl
     address?: Record<string, string>;
   }>;
 
-  return raw
-    .map((item) => {
-      const address = item.address ?? {};
-      const countryCode = (address.country_code ?? "").toUpperCase();
-      const city = getAddressPart(address, ["city", "town", "village", "municipality", "county"]);
-      const state = getAddressPart(address, ["state", "region", "province", "state_district"]);
-      const country = address.country;
-      const latitude = item.lat ? Number(item.lat) : undefined;
-      const longitude = item.lon ? Number(item.lon) : undefined;
+  const results: SearchableLocationResult[] = [];
 
-      if (!city || !country || countryCode.length !== 2 || !Number.isFinite(latitude) || !Number.isFinite(longitude)) {
-        return null;
-      }
+  for (const item of raw) {
+    const address = item.address ?? {};
+    const countryCode = (address.country_code ?? "").toUpperCase();
+    const city = getAddressPart(address, ["city", "town", "village", "municipality", "county"]);
+    const state = getAddressPart(address, ["state", "region", "province", "state_district"]);
+    const country = address.country;
+    const latitude = item.lat ? Number(item.lat) : undefined;
+    const longitude = item.lon ? Number(item.lon) : undefined;
 
-      return {
-        providerPlaceId: item.place_id != null ? String(item.place_id) : undefined,
-        displayName: item.display_name,
-        city,
-        state,
-        country,
-        countryCode,
-        postalCode: address.postcode,
-        latitude,
-        longitude,
-        source: "OpenStreetMap Nominatim",
-        currency: COMMON_CURRENCIES[countryCode],
-      } satisfies SearchableLocationResult;
-    })
-    .filter((item): item is SearchableLocationResult => item !== null);
+    if (!city || !country || countryCode.length !== 2 || latitude === undefined || longitude === undefined || !Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+      continue;
+    }
+
+    results.push({
+      providerPlaceId: item.place_id != null ? String(item.place_id) : undefined,
+      displayName: item.display_name,
+      city,
+      state,
+      country,
+      countryCode,
+      postalCode: address.postcode,
+      latitude,
+      longitude,
+      source: "OpenStreetMap Nominatim",
+      currency: COMMON_CURRENCIES[countryCode],
+    });
+  }
+
+  return results;
 }
