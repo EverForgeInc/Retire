@@ -12,7 +12,6 @@ import {
 } from "date-fns";
 import type { TimelineEventInput, TimelineEventType } from "@/lib/rules/leave";
 
-/** Calendar day kinds, including generated fills not stored as DB events. */
 export type CalendarDayKind =
   | TimelineEventType
   | "retirement_ceremony"
@@ -27,7 +26,6 @@ export type CalendarDayCell = {
   showStar?: "ceremony" | "retirement";
 };
 
-/** Higher index = higher precedence when resolving a day. */
 export const DAY_PRECEDENCE: CalendarDayKind[] = [
   "duty",
   "weekend",
@@ -57,10 +55,7 @@ export const CALENDAR_LEGEND: Array<{
   { kind: "retirement_marker", label: "Retirement", swatchClass: "bg-emerald-600", star: true },
 ];
 
-export const DAY_CELL_STYLES: Record<
-  CalendarDayKind,
-  { cell: string; text: string }
-> = {
+export const DAY_CELL_STYLES: Record<CalendarDayKind, { cell: string; text: string }> = {
   duty: { cell: "bg-slate-900", text: "text-white" },
   weekend: { cell: "bg-slate-200", text: "text-slate-700" },
   federal_holiday: { cell: "bg-amber-400", text: "text-slate-900" },
@@ -98,36 +93,17 @@ function lastWeekdayOfMonth(year: number, monthIndex: number, weekday: number): 
   return addDays(last, -offset);
 }
 
-/** Common U.S. federal holidays for calendar fills (illustrative planner aid). */
 export function federalHolidaysForYear(year: number): Array<{ date: Date; name: string }> {
   const list: Array<{ date: Date; name: string }> = US_FIXED_HOLIDAYS.map((h) => ({
     date: startOfDay(new Date(year, h.month - 1, h.day)),
     name: h.name,
   }));
-  list.push({
-    date: nthWeekdayOfMonth(year, 0, 1, 3),
-    name: "Martin Luther King Jr. Day",
-  });
-  list.push({
-    date: nthWeekdayOfMonth(year, 1, 1, 3),
-    name: "Presidents Day",
-  });
-  list.push({
-    date: lastWeekdayOfMonth(year, 4, 1),
-    name: "Memorial Day",
-  });
-  list.push({
-    date: nthWeekdayOfMonth(year, 8, 1, 1),
-    name: "Labor Day",
-  });
-  list.push({
-    date: nthWeekdayOfMonth(year, 9, 1, 2),
-    name: "Columbus Day",
-  });
-  list.push({
-    date: nthWeekdayOfMonth(year, 10, 4, 4),
-    name: "Thanksgiving Day",
-  });
+  list.push({ date: nthWeekdayOfMonth(year, 0, 1, 3), name: "Martin Luther King Jr. Day" });
+  list.push({ date: nthWeekdayOfMonth(year, 1, 1, 3), name: "Presidents Day" });
+  list.push({ date: lastWeekdayOfMonth(year, 4, 1), name: "Memorial Day" });
+  list.push({ date: nthWeekdayOfMonth(year, 8, 1, 1), name: "Labor Day" });
+  list.push({ date: nthWeekdayOfMonth(year, 9, 1, 2), name: "Columbus Day" });
+  list.push({ date: nthWeekdayOfMonth(year, 10, 4, 4), name: "Thanksgiving Day" });
   return list;
 }
 
@@ -137,12 +113,8 @@ function precedenceRank(kind: CalendarDayKind): number {
 }
 
 function mapEventType(eventType: string): CalendarDayKind | null {
-  if (eventType === "retirement_ceremony" || eventType === "ceremony") {
-    return "retirement_ceremony";
-  }
-  if ((DAY_PRECEDENCE as string[]).includes(eventType)) {
-    return eventType as CalendarDayKind;
-  }
+  if (eventType === "retirement_ceremony" || eventType === "ceremony") return "retirement_ceremony";
+  if ((DAY_PRECEDENCE as string[]).includes(eventType)) return eventType as CalendarDayKind;
   return null;
 }
 
@@ -165,47 +137,34 @@ export function resolveDayKind(
   for (const event of events) {
     const kind = mapEventType(event.eventType);
     if (!kind) continue;
-    if (
-      !isWithinInterval(day, {
-        start: startOfDay(event.startDate),
-        end: startOfDay(event.endDate),
-      })
-    ) {
-      continue;
-    }
+    if (!isWithinInterval(day, { start: startOfDay(event.startDate), end: startOfDay(event.endDate) })) continue;
 
     if (kind === "retirement_ceremony") {
       showStar = "ceremony";
-      label = event.title || "Ceremony";
-      if (precedenceRank("retirement_ceremony") >= precedenceRank(primary)) {
-        // Keep underlying leave/skillbridge color; ceremony is a marker overlay.
-        if (primary === "duty" || primary === "weekend") {
-          primary = "retirement_ceremony";
-        }
+      label = event.title || "Retirement ceremony";
+      if (precedenceRank("retirement_ceremony") >= precedenceRank(primary) && (primary === "duty" || primary === "weekend")) {
+        primary = "retirement_ceremony";
       }
       continue;
     }
 
     if (kind === "retirement") {
       showStar = "retirement";
-      label = "Retirement Date";
+      label = event.title || "Retirement date";
       primary = "retirement";
       continue;
     }
 
     if (precedenceRank(kind) >= precedenceRank(primary)) {
       primary = kind;
-      if (kind === "federal_holiday") label = event.title;
+      label = event.title || readableEventType(kind);
     }
   }
 
   return { primary, label, showStar };
 }
 
-export function buildMonthGrid(params: {
-  month: Date;
-  events: TimelineEventInput[];
-}): CalendarDayCell[] {
+export function buildMonthGrid(params: { month: Date; events: TimelineEventInput[] }): CalendarDayCell[] {
   const monthStart = startOfMonth(params.month);
   const monthEnd = endOfMonth(params.month);
   const year = monthStart.getFullYear();
@@ -214,14 +173,12 @@ export function buildMonthGrid(params: {
     ...federalHolidaysForYear(year - 1),
     ...federalHolidaysForYear(year + 1),
   ];
-
   const gridStart = addDays(monthStart, -getDay(monthStart));
   const gridEnd = addDays(monthEnd, 6 - getDay(monthEnd));
   const days = eachDayOfInterval({ start: gridStart, end: gridEnd });
 
   return days.map((date) => {
-    const inMonth =
-      date.getMonth() === monthStart.getMonth() && date.getFullYear() === monthStart.getFullYear();
+    const inMonth = date.getMonth() === monthStart.getMonth() && date.getFullYear() === monthStart.getFullYear();
     const resolved = resolveDayKind(date, params.events, holidays);
     return {
       date,
@@ -234,9 +191,7 @@ export function buildMonthGrid(params: {
   });
 }
 
-export function eventBadgeVariant(
-  eventType: string,
-): "default" | "secondary" | "outline" | "destructive" {
+export function eventBadgeVariant(eventType: string): "default" | "secondary" | "outline" | "destructive" {
   switch (eventType) {
     case "terminal_leave":
     case "ordinary_leave":
@@ -248,24 +203,20 @@ export function eventBadgeVariant(
   }
 }
 
+export function readableEventType(eventType: string): string {
+  return eventType.replace(/_/g, " ").replace(/\b\w/g, (value) => value.toUpperCase());
+}
+
 export function eventDotClass(eventType: string): string {
   switch (eventType) {
-    case "skillbridge":
-      return "bg-blue-600";
-    case "ptdy":
-      return "bg-teal-500";
-    case "terminal_leave":
-      return "bg-orange-500";
-    case "ordinary_leave":
-      return "bg-emerald-500";
+    case "skillbridge": return "bg-blue-600";
+    case "ptdy": return "bg-teal-500";
+    case "terminal_leave": return "bg-orange-500";
+    case "ordinary_leave": return "bg-emerald-500";
     case "retirement_ceremony":
-    case "ceremony":
-      return "bg-amber-500";
-    case "retirement":
-      return "bg-emerald-600";
-    case "federal_holiday":
-      return "bg-amber-400";
-    default:
-      return "bg-slate-700";
+    case "ceremony": return "bg-amber-500";
+    case "retirement": return "bg-emerald-600";
+    case "federal_holiday": return "bg-amber-400";
+    default: return "bg-slate-700";
   }
 }
