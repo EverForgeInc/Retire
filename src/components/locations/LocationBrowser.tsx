@@ -57,6 +57,17 @@ type CostPreview = {
   retrievedAt: string;
 };
 
+type InternationalBenchmark = {
+  kind: "country_price_level_index";
+  value: number;
+  year: number;
+  countryName: string;
+  source: string;
+  retrievedAt: string;
+  license: string;
+  note: string;
+};
+
 const EMPTY_FORM = {
   displayName: "",
   city: "",
@@ -92,6 +103,7 @@ export function LocationBrowser({ locations, savedLocations }: { locations: Loca
   const [previewBusyId, setPreviewBusyId] = useState<string | null>(null);
   const [adoptBusyId, setAdoptBusyId] = useState<string | null>(null);
   const [costPreviews, setCostPreviews] = useState<Record<string, CostPreview[]>>({});
+  const [internationalBenchmarks, setInternationalBenchmarks] = useState<Record<string, InternationalBenchmark | null>>({});
   const [previewMessages, setPreviewMessages] = useState<Record<string, string>>({});
 
   const countries = useMemo(
@@ -138,14 +150,22 @@ export function LocationBrowser({ locations, savedLocations }: { locations: Loca
       if (!response.ok) throw new Error("preview failed");
       const data = await response.json();
       const costs = (data.costs ?? []) as CostPreview[];
+      const benchmark = (data.benchmark ?? null) as InternationalBenchmark | null;
       setCostPreviews((current) => ({ ...current, [location.id]: costs }));
-      if (!data.supported || costs.length === 0) {
-        setPreviewMessages((current) => ({ ...current, [location.id]: data.reason ?? "No free web data was available for this location." }));
+      setInternationalBenchmarks((current) => ({ ...current, [location.id]: benchmark }));
+
+      if (benchmark) {
+        setPreviewMessages((current) => ({
+          ...current,
+          [location.id]: `Country benchmark · World Bank · ${benchmark.year} · ${benchmark.license}`,
+        }));
+      } else if (!data.supported || costs.length === 0) {
+        setPreviewMessages((current) => ({ ...current, [location.id]: data.reason ?? "No free public data was available for this location." }));
       } else {
         setPreviewMessages((current) => ({ ...current, [location.id]: "Experimental web preview · CostOfLivingData.com · CC BY 4.0" }));
       }
     } catch {
-      setPreviewMessages((current) => ({ ...current, [location.id]: "The free web preview could not be loaded. Your saved location and manual costs were not changed." }));
+      setPreviewMessages((current) => ({ ...current, [location.id]: "The free data preview could not be loaded. Your saved location and manual costs were not changed." }));
     } finally {
       setPreviewBusyId(null);
     }
@@ -199,30 +219,17 @@ export function LocationBrowser({ locations, savedLocations }: { locations: Loca
     <div className="space-y-4">
       <Panel
         title="My retirement locations"
-        description="Search for a city to fill location details automatically, or enter them manually. U.S. locations can preview free web-based cost estimates and then explicitly adopt them into the planner."
+        description="Search for a city to fill location details automatically. U.S. locations can adopt free city-level estimates; international locations can show a free World Bank country-level price benchmark while we evaluate more granular reusable sources."
       >
         <div className="mb-4 rounded-lg border bg-muted/20 p-3">
           <div className="flex flex-col gap-2 sm:flex-row">
-            <Input
-              value={lookupQuery}
-              onChange={(event) => setLookupQuery(event.target.value)}
-              onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); void searchLocations(); } }}
-              placeholder="Search city, state, or country"
-              aria-label="Automatic retirement location search"
-            />
-            <Button type="button" variant="outline" disabled={lookupBusy} onClick={() => void searchLocations()}>
-              {lookupBusy ? "Searching..." : "Find location"}
-            </Button>
+            <Input value={lookupQuery} onChange={(event) => setLookupQuery(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); void searchLocations(); } }} placeholder="Search city, state, or country" aria-label="Automatic retirement location search" />
+            <Button type="button" variant="outline" disabled={lookupBusy} onClick={() => void searchLocations()}>{lookupBusy ? "Searching..." : "Find location"}</Button>
           </div>
           {lookupResults.length > 0 ? (
             <div className="mt-3 grid gap-2">
               {lookupResults.map((result) => (
-                <button
-                  key={`${result.providerPlaceId ?? result.displayName}-${result.city}`}
-                  type="button"
-                  className="rounded-md border bg-background p-3 text-left text-sm hover:bg-muted/50"
-                  onClick={() => chooseLookupResult(result)}
-                >
+                <button key={`${result.providerPlaceId ?? result.displayName}-${result.city}`} type="button" className="rounded-md border bg-background p-3 text-left text-sm hover:bg-muted/50" onClick={() => chooseLookupResult(result)}>
                   <strong>{result.city}</strong>{result.state ? `, ${result.state}` : ""} · {result.country}
                   {result.displayName ? <span className="mt-1 block text-xs text-muted-foreground">{result.displayName}</span> : null}
                 </button>
@@ -256,28 +263,32 @@ export function LocationBrowser({ locations, savedLocations }: { locations: Loca
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             {saved.map((location) => {
               const preview = costPreviews[location.id] ?? [];
+              const benchmark = internationalBenchmarks[location.id] ?? null;
               return (
                 <article key={location.id} className="rounded-lg border p-3 text-sm">
                   <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <strong>{location.city}</strong>{location.state ? `, ${location.state}` : ""} · {location.country}
-                      {location.isPreferred ? <span className="block text-xs text-muted-foreground">Preferred location</span> : null}
-                    </div>
+                    <div><strong>{location.city}</strong>{location.state ? `, ${location.state}` : ""} · {location.country}{location.isPreferred ? <span className="block text-xs text-muted-foreground">Preferred location</span> : null}</div>
                     <button type="button" className="text-destructive underline" onClick={async () => { const response = await fetch(`/api/locations/${location.id}`, { method: "DELETE" }); if (response.ok) setSaved((current) => current.filter((item) => item.id !== location.id)); }}>Remove</button>
                   </div>
 
                   <div className="mt-3 flex flex-wrap gap-2">
                     <Button type="button" size="sm" variant="outline" disabled={previewBusyId === location.id || adoptBusyId === location.id} onClick={() => void previewCosts(location)}>
-                      {previewBusyId === location.id ? "Checking web data..." : location.countryCode === "US" ? "Preview free cost data" : "Check free data availability"}
+                      {previewBusyId === location.id ? "Checking free data..." : location.countryCode === "US" ? "Preview free cost data" : "Preview country benchmark"}
                     </Button>
                     {preview.length > 0 && location.countryCode === "US" ? (
-                      <Button type="button" size="sm" disabled={adoptBusyId === location.id || previewBusyId === location.id} onClick={() => void adoptCosts(location)}>
-                        {adoptBusyId === location.id ? "Adopting..." : "Use these estimates"}
-                      </Button>
+                      <Button type="button" size="sm" disabled={adoptBusyId === location.id || previewBusyId === location.id} onClick={() => void adoptCosts(location)}>{adoptBusyId === location.id ? "Adopting..." : "Use these estimates"}</Button>
                     ) : null}
                   </div>
 
                   {previewMessages[location.id] ? <p className="mt-2 text-xs text-muted-foreground">{previewMessages[location.id]}</p> : null}
+                  {benchmark ? (
+                    <div className="mt-3 rounded-md border bg-muted/30 p-3">
+                      <div className="text-xs text-muted-foreground">Household price-level index</div>
+                      <div className="text-xl font-semibold">{benchmark.value.toLocaleString("en-US", { maximumFractionDigits: 1 })}</div>
+                      <div className="mt-1 text-xs text-muted-foreground">{benchmark.countryName} · {benchmark.year}. {benchmark.note}</div>
+                      <a className="mt-2 inline-block text-xs underline" href={benchmark.source} target="_blank" rel="noreferrer">View World Bank source</a>
+                    </div>
+                  ) : null}
                   {preview.length > 0 ? (
                     <div className="mt-3 grid grid-cols-2 gap-2">
                       {preview.map((cost) => (
@@ -297,33 +308,22 @@ export function LocationBrowser({ locations, savedLocations }: { locations: Loca
         ) : null}
       </Panel>
 
-      <Panel
-        title="Saved locations"
-        description="Open Income Planner for ranked remaining-cash comparisons with source provenance."
-        action={<Link href="/income" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>Open income planner</Link>}
-      >
+      <Panel title="Saved locations" description="Open Income Planner for ranked remaining-cash comparisons with source provenance." action={<Link href="/income" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>Open income planner</Link>}>
         <div className="mb-4 flex flex-col gap-2 sm:flex-row">
           <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search city or region" aria-label="Search locations" className="sm:flex-1" />
           <Select value={country} onValueChange={(value) => setCountry(value ?? "all")}>
             <SelectTrigger className="sm:w-48" aria-label="Filter by country"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All countries</SelectItem>
-              {countries.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}
-            </SelectContent>
+            <SelectContent><SelectItem value="all">All countries</SelectItem>{countries.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}</SelectContent>
           </Select>
         </div>
-        {filtered.length === 0 ? (
-          <EmptyState title="No matching locations" description="Try a different country or search term." />
-        ) : (
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {filtered.map((location) => (
-              <article key={location.id} className="rounded-xl border border-border/70 p-4">
-                <h2 className="font-semibold">{location.city}{location.region ? `, ${location.region}` : ""}</h2>
-                <p className="text-sm text-muted-foreground">{location.country} · {location.currency}</p>
-                <Badge variant="secondary" className="mt-3">{location.approvedCostCount} approved cost categories</Badge>
-              </article>
-            ))}
-          </div>
+        {filtered.length === 0 ? <EmptyState title="No matching locations" description="Try a different country or search term." /> : (
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">{filtered.map((location) => (
+            <article key={location.id} className="rounded-xl border border-border/70 p-4">
+              <h2 className="font-semibold">{location.city}{location.region ? `, ${location.region}` : ""}</h2>
+              <p className="text-sm text-muted-foreground">{location.country} · {location.currency}</p>
+              <Badge variant="secondary" className="mt-3">{location.approvedCostCount} approved cost categories</Badge>
+            </article>
+          ))}</div>
         )}
       </Panel>
     </div>
