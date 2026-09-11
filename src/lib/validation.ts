@@ -129,15 +129,68 @@ export const vaConditionSchema = z.object({
   }
 });
 
-export const digestPreferencesSchema = z.object({
-  cadence: z.enum(["off", "daily", "weekly"]),
-  deliveryLocalTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
-  weeklyDay: z.number().int().min(0).max(6).nullable().optional(),
-  timezone: z.string().min(1),
-  includeActivePhase: z.boolean(),
-  includeOverdue: z.boolean(),
-  includeWaiting: z.boolean(),
-  upcomingDays: z.number().int().min(1).max(90),
-  sendEmptyDigest: z.boolean(),
-  pausedUntil: z.string().datetime().nullable().optional(),
+export const digestPreferencesSchema = z
+  .object({
+    cadence: z.enum(["off", "daily", "weekly"]),
+    deliveryLocalTime: z.string().regex(/^\d{2}:\d{2}$/),
+    weeklyDay: z.number().int().min(0).max(6).nullable().optional(),
+    timezone: z.string().min(1),
+    includeActivePhase: z.boolean().optional(),
+    includeOverdue: z.boolean().optional(),
+    includeWaiting: z.boolean().optional(),
+    upcomingDays: z.number().int().min(0).max(90).optional(),
+    sendEmptyDigest: z.boolean().optional(),
+    pausedUntil: z.string().datetime().nullable().optional(),
+  })
+  .superRefine((value, ctx) => {
+    if (value.cadence === "weekly" && (value.weeklyDay === undefined || value.weeklyDay === null)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "weeklyDay is required when cadence is weekly",
+        path: ["weeklyDay"],
+      });
+    }
+  });
+  
+export const medicalTransitionEventSchema = z.object({
+  eventType: z.enum(["referred", "case_opened", "medical_evaluation", "found_fit", "found_unfit", "separation_or_retirement_ordered", "case_closed"]),
+  occurredAt: dateString,
+  notes: z.string().optional(),
+});
+
+export const incomeScenarioSchema = z.object({
+  name: z.string().min(1),
+  retirementSystem: z.string().optional(),
+  high3Monthly: z.number().optional(),
+  yearsService: z.number().optional(),
+  multiplier: z.number().optional(),
+  estimatedRetiredPay: z.number().optional(),
+  memberVaRating: z.number().int().min(0).max(100).optional(),
+  memberVaPay: z.number().optional(),
+  spouseVaPay: z.number().optional(),
+  civilianIncome: z.number().optional(),
+  otherIncome: z.number().optional(),
+  dependentConfiguration: z.record(z.unknown()).optional(),
+});
+
+export const savedLocationSchema = z.object({
+  displayName: z.string().trim().optional(),
+  city: z.string().trim().min(1),
+  state: z.string().trim().optional(),
+  country: z.string().trim().min(1),
+  countryCode: z.string().trim().length(2).transform((value) => value.toUpperCase()),
+  postalCode: z.string().trim().optional(),
+  providerPlaceId: z.string().trim().optional(),
+  currency: z.string().trim().min(3).max(3).transform((value) => value.toUpperCase()),
+  latitude: z.number().finite().optional(),
+  longitude: z.number().finite().optional(),
+  isPreferred: z.boolean().optional(),
+  manualCosts: z.record(z.number().finite().nonnegative()).optional(),
+});
+
+export const rateImportSchema = z.object({
+  benefitType: z.enum(["va_compensation", "military_pay"]),
+  effectiveDate: dateString,
+  sourceUrl: z.string().url(),
+  rows: z.array(z.record(z.union([z.string(), z.number()]))).min(1),
 });
