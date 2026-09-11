@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     const session = await registerWithCredentials(data.email, data.password, data.displayName);
     if (!session) return jsonError("Unable to create account with that email", 409);
 
-    return jsonOk({ user: session, next: "/onboarding" }, 201);
+    return jsonOk({ user: session, next: "/onboarding" }, { status: 201 });
   } catch (error) {
     return handleRouteError(error);
   }
