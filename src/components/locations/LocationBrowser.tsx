@@ -7,88 +7,18 @@ import { buttonVariants, Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState, Panel } from "@/components/ui/Panel";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
-export type LocationCard = {
-  id: string;
-  city: string;
-  region: string | null;
-  country: string;
-  currency: string;
-  approvedCostCount: number;
-};
+export type LocationCard = { id: string; city: string; region: string | null; country: string; currency: string; approvedCostCount: number };
+export type SavedLocationCard = { id: string; city: string; state: string | null; country: string; countryCode: string; currency: string; isPreferred: boolean };
+type LookupResult = { providerPlaceId?: string; displayName?: string; city: string; state?: string; country: string; countryCode: string; postalCode?: string; latitude?: number; longitude?: number; source: string; currency?: string };
+type CostPreview = { category: string; amountUsd: number; currency: string; source: string; retrievedAt: string };
+type InternationalBenchmark = { kind: "country_price_level_index"; value: number; year: number; countryName: string; source: string; retrievedAt: string; license: string; note: string };
+type InternationalCategoryBenchmark = { category: string; label: string; value: number; year: number; base: string; source: string; retrievedAt: string; license: string; note: string };
 
-export type SavedLocationCard = {
-  id: string;
-  city: string;
-  state: string | null;
-  country: string;
-  countryCode: string;
-  currency: string;
-  isPreferred: boolean;
-};
-
-type LookupResult = {
-  providerPlaceId?: string;
-  displayName?: string;
-  city: string;
-  state?: string;
-  country: string;
-  countryCode: string;
-  postalCode?: string;
-  latitude?: number;
-  longitude?: number;
-  source: string;
-  currency?: string;
-};
-
-type CostPreview = {
-  category: string;
-  amountUsd: number;
-  currency: string;
-  source: string;
-  retrievedAt: string;
-};
-
-type InternationalBenchmark = {
-  kind: "country_price_level_index";
-  value: number;
-  year: number;
-  countryName: string;
-  source: string;
-  retrievedAt: string;
-  license: string;
-  note: string;
-};
-
-const EMPTY_FORM = {
-  displayName: "",
-  city: "",
-  state: "",
-  country: "",
-  countryCode: "",
-  postalCode: "",
-  providerPlaceId: "",
-  currency: "USD",
-  latitude: undefined as number | undefined,
-  longitude: undefined as number | undefined,
-  isPreferred: false,
-};
-
-const COST_LABELS: Record<string, string> = {
-  housing: "Housing / rent",
-  groceries: "Groceries",
-  utilities: "Utilities",
-  transportation: "Transportation",
-  estimated_total: "Estimated monthly total",
-};
+const EMPTY_FORM = { displayName: "", city: "", state: "", country: "", countryCode: "", postalCode: "", providerPlaceId: "", currency: "USD", latitude: undefined as number | undefined, longitude: undefined as number | undefined, isPreferred: false };
+const COST_LABELS: Record<string, string> = { housing: "Housing / rent", groceries: "Groceries", utilities: "Utilities", transportation: "Transportation", estimated_total: "Estimated monthly total" };
 
 export function LocationBrowser({ locations, savedLocations }: { locations: LocationCard[]; savedLocations: SavedLocationCard[] }) {
   const router = useRouter();
@@ -104,42 +34,31 @@ export function LocationBrowser({ locations, savedLocations }: { locations: Loca
   const [adoptBusyId, setAdoptBusyId] = useState<string | null>(null);
   const [costPreviews, setCostPreviews] = useState<Record<string, CostPreview[]>>({});
   const [internationalBenchmarks, setInternationalBenchmarks] = useState<Record<string, InternationalBenchmark | null>>({});
+  const [internationalCategories, setInternationalCategories] = useState<Record<string, InternationalCategoryBenchmark[]>>({});
   const [previewMessages, setPreviewMessages] = useState<Record<string, string>>({});
 
-  const countries = useMemo(
-    () => Array.from(new Set(locations.map((l) => l.country))).sort(),
-    [locations],
-  );
-
+  const countries = useMemo(() => Array.from(new Set(locations.map((l) => l.country))).sort(), [locations]);
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return locations.filter((location) => {
       if (country !== "all" && location.country !== country) return false;
       if (!q) return true;
-      const haystack = `${location.city} ${location.region ?? ""} ${location.country}`.toLowerCase();
-      return haystack.includes(q);
+      return `${location.city} ${location.region ?? ""} ${location.country}`.toLowerCase().includes(q);
     });
   }, [locations, query, country]);
 
   async function searchLocations() {
     const q = lookupQuery.trim();
-    if (q.length < 2) {
-      setMessage("Enter at least two characters to search for a location.");
-      return;
-    }
-    setLookupBusy(true);
-    setMessage(null);
+    if (q.length < 2) { setMessage("Enter at least two characters to search for a location."); return; }
+    setLookupBusy(true); setMessage(null);
     try {
       const response = await fetch(`/api/location-search?q=${encodeURIComponent(q)}`);
       if (!response.ok) throw new Error("lookup failed");
       const data = await response.json();
       setLookupResults(data.results ?? []);
       if ((data.results ?? []).length === 0) setMessage("No matching locations found. You can still enter the location manually.");
-    } catch {
-      setMessage("Automatic lookup is temporarily unavailable. Manual entry is still available.");
-    } finally {
-      setLookupBusy(false);
-    }
+    } catch { setMessage("Automatic lookup is temporarily unavailable. Manual entry is still available."); }
+    finally { setLookupBusy(false); }
   }
 
   async function previewCosts(location: SavedLocationCard) {
@@ -151,14 +70,15 @@ export function LocationBrowser({ locations, savedLocations }: { locations: Loca
       const data = await response.json();
       const costs = (data.costs ?? []) as CostPreview[];
       const benchmark = (data.benchmark ?? null) as InternationalBenchmark | null;
+      const categoryBenchmarks = (data.categoryBenchmarks ?? []) as InternationalCategoryBenchmark[];
       setCostPreviews((current) => ({ ...current, [location.id]: costs }));
       setInternationalBenchmarks((current) => ({ ...current, [location.id]: benchmark }));
-
-      if (benchmark) {
-        setPreviewMessages((current) => ({
-          ...current,
-          [location.id]: `Country benchmark · World Bank · ${benchmark.year} · ${benchmark.license}`,
-        }));
+      setInternationalCategories((current) => ({ ...current, [location.id]: categoryBenchmarks }));
+      if (categoryBenchmarks.length > 0) {
+        const latestYear = Math.max(...categoryBenchmarks.map((item) => item.year));
+        setPreviewMessages((current) => ({ ...current, [location.id]: `International category comparison · OECD · ${latestYear}. World Bank overall benchmark retained as fallback/context.` }));
+      } else if (benchmark) {
+        setPreviewMessages((current) => ({ ...current, [location.id]: `Country benchmark · World Bank · ${benchmark.year} · ${benchmark.license}` }));
       } else if (!data.supported || costs.length === 0) {
         setPreviewMessages((current) => ({ ...current, [location.id]: data.reason ?? "No free public data was available for this location." }));
       } else {
@@ -166,88 +86,52 @@ export function LocationBrowser({ locations, savedLocations }: { locations: Loca
       }
     } catch {
       setPreviewMessages((current) => ({ ...current, [location.id]: "The free data preview could not be loaded. Your saved location and manual costs were not changed." }));
-    } finally {
-      setPreviewBusyId(null);
-    }
+    } finally { setPreviewBusyId(null); }
   }
 
   async function adoptCosts(location: SavedLocationCard) {
     setAdoptBusyId(location.id);
     setPreviewMessages((current) => ({ ...current, [location.id]: "" }));
     try {
-      const response = await fetch("/api/location-cost-adopt", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ savedLocationId: location.id }),
-      });
+      const response = await fetch("/api/location-cost-adopt", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ savedLocationId: location.id }) });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || "adoption failed");
-      setPreviewMessages((current) => ({
-        ...current,
-        [location.id]: `${data.adopted?.length ?? 0} verified monthly categories adopted. The source total remains reference-only to prevent double counting.`,
-      }));
+      setPreviewMessages((current) => ({ ...current, [location.id]: `${data.adopted?.length ?? 0} verified monthly categories adopted. The source total remains reference-only to prevent double counting.` }));
       router.refresh();
     } catch (error) {
-      setPreviewMessages((current) => ({
-        ...current,
-        [location.id]: error instanceof Error ? error.message : "Unable to adopt these estimates.",
-      }));
-    } finally {
-      setAdoptBusyId(null);
-    }
+      setPreviewMessages((current) => ({ ...current, [location.id]: error instanceof Error ? error.message : "Unable to adopt these estimates." }));
+    } finally { setAdoptBusyId(null); }
   }
 
   function chooseLookupResult(result: LookupResult) {
-    setForm((current) => ({
-      ...current,
-      displayName: result.displayName ?? "",
-      city: result.city,
-      state: result.state ?? "",
-      country: result.country,
-      countryCode: result.countryCode,
-      postalCode: result.postalCode ?? "",
-      providerPlaceId: result.providerPlaceId ?? "",
-      currency: result.currency ?? current.currency,
-      latitude: result.latitude,
-      longitude: result.longitude,
-    }));
+    setForm((current) => ({ ...current, displayName: result.displayName ?? "", city: result.city, state: result.state ?? "", country: result.country, countryCode: result.countryCode, postalCode: result.postalCode ?? "", providerPlaceId: result.providerPlaceId ?? "", currency: result.currency ?? current.currency, latitude: result.latitude, longitude: result.longitude }));
     setLookupResults([]);
     setMessage(result.currency ? "Location details filled automatically. Review and save." : "Location details filled automatically. Please confirm the currency before saving.");
   }
 
   return (
     <div className="space-y-4">
-      <Panel
-        title="My retirement locations"
-        description="Search for a city to fill location details automatically. U.S. locations can adopt free city-level estimates; international locations can show a free World Bank country-level price benchmark while we evaluate more granular reusable sources."
-      >
+      <Panel title="My retirement locations" description="Search for a city to fill location details automatically. U.S. locations can adopt free city-level estimates; international locations can compare category-level price indexes when OECD data is available, with a World Bank country benchmark fallback.">
         <div className="mb-4 rounded-lg border bg-muted/20 p-3">
           <div className="flex flex-col gap-2 sm:flex-row">
             <Input value={lookupQuery} onChange={(event) => setLookupQuery(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); void searchLocations(); } }} placeholder="Search city, state, or country" aria-label="Automatic retirement location search" />
             <Button type="button" variant="outline" disabled={lookupBusy} onClick={() => void searchLocations()}>{lookupBusy ? "Searching..." : "Find location"}</Button>
           </div>
-          {lookupResults.length > 0 ? (
-            <div className="mt-3 grid gap-2">
-              {lookupResults.map((result) => (
-                <button key={`${result.providerPlaceId ?? result.displayName}-${result.city}`} type="button" className="rounded-md border bg-background p-3 text-left text-sm hover:bg-muted/50" onClick={() => chooseLookupResult(result)}>
-                  <strong>{result.city}</strong>{result.state ? `, ${result.state}` : ""} · {result.country}
-                  {result.displayName ? <span className="mt-1 block text-xs text-muted-foreground">{result.displayName}</span> : null}
-                </button>
-              ))}
-            </div>
-          ) : null}
+          {lookupResults.length > 0 ? <div className="mt-3 grid gap-2">{lookupResults.map((result) => (
+            <button key={`${result.providerPlaceId ?? result.displayName}-${result.city}`} type="button" className="rounded-md border bg-background p-3 text-left text-sm hover:bg-muted/50" onClick={() => chooseLookupResult(result)}>
+              <strong>{result.city}</strong>{result.state ? `, ${result.state}` : ""} · {result.country}
+              {result.displayName ? <span className="mt-1 block text-xs text-muted-foreground">{result.displayName}</span> : null}
+            </button>
+          ))}</div> : null}
         </div>
 
         <form className="grid gap-2 sm:grid-cols-2 lg:grid-cols-6" onSubmit={async (event) => {
-          event.preventDefault();
-          setMessage(null);
+          event.preventDefault(); setMessage(null);
           const response = await fetch("/api/locations", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
           if (!response.ok) { setMessage("Unable to save location."); return; }
           const data = await response.json();
           setSaved((current) => form.isPreferred ? [data.location, ...current.map((item) => ({ ...item, isPreferred: false }))] : [data.location, ...current]);
-          setForm(EMPTY_FORM);
-          setLookupQuery("");
-          setMessage("Location saved.");
+          setForm(EMPTY_FORM); setLookupQuery(""); setMessage("Location saved.");
         }}>
           <Input required placeholder="City" value={form.city} onChange={(event) => setForm({ ...form, city: event.target.value })} aria-label="New location city" />
           <Input placeholder="State or region" value={form.state} onChange={(event) => setForm({ ...form, state: event.target.value })} aria-label="New location state" />
@@ -259,72 +143,64 @@ export function LocationBrowser({ locations, savedLocations }: { locations: Loca
         </form>
         {message ? <p className="mt-3 text-sm text-muted-foreground" role="status">{message}</p> : null}
 
-        {saved.length > 0 ? (
-          <div className="mt-4 grid gap-3 md:grid-cols-2">
-            {saved.map((location) => {
-              const preview = costPreviews[location.id] ?? [];
-              const benchmark = internationalBenchmarks[location.id] ?? null;
-              return (
-                <article key={location.id} className="rounded-lg border p-3 text-sm">
-                  <div className="flex items-start justify-between gap-3">
-                    <div><strong>{location.city}</strong>{location.state ? `, ${location.state}` : ""} · {location.country}{location.isPreferred ? <span className="block text-xs text-muted-foreground">Preferred location</span> : null}</div>
-                    <button type="button" className="text-destructive underline" onClick={async () => { const response = await fetch(`/api/locations/${location.id}`, { method: "DELETE" }); if (response.ok) setSaved((current) => current.filter((item) => item.id !== location.id)); }}>Remove</button>
-                  </div>
+        {saved.length > 0 ? <div className="mt-4 grid gap-3 md:grid-cols-2">{saved.map((location) => {
+          const preview = costPreviews[location.id] ?? [];
+          const benchmark = internationalBenchmarks[location.id] ?? null;
+          const categoryBenchmarks = internationalCategories[location.id] ?? [];
+          return (
+            <article key={location.id} className="rounded-lg border p-3 text-sm">
+              <div className="flex items-start justify-between gap-3">
+                <div><strong>{location.city}</strong>{location.state ? `, ${location.state}` : ""} · {location.country}{location.isPreferred ? <span className="block text-xs text-muted-foreground">Preferred location</span> : null}</div>
+                <button type="button" className="text-destructive underline" onClick={async () => { const response = await fetch(`/api/locations/${location.id}`, { method: "DELETE" }); if (response.ok) setSaved((current) => current.filter((item) => item.id !== location.id)); }}>Remove</button>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button type="button" size="sm" variant="outline" disabled={previewBusyId === location.id || adoptBusyId === location.id} onClick={() => void previewCosts(location)}>{previewBusyId === location.id ? "Checking free data..." : location.countryCode === "US" ? "Preview free cost data" : "Preview COL breakdown"}</Button>
+                {preview.length > 0 && location.countryCode === "US" ? <Button type="button" size="sm" disabled={adoptBusyId === location.id || previewBusyId === location.id} onClick={() => void adoptCosts(location)}>{adoptBusyId === location.id ? "Adopting..." : "Use these estimates"}</Button> : null}
+              </div>
+              {previewMessages[location.id] ? <p className="mt-2 text-xs text-muted-foreground">{previewMessages[location.id]}</p> : null}
 
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <Button type="button" size="sm" variant="outline" disabled={previewBusyId === location.id || adoptBusyId === location.id} onClick={() => void previewCosts(location)}>
-                      {previewBusyId === location.id ? "Checking free data..." : location.countryCode === "US" ? "Preview free cost data" : "Preview country benchmark"}
-                    </Button>
-                    {preview.length > 0 && location.countryCode === "US" ? (
-                      <Button type="button" size="sm" disabled={adoptBusyId === location.id || previewBusyId === location.id} onClick={() => void adoptCosts(location)}>{adoptBusyId === location.id ? "Adopting..." : "Use these estimates"}</Button>
-                    ) : null}
+              {categoryBenchmarks.length > 0 ? (
+                <div className="mt-3">
+                  <div className="mb-2 flex items-center justify-between"><div className="font-medium">International COL categories</div><span className="text-xs text-muted-foreground">Comparative indexes</span></div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {categoryBenchmarks.map((item) => (
+                      <div key={item.category} className={cn("rounded-md border p-2", item.category === "overall" && "col-span-2 bg-muted/30")}>
+                        <div className="text-xs text-muted-foreground">{item.label}</div>
+                        <div className="font-semibold">{item.value.toLocaleString("en-US", { maximumFractionDigits: 1 })}</div>
+                        <div className="text-[11px] text-muted-foreground">{item.year} · base {item.base || "OECD"}</div>
+                      </div>
+                    ))}
                   </div>
+                  <p className="mt-2 text-[11px] text-muted-foreground">These values compare relative price levels; they are not monthly dollar expenses and are not imported into the Income Planner.</p>
+                  <a className="mt-1 inline-block text-xs underline" href={categoryBenchmarks[0].source} target="_blank" rel="noreferrer">View OECD source</a>
+                </div>
+              ) : null}
 
-                  {previewMessages[location.id] ? <p className="mt-2 text-xs text-muted-foreground">{previewMessages[location.id]}</p> : null}
-                  {benchmark ? (
-                    <div className="mt-3 rounded-md border bg-muted/30 p-3">
-                      <div className="text-xs text-muted-foreground">Household price-level index</div>
-                      <div className="text-xl font-semibold">{benchmark.value.toLocaleString("en-US", { maximumFractionDigits: 1 })}</div>
-                      <div className="mt-1 text-xs text-muted-foreground">{benchmark.countryName} · {benchmark.year}. {benchmark.note}</div>
-                      <a className="mt-2 inline-block text-xs underline" href={benchmark.source} target="_blank" rel="noreferrer">View World Bank source</a>
-                    </div>
-                  ) : null}
-                  {preview.length > 0 ? (
-                    <div className="mt-3 grid grid-cols-2 gap-2">
-                      {preview.map((cost) => (
-                        <div key={cost.category} className={cn("rounded-md border p-2", cost.category === "estimated_total" && "col-span-2 bg-muted/30")}>
-                          <div className="text-xs text-muted-foreground">{COST_LABELS[cost.category] ?? cost.category}</div>
-                          <div className="font-semibold">${cost.amountUsd.toLocaleString("en-US", { maximumFractionDigits: 0 })}/mo</div>
-                          {cost.category === "estimated_total" ? <div className="text-[11px] text-muted-foreground">Reference only; not added again to planner expenses.</div> : null}
-                        </div>
-                      ))}
-                      <a className="col-span-2 text-xs underline" href={preview[0].source} target="_blank" rel="noreferrer">View source data</a>
-                    </div>
-                  ) : null}
-                </article>
-              );
-            })}
-          </div>
-        ) : null}
+              {benchmark ? <div className="mt-3 rounded-md border bg-muted/30 p-3">
+                <div className="text-xs text-muted-foreground">World Bank household price-level benchmark</div>
+                <div className="text-xl font-semibold">{benchmark.value.toLocaleString("en-US", { maximumFractionDigits: 1 })}</div>
+                <div className="mt-1 text-xs text-muted-foreground">{benchmark.countryName} · {benchmark.year}. {benchmark.note}</div>
+                <a className="mt-2 inline-block text-xs underline" href={benchmark.source} target="_blank" rel="noreferrer">View World Bank source</a>
+              </div> : null}
+
+              {preview.length > 0 ? <div className="mt-3 grid grid-cols-2 gap-2">{preview.map((cost) => (
+                <div key={cost.category} className={cn("rounded-md border p-2", cost.category === "estimated_total" && "col-span-2 bg-muted/30")}>
+                  <div className="text-xs text-muted-foreground">{COST_LABELS[cost.category] ?? cost.category}</div>
+                  <div className="font-semibold">${cost.amountUsd.toLocaleString("en-US", { maximumFractionDigits: 0 })}/mo</div>
+                  {cost.category === "estimated_total" ? <div className="text-[11px] text-muted-foreground">Reference only; not added again to planner expenses.</div> : null}
+                </div>
+              ))}<a className="col-span-2 text-xs underline" href={preview[0].source} target="_blank" rel="noreferrer">View source data</a></div> : null}
+            </article>
+          );
+        })}</div> : null}
       </Panel>
 
       <Panel title="Saved locations" description="Open Income Planner for ranked remaining-cash comparisons with source provenance." action={<Link href="/income" className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>Open income planner</Link>}>
         <div className="mb-4 flex flex-col gap-2 sm:flex-row">
           <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search city or region" aria-label="Search locations" className="sm:flex-1" />
-          <Select value={country} onValueChange={(value) => setCountry(value ?? "all")}>
-            <SelectTrigger className="sm:w-48" aria-label="Filter by country"><SelectValue /></SelectTrigger>
-            <SelectContent><SelectItem value="all">All countries</SelectItem>{countries.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}</SelectContent>
-          </Select>
+          <Select value={country} onValueChange={(value) => setCountry(value ?? "all")}><SelectTrigger className="sm:w-48" aria-label="Filter by country"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All countries</SelectItem>{countries.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}</SelectContent></Select>
         </div>
-        {filtered.length === 0 ? <EmptyState title="No matching locations" description="Try a different country or search term." /> : (
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">{filtered.map((location) => (
-            <article key={location.id} className="rounded-xl border border-border/70 p-4">
-              <h2 className="font-semibold">{location.city}{location.region ? `, ${location.region}` : ""}</h2>
-              <p className="text-sm text-muted-foreground">{location.country} · {location.currency}</p>
-              <Badge variant="secondary" className="mt-3">{location.approvedCostCount} approved cost categories</Badge>
-            </article>
-          ))}</div>
-        )}
+        {filtered.length === 0 ? <EmptyState title="No matching locations" description="Try a different country or search term." /> : <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">{filtered.map((location) => <article key={location.id} className="rounded-xl border border-border/70 p-4"><h2 className="font-semibold">{location.city}{location.region ? `, ${location.region}` : ""}</h2><p className="text-sm text-muted-foreground">{location.country} · {location.currency}</p><Badge variant="secondary" className="mt-3">{location.approvedCostCount} approved cost categories</Badge></article>)}</div>}
       </Panel>
     </div>
   );
