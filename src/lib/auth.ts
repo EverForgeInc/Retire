@@ -14,8 +14,11 @@ export type SessionUser = {
 };
 
 function getSecret() {
-  const secret = process.env.AUTH_SECRET;
+  const secret = process.env.AUTH_SECRET?.trim();
   if (!secret) throw new Error("AUTH_SECRET is not configured");
+  if (process.env.NODE_ENV === "production" && secret.length < 32) {
+    throw new Error("AUTH_SECRET must be at least 32 characters in production");
+  }
   return new TextEncoder().encode(secret);
 }
 
@@ -96,11 +99,7 @@ export async function getSessionProfile() {
   return { session, user, profile: user.profile };
 }
 
-export async function loginWithCredentials(email: string, password: string) {
-  const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
-  if (!user) return null;
-  const valid = await verifyPassword(password, user.passwordHash);
-  if (!valid) return null;
+async function establishSession(user: { id: string; email: string; displayName: string | null; role: string }) {
   const sessionUser: SessionUser = {
     userId: user.id,
     email: user.email,
@@ -110,4 +109,28 @@ export async function loginWithCredentials(email: string, password: string) {
   const token = await createSessionToken(sessionUser);
   await setSessionCookie(token);
   return sessionUser;
+}
+
+export async function registerWithCredentials(email: string, password: string, displayName: string) {
+  const normalizedEmail = email.trim().toLowerCase();
+  const existing = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+  if (existing) return null;
+
+  const user = await prisma.user.create({
+    data: {
+      email: normalizedEmail,
+      displayName: displayName.trim(),
+      passwordHash: await hashPassword(password),
+      role: "member",
+    },
+  });
+  return establishSession(user);
+}
+
+export async function loginWithCredentials(email: string, password: string) {
+  const user = await prisma.user.findUnique({ where: { email: email.trim().toLowerCase() } });
+  if (!user) return null;
+  const valid = await verifyPassword(password, user.passwordHash);
+  if (!valid) return null;
+  return establishSession(user);
 }
