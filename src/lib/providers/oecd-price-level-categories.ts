@@ -9,6 +9,14 @@ export type InternationalPriceCategory = {
   license: string;
 };
 
+const ISO2_TO_OECD3: Record<string, string> = {
+  AU: "AUS", AT: "AUT", BE: "BEL", CA: "CAN", CL: "CHL", CO: "COL", CR: "CRI", CZ: "CZE",
+  DK: "DNK", EE: "EST", FI: "FIN", FR: "FRA", DE: "DEU", GR: "GRC", HU: "HUN", IS: "ISL",
+  IE: "IRL", IL: "ISR", IT: "ITA", JP: "JPN", KR: "KOR", LV: "LVA", LT: "LTU", LU: "LUX",
+  MX: "MEX", NL: "NLD", NZ: "NZL", NO: "NOR", PL: "POL", PT: "PRT", SK: "SVK", SI: "SVN",
+  ES: "ESP", SE: "SWE", CH: "CHE", TR: "TUR", GB: "GBR", US: "USA",
+};
+
 const CATEGORY_CODES = [
   ["overall", "Actual individual consumption", "A01"],
   ["food", "Food and non-alcoholic beverages", "A0101"],
@@ -47,10 +55,9 @@ export function parseOecdPriceLevelCsv(
   const lines = csv.trim().split(/\r?\n/).filter(Boolean);
   if (lines.length < 2) return null;
   const headers = parseCsvLine(lines[0]).map((item) => item.trim());
-  const indexOf = (name: string) => headers.indexOf(name);
-  const obsIndex = indexOf("OBS_VALUE");
-  const timeIndex = indexOf("TIME_PERIOD");
-  const baseIndex = indexOf("BASE_PER");
+  const obsIndex = headers.indexOf("OBS_VALUE");
+  const timeIndex = headers.indexOf("TIME_PERIOD");
+  const baseIndex = headers.indexOf("BASE_PER");
   if (obsIndex < 0 || timeIndex < 0) return null;
 
   const rows = lines.slice(1).map(parseCsvLine).map((row) => ({
@@ -73,9 +80,9 @@ export function parseOecdPriceLevelCsv(
   };
 }
 
-async function fetchCategory(countryCode: string, category: typeof CATEGORY_CODES[number]) {
+async function fetchCategory(countryCode3: string, category: typeof CATEGORY_CODES[number]) {
   const [key, label, code] = category;
-  const source = `https://sdmx.oecd.org/public/rest/data/OECD.SDD.TPS,DSD_PPP@DF_PPP_CPL,1.0/${encodeURIComponent(countryCode)}.A.PL.${code}..OECD?startPeriod=2022&dimensionAtObservation=AllDimensions`;
+  const source = `https://sdmx.oecd.org/public/rest/data/OECD.SDD.TPS,DSD_PPP@DF_PPP_CPL,1.0/${encodeURIComponent(countryCode3)}.A.PL.${code}..OECD?startPeriod=2022&dimensionAtObservation=AllDimensions`;
   try {
     const response = await fetch(source, {
       headers: {
@@ -93,8 +100,9 @@ async function fetchCategory(countryCode: string, category: typeof CATEGORY_CODE
 }
 
 export async function getOecdInternationalPriceCategories(countryCode: string) {
-  const code = countryCode.trim().toUpperCase();
-  if (!/^[A-Z]{3}$/.test(code)) return [];
+  const normalized = countryCode.trim().toUpperCase();
+  const code = /^[A-Z]{3}$/.test(normalized) ? normalized : ISO2_TO_OECD3[normalized];
+  if (!code) return [];
   const results = await Promise.all(CATEGORY_CODES.map((category) => fetchCategory(code, category)));
   return results.filter((result): result is InternationalPriceCategory => result !== null);
 }
