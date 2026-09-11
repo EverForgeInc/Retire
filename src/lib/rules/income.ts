@@ -40,7 +40,11 @@ export function compareLocationCash(
   const totalIncome = totalMonthlyIncome(income);
   const totalExpenses = totalMonthlyExpenses(expenses);
   const remaining = totalIncome - totalExpenses;
-  const housing = (expenses.rent || 0) + (expenses.property_tax || 0) + (expenses.home_or_renters_insurance || 0);
+  const housing =
+    (expenses.housing || 0) +
+    (expenses.rent || 0) +
+    (expenses.property_tax || 0) +
+    (expenses.home_or_renters_insurance || 0);
 
   return {
     totalMonthlyIncome: totalIncome,
