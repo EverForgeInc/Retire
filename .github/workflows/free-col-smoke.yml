@@ -1,0 +1,30 @@
+name: Free COL Smoke Test
+
+on:
+  push:
+    branches:
+      - feature/free-cost-of-living-preview
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch real public cost page
+        run: |
+          node - <<'NODE'
+          const url = 'https://costoflivingdata.com/cost-of-living/ia/iowa-city/';
+          const response = await fetch(url, { headers: { 'User-Agent': 'MilitaryRetirementPlanner/0.1 (+https://github.com/EverForgeInc/Retire)' } });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const html = await response.text();
+          const text = html.replace(/<script[\s\S]*?<\/script>/gi,' ').replace(/<style[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/&nbsp;|&#160;/gi,' ').replace(/\s+/g,' ');
+          const checks = ['Rent', 'Groceries', 'Utilities', 'Transportation', 'Estimated Total'];
+          for (const label of checks) {
+            if (!text.toLowerCase().includes(label.toLowerCase())) throw new Error(`Missing live label: ${label}`);
+          }
+          const total = text.match(/Estimated Total[\s\S]{0,120}?\$([0-9][0-9,]*(?:\.[0-9]+)?)/i);
+          if (!total) throw new Error('Could not parse live estimated total');
+          console.log(`Live source reachable; Iowa City estimated total parsed as $${total[1]}/mo`);
+          NODE
