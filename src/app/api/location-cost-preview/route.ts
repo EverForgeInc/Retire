@@ -1,6 +1,7 @@
 import { handleRouteError, jsonError, jsonOk, requireMemberContext } from "@/lib/api";
 import { prisma } from "@/lib/db";
 import { freeUsWebCostProvider } from "@/lib/providers/cost-of-living-data";
+import { getOecdInternationalPriceCategories } from "@/lib/providers/oecd-price-level-categories";
 import { getWorldBankPriceLevelBenchmark } from "@/lib/providers/world-bank-price-level";
 
 export async function GET(request: Request) {
@@ -16,23 +17,31 @@ export async function GET(request: Request) {
     if (!saved) return jsonError("Location not found", 404);
 
     if (saved.countryCode.toUpperCase() !== "US") {
-      const benchmark = await getWorldBankPriceLevelBenchmark(saved.countryCode);
-      if (!benchmark) {
+      const [benchmark, categories] = await Promise.all([
+        getWorldBankPriceLevelBenchmark(saved.countryCode),
+        getOecdInternationalPriceCategories(saved.countryCode),
+      ]);
+
+      if (!benchmark && categories.length === 0) {
         return jsonOk({
           supported: true,
           available: false,
           reason: "No reusable international benchmark was available for this country. Manual costs remain unchanged.",
           costs: [],
           benchmark: null,
+          categoryBenchmarks: [],
         });
       }
+
       return jsonOk({
         supported: true,
         available: true,
         experimental: true,
-        attribution: "World Bank World Development Indicators · household final-consumption price level index · CC BY 4.0",
+        attribution: categories.length > 0
+          ? "OECD detailed PPP price-level indices with World Bank household benchmark fallback"
+          : "World Bank World Development Indicators · household final-consumption price level index · CC BY 4.0",
         costs: [],
-        benchmark: {
+        benchmark: benchmark ? {
           kind: "country_price_level_index",
           value: benchmark.value,
           year: benchmark.year,
@@ -41,7 +50,18 @@ export async function GET(request: Request) {
           retrievedAt: benchmark.retrievedAt.toISOString(),
           license: benchmark.license,
           note: "Country-level comparison only. This is not a city-level monthly budget and is not imported into expenses.",
-        },
+        } : null,
+        categoryBenchmarks: categories.map((category) => ({
+          category: category.category,
+          label: category.label,
+          value: category.value,
+          year: category.year,
+          base: category.base,
+          source: category.source,
+          retrievedAt: category.retrievedAt.toISOString(),
+          license: category.license,
+          note: "Relative price-level comparison only; not a monthly expense estimate.",
+        })),
       });
     }
 
