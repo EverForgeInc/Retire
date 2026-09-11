@@ -12,22 +12,23 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
-      - name: Discover ICP source and sample category API
+      - name: Probe category endpoint patterns
         run: |
           node - <<'NODE'
-          async function get(url) {
-            const r = await fetch(url, { headers: { 'User-Agent': 'MilitaryRetirementPlanner/0.1 (+https://github.com/EverForgeInc/Retire)' } });
-            if (!r.ok) throw new Error(`${url} -> ${r.status}`);
-            return r.json();
-          }
-          const sources = await get('https://api.worldbank.org/v2/source?format=json&per_page=500');
-          const rows = sources?.[1] ?? [];
-          const matches = rows.filter(x => /International Comparison Program/i.test(x.name || ''));
-          console.log('ICP sources', matches.map(x => ({ id: x.id, name: x.name, lastupdated: x.lastupdated })));
-          for (const source of matches) {
-            const series = await get(`https://api.worldbank.org/v2/source/${source.id}/series?format=json&per_page=5000`);
-            const list = series?.[1] ?? [];
-            const px = list.filter(x => /PX\.WL/i.test(x.id || '') || /price level/i.test(x.name || ''));
-            console.log('SOURCE', source.id, source.name, 'series matches', px.slice(0, 20));
+          const urls = [
+            'https://api.worldbank.org/v2/country/JP/indicator/1107000?format=json&source=62',
+            'https://api.worldbank.org/v2/country/JP/indicator/PX.WL?format=json&source=62',
+            'https://api.worldbank.org/v2/country/JP/indicator/1107000.PX.WL?format=json&source=62',
+            'https://api.worldbank.org/v2/country/JP/indicator/9060000?format=json&source=62',
+            'https://api.worldbank.org/v2/country/JP/indicator/9060000.PX.WL?format=json&source=62'
+          ];
+          for (const url of urls) {
+            try {
+              const r = await fetch(url, { headers: { 'User-Agent': 'MilitaryRetirementPlanner/0.1 (+https://github.com/EverForgeInc/Retire)' } });
+              const text = await r.text();
+              console.log('\nURL', url, 'STATUS', r.status, '\n', text.slice(0, 1500));
+            } catch (e) {
+              console.log('ERROR', url, e.message);
+            }
           }
           NODE
