@@ -42,17 +42,17 @@ export default async function SettingsPage() {
           </ul>
         </Panel>
 
-        <Panel title="Exports" description="Use these when you want a copy of your planner data outside the app.">
+        <Panel title="Exports" description="Exports happen only when you choose one of these download or print actions.">
           <div className="space-y-4 text-sm">
             <div>
               <p className="font-semibold">JSON backup</p>
               <p className="text-muted-foreground">Structured data for backup, troubleshooting, or future import tools.</p>
-              <a href="/api/exports/json" className={cn(buttonVariants({ variant: "outline" }), "mt-2")} target="_blank" rel="noreferrer">Open JSON export</a>
+              <a href="/api/exports/json" download className={cn(buttonVariants({ variant: "outline" }), "mt-2")}>Download JSON backup</a>
             </div>
             <div>
               <p className="font-semibold">CSV checklist</p>
               <p className="text-muted-foreground">Spreadsheet-friendly checklist data for Excel, Numbers, or Google Sheets.</p>
-              <a href="/api/exports/csv" className={cn(buttonVariants({ variant: "outline" }), "mt-2")} target="_blank" rel="noreferrer">Download CSV</a>
+              <a href="/api/exports/csv" download className={cn(buttonVariants({ variant: "outline" }), "mt-2")}>Download CSV</a>
             </div>
             <div>
               <p className="font-semibold">Printable checklist</p>
