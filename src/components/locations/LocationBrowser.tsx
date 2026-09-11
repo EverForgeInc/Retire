@@ -48,6 +48,14 @@ type LookupResult = {
   currency?: string;
 };
 
+type CostPreview = {
+  category: string;
+  amountUsd: number;
+  currency: string;
+  source: string;
+  retrievedAt: string;
+};
+
 const EMPTY_FORM = {
   displayName: "",
   city: "",
@@ -62,6 +70,14 @@ const EMPTY_FORM = {
   isPreferred: false,
 };
 
+const COST_LABELS: Record<string, string> = {
+  housing: "Housing / rent",
+  groceries: "Groceries",
+  utilities: "Utilities",
+  transportation: "Transportation",
+  estimated_total: "Estimated monthly total",
+};
+
 export function LocationBrowser({ locations, savedLocations }: { locations: LocationCard[]; savedLocations: SavedLocationCard[] }) {
   const [query, setQuery] = useState("");
   const [country, setCountry] = useState("all");
@@ -71,6 +87,9 @@ export function LocationBrowser({ locations, savedLocations }: { locations: Loca
   const [lookupQuery, setLookupQuery] = useState("");
   const [lookupResults, setLookupResults] = useState<LookupResult[]>([]);
   const [lookupBusy, setLookupBusy] = useState(false);
+  const [previewBusyId, setPreviewBusyId] = useState<string | null>(null);
+  const [costPreviews, setCostPreviews] = useState<Record<string, CostPreview[]>>({});
+  const [previewMessages, setPreviewMessages] = useState<Record<string, string>>({});
 
   const countries = useMemo(
     () => Array.from(new Set(locations.map((l) => l.country))).sort(),
@@ -108,6 +127,27 @@ export function LocationBrowser({ locations, savedLocations }: { locations: Loca
     }
   }
 
+  async function previewCosts(location: SavedLocationCard) {
+    setPreviewBusyId(location.id);
+    setPreviewMessages((current) => ({ ...current, [location.id]: "" }));
+    try {
+      const response = await fetch(`/api/location-cost-preview?savedLocationId=${encodeURIComponent(location.id)}`);
+      if (!response.ok) throw new Error("preview failed");
+      const data = await response.json();
+      const costs = (data.costs ?? []) as CostPreview[];
+      setCostPreviews((current) => ({ ...current, [location.id]: costs }));
+      if (!data.supported || costs.length === 0) {
+        setPreviewMessages((current) => ({ ...current, [location.id]: data.reason ?? "No free web data was available for this location." }));
+      } else {
+        setPreviewMessages((current) => ({ ...current, [location.id]: "Experimental web preview · CostOfLivingData.com · CC BY 4.0" }));
+      }
+    } catch {
+      setPreviewMessages((current) => ({ ...current, [location.id]: "The free web preview could not be loaded. Your saved location and manual costs were not changed." }));
+    } finally {
+      setPreviewBusyId(null);
+    }
+  }
+
   function chooseLookupResult(result: LookupResult) {
     setForm((current) => ({
       ...current,
@@ -130,7 +170,7 @@ export function LocationBrowser({ locations, savedLocations }: { locations: Loca
     <div className="space-y-4">
       <Panel
         title="My retirement locations"
-        description="Search for a city to fill location details automatically, or enter them manually. Cost values remain blank until an approved source or manual override is provided."
+        description="Search for a city to fill location details automatically, or enter them manually. U.S. locations can also test a free web-based cost preview before any values are adopted."
       >
         <div className="mb-4 rounded-lg border bg-muted/20 p-3">
           <div className="flex flex-col gap-2 sm:flex-row">
@@ -182,7 +222,42 @@ export function LocationBrowser({ locations, savedLocations }: { locations: Loca
           <label className="flex items-center gap-2 text-sm sm:col-span-2 lg:col-span-6"><input type="checkbox" checked={form.isPreferred} onChange={(event) => setForm({ ...form, isPreferred: event.target.checked })} /> Make preferred location</label>
         </form>
         {message ? <p className="mt-3 text-sm text-muted-foreground" role="status">{message}</p> : null}
-        {saved.length > 0 ? <div className="mt-4 grid gap-2 sm:grid-cols-2">{saved.map((location) => <div key={location.id} className="flex items-center justify-between rounded-lg border p-3 text-sm"><span><strong>{location.city}</strong>{location.state ? `, ${location.state}` : ""} · {location.country}{location.isPreferred ? " · Preferred" : ""}</span><button type="button" className="text-destructive underline" onClick={async () => { const response = await fetch(`/api/locations/${location.id}`, { method: "DELETE" }); if (response.ok) setSaved((current) => current.filter((item) => item.id !== location.id)); }}>Remove</button></div>)}</div> : null}
+
+        {saved.length > 0 ? (
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            {saved.map((location) => {
+              const preview = costPreviews[location.id] ?? [];
+              return (
+                <article key={location.id} className="rounded-lg border p-3 text-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <strong>{location.city}</strong>{location.state ? `, ${location.state}` : ""} · {location.country}
+                      {location.isPreferred ? <span className="block text-xs text-muted-foreground">Preferred location</span> : null}
+                    </div>
+                    <button type="button" className="text-destructive underline" onClick={async () => { const response = await fetch(`/api/locations/${location.id}`, { method: "DELETE" }); if (response.ok) setSaved((current) => current.filter((item) => item.id !== location.id)); }}>Remove</button>
+                  </div>
+
+                  <Button className="mt-3" type="button" size="sm" variant="outline" disabled={previewBusyId === location.id} onClick={() => void previewCosts(location)}>
+                    {previewBusyId === location.id ? "Checking web data..." : location.countryCode === "US" ? "Preview free cost data" : "Check free data availability"}
+                  </Button>
+
+                  {previewMessages[location.id] ? <p className="mt-2 text-xs text-muted-foreground">{previewMessages[location.id]}</p> : null}
+                  {preview.length > 0 ? (
+                    <div className="mt-3 grid grid-cols-2 gap-2">
+                      {preview.map((cost) => (
+                        <div key={cost.category} className={cn("rounded-md border p-2", cost.category === "estimated_total" && "col-span-2 bg-muted/30")}>
+                          <div className="text-xs text-muted-foreground">{COST_LABELS[cost.category] ?? cost.category}</div>
+                          <div className="font-semibold">${cost.amountUsd.toLocaleString("en-US", { maximumFractionDigits: 0 })}/mo</div>
+                        </div>
+                      ))}
+                      <a className="col-span-2 text-xs underline" href={preview[0].source} target="_blank" rel="noreferrer">View source data</a>
+                    </div>
+                  ) : null}
+                </article>
+              );
+            })}
+          </div>
+        ) : null}
       </Panel>
 
       <Panel
