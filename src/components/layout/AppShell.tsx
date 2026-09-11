@@ -36,9 +36,9 @@ const NAV = [
   { href: "/va", label: "VA Claims", icon: ShieldAlert },
   { href: "/income", label: "Income Planner", icon: CircleDollarSign },
   { href: "/locations", label: "Location Comparison", icon: MapPinned },
-  { href: "/documents", label: "Documents", icon: FileText },
-  { href: "/contacts", label: "Contacts", icon: Users },
-  { href: "/reminders", label: "Reminders", icon: Bell },
+  { href: "/documents", label: "Document Tracker", icon: FileText },
+  { href: "/contacts", label: "Contacts & Resources", icon: Users },
+  { href: "/reminders", label: "Scheduled Summaries", icon: Bell },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
@@ -77,8 +77,8 @@ export function AppShell({
       >
         <div className="border-b border-white/10 px-5 py-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/20 ring-1 ring-blue-300/30">
-              <ClipboardList className="h-5 w-5 text-blue-200" aria-hidden="true" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[color:var(--gold)]/15 ring-1 ring-[color:var(--gold)]/30">
+              <ClipboardList className="h-5 w-5 text-[color:var(--gold)]" aria-hidden="true" />
             </div>
             <div>
               <div className="text-sm font-semibold tracking-wide">Military Retirement</div>
@@ -97,7 +97,7 @@ export function AppShell({
                 href={item.href}
                 className={cn(
                   "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition",
-                  active ? "bg-blue-600 text-white shadow-lg shadow-blue-900/30" : "text-slate-200 hover:bg-white/5",
+                  active ? "bg-white/10 text-white ring-1 ring-white/10" : "text-slate-200 hover:bg-white/5",
                 )}
               >
                 <Icon className="h-4 w-4" aria-hidden="true" />
@@ -123,7 +123,7 @@ export function AppShell({
 
         <div className="space-y-1 border-t border-white/10 p-3">
           <Link
-            href="/settings"
+            href="/help"
             className={cn(
               buttonVariants({ variant: "ghost" }),
               "w-full justify-start text-slate-200 hover:bg-white/5 hover:text-white",
@@ -145,10 +145,10 @@ export function AppShell({
       </aside>
 
       <div className="min-w-0">
-        <header className="sticky top-0 z-20 border-b border-border/80 bg-white/85 px-4 py-4 backdrop-blur md:px-8">
+        <header className="sticky top-0 z-20 border-b border-border/80 bg-[color:var(--panel-strong)]/95 px-4 py-4 backdrop-blur md:px-8">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h1 className="font-[family-name:var(--font-source-serif)] text-2xl font-semibold text-slate-900">
+              <h1 className="font-[family-name:var(--font-source-serif)] text-2xl font-semibold text-foreground">
                 {title}
               </h1>
               {subtitle ? <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p> : null}
@@ -156,7 +156,7 @@ export function AppShell({
             <div className="flex items-center gap-2">
               <Link
                 href="/reminders"
-                aria-label="Reminders"
+                aria-label="Scheduled summaries"
                 className={buttonVariants({ variant: "outline", size: "icon" })}
               >
                 <Bell className="h-4 w-4" />
@@ -168,8 +168,8 @@ export function AppShell({
                 <DropdownMenuContent align="end" className="min-w-44">
                   <DropdownMenuItem onClick={() => router.push("/settings")}>Settings</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => router.push("/onboarding")}>Update profile</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => router.push("/help")}>Help & Resources</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => router.push("/audit")}>Audit history</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => router.push("/admin")}>Admin tools</DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout}>Sign out</DropdownMenuItem>
                 </DropdownMenuContent>
@@ -195,7 +195,7 @@ export function AppShell({
               href={item.href}
               className={cn(
                 "flex min-h-12 flex-col items-center justify-center gap-1 rounded-xl text-[11px]",
-                active ? "text-blue-600" : "text-slate-500",
+                active ? "text-[color:var(--gold)]" : "text-slate-500",
               )}
             >
               <Icon className="h-5 w-5" aria-hidden="true" />
