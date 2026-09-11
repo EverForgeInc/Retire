@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -47,32 +48,18 @@ export default function LoginPage() {
             Sign in
           </CardTitle>
           <CardDescription>
-            Plan your checklist, timeline, and transition. This is not an official DoD system.
+            Plan your checklist, timeline, and transition. This is not an official DoD or VA system.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form className="space-y-4" onSubmit={onSubmit}>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                required
-                defaultValue="david@example.com"
-                autoComplete="email"
-              />
+              <Input id="email" name="email" type="email" required autoComplete="email" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                required
-                defaultValue="changeme123"
-                autoComplete="current-password"
-              />
+              <Input id="password" name="password" type="password" required autoComplete="current-password" />
             </div>
             {error ? (
               <Alert variant="destructive">
@@ -82,6 +69,9 @@ export default function LoginPage() {
             <Button type="submit" className="w-full" disabled={loading} size="lg">
               {loading ? "Signing in..." : "Sign in"}
             </Button>
+            <p className="text-center text-sm text-muted-foreground">
+              Invited to the closed beta? <Link className="underline" href="/register">Create your account</Link>
+            </p>
           </form>
         </CardContent>
       </Card>
