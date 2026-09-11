@@ -71,6 +71,15 @@ export function parseCostOfLivingDataPage(html: string, sourceUrl: string, retri
   });
 }
 
+/**
+ * The source page exposes both itemized categories and an estimated total.
+ * The total is reference-only; importing it alongside the itemized categories
+ * would double-count expenses in the Income Planner.
+ */
+export function planningCostsFromPreview(costs: CostOfLivingResult[]) {
+  return costs.filter((cost) => cost.category !== "estimated_total");
+}
+
 export class CostOfLivingDataWebProvider implements CostOfLivingProvider {
   async getMonthlyCosts(input: { city: string; state?: string; country: string; countryCode: string }) {
     if (input.countryCode.toUpperCase() !== "US") return [];

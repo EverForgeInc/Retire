@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseCostOfLivingDataPage } from "@/lib/providers/cost-of-living-data";
+import { parseCostOfLivingDataPage, planningCostsFromPreview } from "@/lib/providers/cost-of-living-data";
 
 describe("CostOfLivingData web parser", () => {
   it("extracts the monthly summary categories used by the prototype", () => {
@@ -27,5 +27,15 @@ describe("CostOfLivingData web parser", () => {
     const result = parseCostOfLivingDataPage("<p>Estimated Total $2,500/mo</p>", "https://costoflivingdata.com/test");
     expect(result).toHaveLength(1);
     expect(result[0].category).toBe("estimated_total");
+  });
+
+  it("keeps the source total out of planner expenses to prevent double counting", () => {
+    const retrievedAt = new Date("2026-09-11T00:00:00Z");
+    const preview = [
+      { category: "housing", amountLocal: 1000, amountUsd: 1000, currency: "USD", source: "test", retrievedAt },
+      { category: "groceries", amountLocal: 400, amountUsd: 400, currency: "USD", source: "test", retrievedAt },
+      { category: "estimated_total", amountLocal: 1400, amountUsd: 1400, currency: "USD", source: "test", retrievedAt },
+    ];
+    expect(planningCostsFromPreview(preview).map((item) => item.category)).toEqual(["housing", "groceries"]);
   });
 });
