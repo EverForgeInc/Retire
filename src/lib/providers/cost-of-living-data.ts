@@ -37,9 +37,13 @@ function decodeHtml(value: string) {
 }
 
 function moneyAfter(text: string, label: RegExp) {
-  const match = text.match(new RegExp(`${label.source}[\\s\\S]{0,120}?\\$([0-9][0-9,]*(?:\\.[0-9]+)?)`, "i"));
-  if (!match) return null;
-  const amount = Number(match[1].replace(/,/g, ""));
+  const labelMatch = text.match(label);
+  if (!labelMatch || labelMatch.index == null) return null;
+  const start = labelMatch.index + labelMatch[0].length;
+  const tail = text.slice(start, start + 120);
+  const money = tail.match(/\$([0-9][0-9,]*(?:\.[0-9]+)?)/);
+  if (!money) return null;
+  const amount = Number(money[1].replace(/,/g, ""));
   return Number.isFinite(amount) ? amount : null;
 }
 
