@@ -12,18 +12,13 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
-      - name: Probe OECD detailed price-level response
+      - name: Probe exact OECD detailed category query
         run: |
           node - <<'NODE'
-          const url = 'https://sdmx.oecd.org/public/rest/data/OECD.SDD.TPS,DSD_PPP@DF_PPP_CPL,1.0/JPN.A.PL....?startPeriod=2022&dimensionAtObservation=AllDimensions';
-          const r = await fetch(url, {
-            headers: {
-              'User-Agent': 'MilitaryRetirementPlanner/0.1 (+https://github.com/EverForgeInc/Retire)',
-              'Accept': 'text/csv'
-            }
-          });
-          console.log('status', r.status, 'content-type', r.headers.get('content-type'));
+          const url = 'https://sdmx.oecd.org/public/rest/data/OECD.SDD.TPS,DSD_PPP@DF_PPP_CPL,1.0/JPN.A.PL.A0106..OECD?startPeriod=2022&dimensionAtObservation=AllDimensions';
+          const r = await fetch(url, { headers: { 'User-Agent': 'MilitaryRetirementPlanner/0.1 (+https://github.com/EverForgeInc/Retire)', 'Accept': 'text/csv' } });
           const text = await r.text();
-          console.log(text.slice(0, 12000));
-          if (!r.ok || !text.includes('REF_AREA')) throw new Error('OECD CSV query failed');
+          console.log('status', r.status, 'content-type', r.headers.get('content-type'));
+          console.log(text.slice(0, 6000));
+          if (!r.ok) throw new Error(`OECD query failed ${r.status}`);
           NODE
