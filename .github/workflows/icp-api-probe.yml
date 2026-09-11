@@ -15,7 +15,7 @@ jobs:
       - name: Probe OECD detailed price-level response
         run: |
           node - <<'NODE'
-          const url = 'https://sdmx.oecd.org/public/rest/v1/data/OECD.SDD.TPS,DSD_PPP@DF_PPP_CPL,1.0/JPN.A.PL....?startPeriod=2022&dimension_at_observation=AllDimensions';
+          const url = 'https://sdmx.oecd.org/public/rest/v1/data/OECD.SDD.TPS,DSD_PPP@DF_PPP_CPL,1.0/JPN.A.PL....?startPeriod=2022&dimensionAtObservation=AllDimensions';
           const r = await fetch(url, {
             headers: {
               'User-Agent': 'MilitaryRetirementPlanner/0.1 (+https://github.com/EverForgeInc/Retire)',
