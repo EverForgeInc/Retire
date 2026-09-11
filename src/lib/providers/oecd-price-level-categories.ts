@@ -60,11 +60,15 @@ export function parseOecdPriceLevelCsv(
   const baseIndex = headers.indexOf("BASE_PER");
   if (obsIndex < 0 || timeIndex < 0) return null;
 
-  const rows = lines.slice(1).map(parseCsvLine).map((row) => ({
-    value: Number(row[obsIndex]),
-    year: Number(row[timeIndex]),
-    base: baseIndex >= 0 ? row[baseIndex] : "OECD",
-  })).filter((row) => Number.isFinite(row.value) && Number.isInteger(row.year));
+  const rows = lines.slice(1).map(parseCsvLine).map((row) => {
+    const rawValue = row[obsIndex]?.trim();
+    const rawYear = row[timeIndex]?.trim();
+    return {
+      value: rawValue ? Number(rawValue) : Number.NaN,
+      year: rawYear ? Number(rawYear) : Number.NaN,
+      base: baseIndex >= 0 ? row[baseIndex] : "OECD",
+    };
+  }).filter((row) => Number.isFinite(row.value) && Number.isInteger(row.year));
   if (rows.length === 0) return null;
   rows.sort((a, b) => b.year - a.year);
   const latest = rows[0];
