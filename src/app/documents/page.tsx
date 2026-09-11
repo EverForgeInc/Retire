@@ -27,9 +27,7 @@ export default async function DocumentsPage() {
         <Alert>
           <AlertTitle>What this area is for</AlertTitle>
           <AlertDescription>
-            Use this as a reference tracker for items such as retirement orders, DD214 preparation, medical-record requests,
-            claim confirmations, and other transition documents. The app stores a description, confirmation number, or the
-            name of your secure storage location; it is not intended to be the primary storage location for sensitive files.
+            Medical-file uploads are disabled by default to protect user privacy. Use this as a reference tracker for items such as retirement orders, DD214 preparation, medical-record requests, claim confirmations, and other transition documents. The app stores a description, confirmation number, or the name of your secure storage location; it is not intended to be the primary storage location for sensitive files.
           </AlertDescription>
         </Alert>
       </div>
