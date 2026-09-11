@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { buttonVariants, Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState, Panel } from "@/components/ui/Panel";
@@ -79,6 +80,7 @@ const COST_LABELS: Record<string, string> = {
 };
 
 export function LocationBrowser({ locations, savedLocations }: { locations: LocationCard[]; savedLocations: SavedLocationCard[] }) {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [country, setCountry] = useState("all");
   const [saved, setSaved] = useState(savedLocations);
@@ -88,6 +90,7 @@ export function LocationBrowser({ locations, savedLocations }: { locations: Loca
   const [lookupResults, setLookupResults] = useState<LookupResult[]>([]);
   const [lookupBusy, setLookupBusy] = useState(false);
   const [previewBusyId, setPreviewBusyId] = useState<string | null>(null);
+  const [adoptBusyId, setAdoptBusyId] = useState<string | null>(null);
   const [costPreviews, setCostPreviews] = useState<Record<string, CostPreview[]>>({});
   const [previewMessages, setPreviewMessages] = useState<Record<string, string>>({});
 
@@ -148,6 +151,32 @@ export function LocationBrowser({ locations, savedLocations }: { locations: Loca
     }
   }
 
+  async function adoptCosts(location: SavedLocationCard) {
+    setAdoptBusyId(location.id);
+    setPreviewMessages((current) => ({ ...current, [location.id]: "" }));
+    try {
+      const response = await fetch("/api/location-cost-adopt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ savedLocationId: location.id }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || "adoption failed");
+      setPreviewMessages((current) => ({
+        ...current,
+        [location.id]: `${data.adopted?.length ?? 0} verified monthly categories adopted. The source total remains reference-only to prevent double counting.`,
+      }));
+      router.refresh();
+    } catch (error) {
+      setPreviewMessages((current) => ({
+        ...current,
+        [location.id]: error instanceof Error ? error.message : "Unable to adopt these estimates.",
+      }));
+    } finally {
+      setAdoptBusyId(null);
+    }
+  }
+
   function chooseLookupResult(result: LookupResult) {
     setForm((current) => ({
       ...current,
@@ -170,7 +199,7 @@ export function LocationBrowser({ locations, savedLocations }: { locations: Loca
     <div className="space-y-4">
       <Panel
         title="My retirement locations"
-        description="Search for a city to fill location details automatically, or enter them manually. U.S. locations can also test a free web-based cost preview before any values are adopted."
+        description="Search for a city to fill location details automatically, or enter them manually. U.S. locations can preview free web-based cost estimates and then explicitly adopt them into the planner."
       >
         <div className="mb-4 rounded-lg border bg-muted/20 p-3">
           <div className="flex flex-col gap-2 sm:flex-row">
@@ -237,9 +266,16 @@ export function LocationBrowser({ locations, savedLocations }: { locations: Loca
                     <button type="button" className="text-destructive underline" onClick={async () => { const response = await fetch(`/api/locations/${location.id}`, { method: "DELETE" }); if (response.ok) setSaved((current) => current.filter((item) => item.id !== location.id)); }}>Remove</button>
                   </div>
 
-                  <Button className="mt-3" type="button" size="sm" variant="outline" disabled={previewBusyId === location.id} onClick={() => void previewCosts(location)}>
-                    {previewBusyId === location.id ? "Checking web data..." : location.countryCode === "US" ? "Preview free cost data" : "Check free data availability"}
-                  </Button>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Button type="button" size="sm" variant="outline" disabled={previewBusyId === location.id || adoptBusyId === location.id} onClick={() => void previewCosts(location)}>
+                      {previewBusyId === location.id ? "Checking web data..." : location.countryCode === "US" ? "Preview free cost data" : "Check free data availability"}
+                    </Button>
+                    {preview.length > 0 && location.countryCode === "US" ? (
+                      <Button type="button" size="sm" disabled={adoptBusyId === location.id || previewBusyId === location.id} onClick={() => void adoptCosts(location)}>
+                        {adoptBusyId === location.id ? "Adopting..." : "Use these estimates"}
+                      </Button>
+                    ) : null}
+                  </div>
 
                   {previewMessages[location.id] ? <p className="mt-2 text-xs text-muted-foreground">{previewMessages[location.id]}</p> : null}
                   {preview.length > 0 ? (
@@ -248,6 +284,7 @@ export function LocationBrowser({ locations, savedLocations }: { locations: Loca
                         <div key={cost.category} className={cn("rounded-md border p-2", cost.category === "estimated_total" && "col-span-2 bg-muted/30")}>
                           <div className="text-xs text-muted-foreground">{COST_LABELS[cost.category] ?? cost.category}</div>
                           <div className="font-semibold">${cost.amountUsd.toLocaleString("en-US", { maximumFractionDigits: 0 })}/mo</div>
+                          {cost.category === "estimated_total" ? <div className="text-[11px] text-muted-foreground">Reference only; not added again to planner expenses.</div> : null}
                         </div>
                       ))}
                       <a className="col-span-2 text-xs underline" href={preview[0].source} target="_blank" rel="noreferrer">View source data</a>
