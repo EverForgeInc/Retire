@@ -38,4 +38,23 @@ describe("CostOfLivingData web parser", () => {
     ];
     expect(planningCostsFromPreview(preview).map((item) => item.category)).toEqual(["housing", "groceries"]);
   });
+
+  it("prefers electricity and internet over a combined utilities bucket when the source exposes a split", () => {
+    const html = `
+      <main>
+        <div>Electricity monthly <strong>$145</strong></div>
+        <div>Internet service <strong>$75</strong></div>
+        <div>Utilities local estimate <strong>$300</strong></div>
+        <div>Estimated Total <strong>$2,000/mo</strong></div>
+      </main>
+    `;
+    const preview = parseCostOfLivingDataPage(html, "https://costoflivingdata.com/test", new Date("2026-09-11T00:00:00Z"));
+    expect(Object.fromEntries(preview.map((item) => [item.category, item.amountUsd]))).toEqual({
+      electricity: 145,
+      internet: 75,
+      utilities: 300,
+      estimated_total: 2000,
+    });
+    expect(planningCostsFromPreview(preview).map((item) => item.category)).toEqual(["electricity", "internet"]);
+  });
 });
