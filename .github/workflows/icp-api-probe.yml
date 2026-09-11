@@ -12,23 +12,18 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
-      - name: Probe category endpoint patterns
+      - name: Probe OECD detailed price-level response
         run: |
           node - <<'NODE'
-          const urls = [
-            'https://api.worldbank.org/v2/country/JP/indicator/1107000?format=json&source=62',
-            'https://api.worldbank.org/v2/country/JP/indicator/PX.WL?format=json&source=62',
-            'https://api.worldbank.org/v2/country/JP/indicator/1107000.PX.WL?format=json&source=62',
-            'https://api.worldbank.org/v2/country/JP/indicator/9060000?format=json&source=62',
-            'https://api.worldbank.org/v2/country/JP/indicator/9060000.PX.WL?format=json&source=62'
-          ];
-          for (const url of urls) {
-            try {
-              const r = await fetch(url, { headers: { 'User-Agent': 'MilitaryRetirementPlanner/0.1 (+https://github.com/EverForgeInc/Retire)' } });
-              const text = await r.text();
-              console.log('\nURL', url, 'STATUS', r.status, '\n', text.slice(0, 1500));
-            } catch (e) {
-              console.log('ERROR', url, e.message);
+          const url = 'https://sdmx.oecd.org/public/rest/v1/data/OECD.SDD.TPS,DSD_PPP@DF_PPP_CPL,1.0/JPN.A.PL....?startPeriod=2022&dimension_at_observation=AllDimensions';
+          const r = await fetch(url, {
+            headers: {
+              'User-Agent': 'MilitaryRetirementPlanner/0.1 (+https://github.com/EverForgeInc/Retire)',
+              'Accept': 'text/csv'
             }
-          }
+          });
+          console.log('status', r.status, 'content-type', r.headers.get('content-type'));
+          const text = await r.text();
+          console.log(text.slice(0, 12000));
+          if (!r.ok || !text.includes('REF_AREA')) throw new Error('OECD CSV query failed');
           NODE
