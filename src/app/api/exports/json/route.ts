@@ -1,4 +1,4 @@
-import { handleRouteError, jsonOk, PublicApiError, requireMemberContext } from "@/lib/api";
+import { handleRouteError, PublicApiError, requireMemberContext } from "@/lib/api";
 import { prisma } from "@/lib/db";
 import { toDateOnly } from "@/lib/rules/date-engine";
 
@@ -12,8 +12,7 @@ export async function GET() {
 
     const payload = {
       exportedAt: new Date().toISOString(),
-      disclaimer:
-        "Not an official DoD system. Export contains no Social Security number fields.",
+      disclaimer: "Not an official DoD system. Export contains no Social Security number fields.",
       member: {
         email: user.email,
         fullName: profile.fullName,
@@ -34,12 +33,18 @@ export async function GET() {
       })),
     };
 
-    const serialized = JSON.stringify(payload);
+    const serialized = JSON.stringify(payload, null, 2);
     if (/"ssn"|last4|socialSecurity/i.test(serialized)) {
       throw new PublicApiError("Export blocked: forbidden identity fields detected");
     }
 
-    return jsonOk(payload);
+    return new Response(serialized, {
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        "Content-Disposition": 'attachment; filename="retirement-planner-backup.json"',
+        "Cache-Control": "no-store",
+      },
+    });
   } catch (error) {
     return handleRouteError(error);
   }

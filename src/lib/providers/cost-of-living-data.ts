@@ -52,6 +52,8 @@ export function parseCostOfLivingDataPage(html: string, sourceUrl: string, retri
   const categories: Array<[string, RegExp]> = [
     ["housing", /Rent\s+median rent|Median Rent(?:\s*\/\s*Month)?/i],
     ["groceries", /Groceries\s+national estimate|Food\s*&\s*Groceries/i],
+    ["electricity", /Electricity(?:\s+bill|\s*\/\s*Month|\s+monthly)?/i],
+    ["internet", /Internet(?:\s+service|\s*\/\s*Month|\s+monthly)?/i],
     ["utilities", /Utilities\s+local estimate|Utilities/i],
     ["transportation", /Transportation\s+local gas prices|Transportation/i],
     ["estimated_total", /Estimated Total/i],
@@ -60,24 +62,20 @@ export function parseCostOfLivingDataPage(html: string, sourceUrl: string, retri
   return categories.flatMap(([category, label]) => {
     const amount = moneyAfter(text, label);
     if (amount == null) return [];
-    return [{
-      category,
-      amountLocal: amount,
-      amountUsd: amount,
-      currency: "USD",
-      source: sourceUrl,
-      retrievedAt,
-    }];
+    return [{ category, amountLocal: amount, amountUsd: amount, currency: "USD", source: sourceUrl, retrievedAt }];
   });
 }
 
 /**
  * The source page exposes both itemized categories and an estimated total.
  * The total is reference-only; importing it alongside the itemized categories
- * would double-count expenses in the Income Planner.
+ * would double-count expenses in the Income Planner. If the page exposes
+ * electricity and internet separately, the generic utilities bucket is also
+ * excluded so those costs are not counted twice.
  */
 export function planningCostsFromPreview(costs: CostOfLivingResult[]) {
-  return costs.filter((cost) => cost.category !== "estimated_total");
+  const hasUtilitySplit = costs.some((cost) => cost.category === "electricity") || costs.some((cost) => cost.category === "internet");
+  return costs.filter((cost) => cost.category !== "estimated_total" && !(hasUtilitySplit && cost.category === "utilities"));
 }
 
 export class CostOfLivingDataWebProvider implements CostOfLivingProvider {

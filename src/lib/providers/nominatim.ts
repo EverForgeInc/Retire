@@ -21,12 +21,14 @@ export async function searchNominatimLocations(query: string): Promise<Searchabl
   url.searchParams.set("q", query);
   url.searchParams.set("format", "jsonv2");
   url.searchParams.set("addressdetails", "1");
+  url.searchParams.set("accept-language", "en");
   url.searchParams.set("limit", "6");
 
   const response = await fetch(url, {
     headers: {
       "User-Agent": "EverForgeInc-Retire/0.1 (retirement-planning application)",
       Accept: "application/json",
+      "Accept-Language": "en",
     },
     cache: "no-store",
   });

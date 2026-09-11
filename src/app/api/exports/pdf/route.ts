@@ -2,8 +2,7 @@ import { handleRouteError, requireMemberContext } from "@/lib/api";
 import { prisma } from "@/lib/db";
 import { toDateOnly } from "@/lib/rules/date-engine";
 
-/** Generates a printable HTML document (PDF-ready via browser print). */
-export async function POST() {
+async function printableChecklist() {
   try {
     const { profile, user } = await requireMemberContext();
     const tasks = await prisma.memberTask.findMany({
@@ -16,7 +15,7 @@ export async function POST() {
         (t) => `<tr>
           <td>${escapeHtml(t.sectionName ?? "")}</td>
           <td>${escapeHtml(t.title)}</td>
-          <td>${escapeHtml(t.status)}</td>
+          <td>${escapeHtml(t.status.replaceAll("_", " "))}</td>
           <td>${t.calculatedStart ? toDateOnly(t.calculatedStart) : ""}</td>
           <td>${t.calculatedEnd ? toDateOnly(t.calculatedEnd) : ""}</td>
           <td>${t.dateCompleted ? toDateOnly(t.dateCompleted) : ""}</td>
@@ -29,15 +28,18 @@ export async function POST() {
 <html lang="en">
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Retirement Checklist Export</title>
   <style>
     body { font-family: Georgia, "Times New Roman", serif; color: #12243a; margin: 24px; }
     h1 { font-size: 22px; margin-bottom: 4px; }
     .meta { margin-bottom: 16px; font-size: 13px; }
     .disclaimer { font-size: 12px; color: #555; margin-bottom: 20px; }
+    .print-note { padding: 10px 12px; background: #eef3f8; border: 1px solid #cbd5e1; font-size: 12px; margin-bottom: 16px; }
     table { width: 100%; border-collapse: collapse; font-size: 12px; }
     th, td { border: 1px solid #cbd5e1; padding: 6px 8px; vertical-align: top; }
     th { background: #e8eef6; text-align: left; }
+    @media print { .print-note { display: none; } body { margin: 10mm; } }
   </style>
 </head>
 <body>
@@ -47,13 +49,10 @@ export async function POST() {
     <div><strong>Rank:</strong> ${escapeHtml(profile.rank ?? "")}</div>
     <div><strong>Projected retirement:</strong> ${toDateOnly(profile.projectedRetirementDate)}</div>
   </div>
+  <div class="print-note">Use your browser's Print command and choose “Save as PDF” if you want a PDF file.</div>
   <p class="disclaimer">Not an official Department of Defense or U.S. government system. No Social Security number is collected or exported.</p>
   <table>
-    <thead>
-      <tr>
-        <th>Section</th><th>Task</th><th>Status</th><th>Start</th><th>End</th><th>Completed</th><th>Notes</th>
-      </tr>
-    </thead>
+    <thead><tr><th>Section</th><th>Task</th><th>Status</th><th>Start</th><th>End</th><th>Completed</th><th>Notes</th></tr></thead>
     <tbody>${rows}</tbody>
   </table>
 </body>
@@ -63,6 +62,7 @@ export async function POST() {
       headers: {
         "Content-Type": "text/html; charset=utf-8",
         "Content-Disposition": 'inline; filename="retirement-checklist.html"',
+        "Cache-Control": "no-store",
       },
     });
   } catch (error) {
@@ -70,10 +70,9 @@ export async function POST() {
   }
 }
 
+export async function GET() { return printableChecklist(); }
+export async function POST() { return printableChecklist(); }
+
 function escapeHtml(value: string) {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
+  return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 }

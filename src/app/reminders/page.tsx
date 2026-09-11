@@ -16,8 +16,8 @@ export default async function RemindersPage() {
 
   return (
     <AppShell
-      title="Reminders"
-      subtitle="Daily or weekly privacy-filtered checklist digests"
+      title="Scheduled Summaries"
+      subtitle="Choose when the app should summarize the transition items that need your attention"
       progress={{
         percent: dashboard.metrics.progressPercent,
         complete: dashboard.metrics.completeCount,
@@ -26,6 +26,9 @@ export default async function RemindersPage() {
         retirementDate: dashboard.profile.projectedRetirementDate,
       }}
     >
+      <div className="mb-4 rounded-xl border border-border/70 bg-muted/40 p-4 text-sm text-muted-foreground">
+        A scheduled summary is a daily or weekly digest of due and overdue checklist items, follow-ups, waiting items, and upcoming milestones. It is meant to help you see what needs attention without opening every section of the app.
+      </div>
       <div className="grid gap-4 lg:grid-cols-2">
         <DigestSettingsForm
           initial={{
@@ -40,11 +43,11 @@ export default async function RemindersPage() {
             sendEmptyDigest: prefs?.sendEmptyDigest ?? false,
           }}
         />
-        <Panel title="Recent digest deliveries">
+        <Panel title="Recent summary activity">
           {deliveries.length === 0 ? (
             <EmptyState
-              title="No digests queued yet"
-              description="Send a test digest from the form."
+              title="No summaries queued yet"
+              description="Use the settings form to configure or send a test summary."
             />
           ) : (
             <ul className="space-y-3 text-sm">

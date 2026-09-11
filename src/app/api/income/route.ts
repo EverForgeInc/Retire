@@ -1,6 +1,8 @@
-import { handleRouteError, jsonOk, requireMemberContext } from "@/lib/api";
+import { handleRouteError, jsonOk, PublicApiError, requireMemberContext } from "@/lib/api";
 import { prisma } from "@/lib/db";
 import { compareLocationCash, estimateRetiredPay, VA_SCENARIO_RATINGS } from "@/lib/rules/income";
+
+const DISPLAYED_DEPENDENT_KEY = "veteran_spouse_two_children";
 
 export async function GET() {
   try {
@@ -11,9 +13,7 @@ export async function GET() {
         locations: {
           include: {
             location: {
-              include: {
-                costVersions: { where: { approved: true } },
-              },
+              include: { costVersions: { where: { approved: true } } },
             },
           },
         },
@@ -33,9 +33,7 @@ export async function GET() {
       const comparisons = scenario.locations.map((sel) => {
         const expensesFromCustom = JSON.parse(sel.customExpenses || "{}") as Record<string, number>;
         const expensesFromApproved = Object.fromEntries(
-          sel.location.costVersions
-            .filter((c) => c.amountUsd != null)
-            .map((c) => [c.category, c.amountUsd as number]),
+          sel.location.costVersions.filter((c) => c.amountUsd != null).map((c) => [c.category, c.amountUsd as number]),
         );
         const savedLocation = savedByLocationId.get(sel.location.id);
         const manualCosts = savedLocation ? JSON.parse(savedLocation.manualCosts || "{}") as Record<string, number> : {};
@@ -80,11 +78,15 @@ export async function GET() {
         };
       });
 
-        comparisons.sort((a, b) => (b.remainingMonthlyCash ?? -Infinity) - (a.remainingMonthlyCash ?? -Infinity));
+      comparisons.sort((a, b) => (b.remainingMonthlyCash ?? -Infinity) - (a.remainingMonthlyCash ?? -Infinity));
 
       return {
         id: scenario.id,
         name: scenario.name,
+        retirementSystem: scenario.retirementSystem,
+        high3Monthly: scenario.high3Monthly,
+        yearsService: scenario.yearsService,
+        multiplier: scenario.multiplier,
         estimatedRetiredPay:
           scenario.estimatedRetiredPay ??
           (scenario.high3Monthly && scenario.yearsService && scenario.multiplier
@@ -92,13 +94,15 @@ export async function GET() {
             : null),
         memberVaRating: scenario.memberVaRating,
         memberVaPay: scenario.memberVaPay,
+        civilianIncome: scenario.civilianIncome,
+        otherIncome: scenario.otherIncome,
         comparisons,
       };
     });
 
     const vaMatrix = VA_SCENARIO_RATINGS.map((rating) => {
       const row = approvedVa?.vaCompensationRates.find(
-        (r) => r.rating === rating && r.dependentKey === "veteran_spouse_two_children",
+        (r) => r.rating === rating && r.dependentKey === DISPLAYED_DEPENDENT_KEY,
       );
       return {
         rating,
@@ -111,9 +115,71 @@ export async function GET() {
     return jsonOk({
       scenarios: enriched,
       vaMatrix,
-      disclaimer:
-        "Financial outputs are planning estimates. Verify rates against the latest administrator-approved official tables.",
+      displayedDependentKey: DISPLAYED_DEPENDENT_KEY,
+      disclaimer: "Financial outputs are planning estimates. Verify rates against the latest approved official tables.",
     });
+  } catch (error) {
+    return handleRouteError(error);
+  }
+}
+
+export async function PUT(request: Request) {
+  try {
+    const { profile } = await requireMemberContext();
+    const body = await request.json();
+    const name = String(body.name || "Primary retirement scenario").trim();
+    const retirementSystem = String(body.retirementSystem || "High-3");
+    const high3Monthly = Number(body.high3Monthly || 0);
+    const yearsService = Number(body.yearsService || 0);
+    const multiplier = Number(body.multiplier || 0);
+    const memberVaRating = Number(body.memberVaRating ?? 0);
+    const civilianIncome = Number(body.civilianIncome || 0);
+    const otherIncome = Number(body.otherIncome || 0);
+
+    if (!name || ![high3Monthly, yearsService, multiplier, civilianIncome, otherIncome].every(Number.isFinite)) {
+      throw new PublicApiError("Enter valid numeric income assumptions.", 400);
+    }
+    if (!VA_SCENARIO_RATINGS.includes(memberVaRating as (typeof VA_SCENARIO_RATINGS)[number])) {
+      throw new PublicApiError("Select a supported VA planning rating.", 400);
+    }
+
+    const approvedVa = await prisma.benefitRateVersion.findFirst({
+      where: { benefitType: "va_compensation", status: "approved" },
+      include: { vaCompensationRates: true },
+      orderBy: { effectiveDate: "desc" },
+    });
+    const vaRow = approvedVa?.vaCompensationRates.find(
+      (row) => row.rating === memberVaRating && row.dependentKey === DISPLAYED_DEPENDENT_KEY,
+    );
+    const memberVaPay = vaRow?.monthlyAmount ?? 0;
+    const estimatedRetiredPay = high3Monthly > 0 && yearsService > 0 && multiplier > 0
+      ? estimateRetiredPay(high3Monthly, yearsService, multiplier)
+      : 0;
+
+    const existing = await prisma.incomeScenario.findFirst({
+      where: { memberProfileId: profile.id },
+      orderBy: { createdAt: "asc" },
+    });
+
+    const data = {
+      name,
+      retirementSystem,
+      high3Monthly,
+      yearsService,
+      multiplier,
+      estimatedRetiredPay,
+      memberVaRating,
+      memberVaPay,
+      civilianIncome,
+      otherIncome,
+      dependentConfiguration: JSON.stringify({ dependentKey: DISPLAYED_DEPENDENT_KEY }),
+    };
+
+    const scenario = existing
+      ? await prisma.incomeScenario.update({ where: { id: existing.id }, data })
+      : await prisma.incomeScenario.create({ data: { memberProfileId: profile.id, ...data } });
+
+    return jsonOk({ scenario, vaSourceEffectiveDate: approvedVa?.effectiveDate ?? null });
   } catch (error) {
     return handleRouteError(error);
   }

@@ -11,7 +11,7 @@ export default async function SettingsPage() {
   return (
     <AppShell
       title="Settings"
-      subtitle="Profile, privacy, exports, and admin tools"
+      subtitle="Profile, privacy, summaries, and exports"
       progress={{
         percent: dashboard.metrics.progressPercent,
         complete: dashboard.metrics.completeCount,
@@ -23,22 +23,10 @@ export default async function SettingsPage() {
       <div className="grid gap-4 md:grid-cols-2">
         <Panel title="Profile">
           <dl className="space-y-2 text-sm">
-            <div>
-              <dt className="text-muted-foreground">Name</dt>
-              <dd>{dashboard.profile.fullName}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">Rank</dt>
-              <dd>{dashboard.profile.rank}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">Email</dt>
-              <dd>{ctx.user.email}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">Retirement date</dt>
-              <dd>{dashboard.profile.projectedRetirementDate}</dd>
-            </div>
+            <div><dt className="text-muted-foreground">Name</dt><dd>{dashboard.profile.fullName}</dd></div>
+            <div><dt className="text-muted-foreground">Rank / pay grade</dt><dd>{dashboard.profile.rank}</dd></div>
+            <div><dt className="text-muted-foreground">Email</dt><dd>{ctx.user.email}</dd></div>
+            <div><dt className="text-muted-foreground">Retirement date</dt><dd>{dashboard.profile.projectedRetirementDate}</dd></div>
           </dl>
           <Link href="/onboarding" className={cn(buttonVariants({ variant: "link" }), "mt-4 h-auto px-0")}>
             Update profile and recalculate dates
@@ -46,52 +34,41 @@ export default async function SettingsPage() {
         </Panel>
 
         <Panel title="Privacy">
-          <ul className="list-disc space-y-2 pl-5 text-sm text-slate-700">
+          <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
             <li>No SSN or Last 4 is collected.</li>
             <li>No completion initials are required.</li>
-            <li>Medical files remain outside the app by default.</li>
-            <li>Digest emails exclude diagnoses and VA narratives.</li>
+            <li>Sensitive medical files remain outside the app by default.</li>
+            <li>Scheduled summaries exclude diagnoses and VA narratives.</li>
           </ul>
         </Panel>
 
-        <Panel title="Exports">
-          <div className="flex flex-wrap gap-2">
-            <a href="/api/exports/json" className={buttonVariants({ variant: "outline" })} download>
-              Export JSON
-            </a>
-            <a href="/api/exports/csv" className={buttonVariants({ variant: "secondary" })} download>
-              Export CSV
-            </a>
-            <form action="/api/exports/pdf" method="post">
-              <button type="submit" className={buttonVariants({ variant: "outline" })}>
-                Printable checklist
-              </button>
-            </form>
+        <Panel title="Exports" description="Exports happen only when you choose one of these download or print actions.">
+          <div className="space-y-4 text-sm">
+            <div>
+              <p className="font-semibold">JSON backup</p>
+              <p className="text-muted-foreground">Structured data for backup, troubleshooting, or future import tools.</p>
+              <a href="/api/exports/json" download className={cn(buttonVariants({ variant: "outline" }), "mt-2")}>Download JSON backup</a>
+            </div>
+            <div>
+              <p className="font-semibold">CSV checklist</p>
+              <p className="text-muted-foreground">Spreadsheet-friendly checklist data for Excel, Numbers, or Google Sheets.</p>
+              <a href="/api/exports/csv" download className={cn(buttonVariants({ variant: "outline" }), "mt-2")}>Download CSV</a>
+            </div>
+            <div>
+              <p className="font-semibold">Printable checklist</p>
+              <p className="text-muted-foreground">A print-oriented version for appointments, transition counseling, or personal review.</p>
+              <form action="/api/exports/pdf" method="post" className="mt-2">
+                <button type="submit" className={buttonVariants({ variant: "outline" })}>Create printable checklist</button>
+              </form>
+            </div>
           </div>
         </Panel>
 
         <Panel title="More">
-          <ul className="space-y-2 text-sm">
-            <li>
-              <Link href="/reminders" className="font-semibold text-blue-600 hover:underline">
-                Digest email settings
-              </Link>
-            </li>
-            <li>
-              <Link href="/admin" className="font-semibold text-blue-600 hover:underline">
-                Admin template & rate tools
-              </Link>
-            </li>
-            <li>
-              <Link href="/audit" className="font-semibold text-blue-600 hover:underline">
-                Audit history
-              </Link>
-            </li>
-            <li>
-              <Link href="/timeline" className="font-semibold text-blue-600 hover:underline">
-                Timeline calendar
-              </Link>
-            </li>
+          <ul className="space-y-3 text-sm">
+            <li><Link href="/reminders" className="font-semibold text-[color:var(--gold)] hover:underline">Scheduled summary settings</Link><p className="text-muted-foreground">Choose daily/weekly transition reminders.</p></li>
+            <li><Link href="/audit" className="font-semibold text-[color:var(--gold)] hover:underline">Audit history</Link><p className="text-muted-foreground">Review recorded task and planner changes.</p></li>
+            <li><Link href="/help" className="font-semibold text-[color:var(--gold)] hover:underline">Help & Resources</Link><p className="text-muted-foreground">Guidance, glossary-style explanations, and official starting points.</p></li>
           </ul>
         </Panel>
       </div>
